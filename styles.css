@@ -163,6 +163,7 @@ main {
 .timeline-item,
 .showreel-copy,
 .skills-grid article,
+.language-panel,
 .contact-grid a {
   background: var(--surface);
   border: 1px solid var(--line);
@@ -685,6 +686,85 @@ main {
   color: var(--muted);
 }
 
+.language-panel {
+  margin-top: 0.82rem;
+  border-radius: 0.95rem;
+  padding: 0.95rem;
+  transition: transform 300ms var(--ease-spring), border-color 240ms ease, box-shadow 260ms ease;
+}
+
+.language-panel:hover {
+  transform: translateY(-4px);
+  border-color: rgba(108, 180, 255, 0.42);
+  box-shadow: 0 18px 34px rgba(3, 10, 20, 0.46);
+}
+
+.language-panel h3 {
+  margin: 0 0 0.78rem;
+  font-family: "Syne", "Trebuchet MS", sans-serif;
+  font-size: 1.14rem;
+}
+
+.language-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.language-item {
+  border: 1px solid rgba(120, 161, 204, 0.24);
+  border-radius: 0.8rem;
+  background: rgba(14, 27, 43, 0.65);
+  padding: 0.66rem 0.72rem 0.7rem;
+}
+
+.language-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.4rem;
+  margin-bottom: 0.48rem;
+}
+
+.language-head span {
+  color: #dfebff;
+  font-weight: 700;
+}
+
+.language-head strong {
+  color: var(--accent-2);
+  font-size: 0.9rem;
+}
+
+.language-meter {
+  height: 0.44rem;
+  border-radius: 999px;
+  background: rgba(114, 152, 198, 0.26);
+  overflow: hidden;
+}
+
+.language-meter-fill {
+  display: block;
+  height: 100%;
+  width: calc(var(--lang-level, 1) * 100%);
+  background: linear-gradient(90deg, #59b8ff, #67e6c7);
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 860ms var(--ease-spring);
+}
+
+.language-item:nth-child(1) .language-meter-fill {
+  transition-delay: 90ms;
+}
+
+.language-item:nth-child(2) .language-meter-fill {
+  transition-delay: 170ms;
+}
+
+.language-item:nth-child(3) .language-meter-fill {
+  transition-delay: 250ms;
+}
+
 .contact-section {
   padding-bottom: 2.6rem;
 }
@@ -777,6 +857,10 @@ main {
 .reveal.is-visible .contact-grid a {
   opacity: 1;
   transform: translateY(0) scale(1);
+}
+
+.reveal.is-visible .language-meter-fill {
+  transform: scaleX(1);
 }
 
 .reveal.is-visible .timeline-item:hover {
@@ -894,6 +978,10 @@ main {
   .site-nav {
     display: none;
   }
+
+  .language-list {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -903,6 +991,7 @@ main {
   .timeline-item,
   .work-card,
   .skills-grid article,
+  .language-panel,
   .contact-grid a {
     transition: none;
   }
@@ -929,6 +1018,11 @@ main {
   .text-animate .text-word {
     opacity: 1;
     filter: none;
+    transform: none;
+    transition: none;
+  }
+
+  .language-meter-fill {
     transform: none;
     transition: none;
   }

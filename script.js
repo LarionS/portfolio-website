@@ -19,7 +19,7 @@ const revealObserver = new IntersectionObserver(
 revealItems.forEach((item) => revealObserver.observe(item));
 
 const textAnimationTargets = document.querySelectorAll(
-  ".hero h1, .hero-copy, .section-heading h2, .timeline-item p, .work-card h3, .work-card p, .skills-grid h3, .skills-grid p"
+  ".hero h1, .hero-copy, .section-heading h2, .timeline-item p, .work-card h3, .work-card p, .skills-grid h3, .skills-grid p, .language-panel h3"
 );
 
 const splitTextToWords = (element) => {
