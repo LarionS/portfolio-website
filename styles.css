@@ -686,6 +686,33 @@ main {
   color: var(--muted);
 }
 
+.skill-tags {
+  margin-top: 0.7rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.skill-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid rgba(121, 171, 226, 0.32);
+  background: rgba(18, 35, 55, 0.72);
+  color: #dceeff;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  padding: 0.2rem 0.55rem;
+  transition: transform 200ms var(--ease-spring), border-color 200ms ease, background-color 200ms ease;
+}
+
+.skills-grid article:hover .skill-tag {
+  border-color: rgba(119, 187, 255, 0.48);
+  background: rgba(24, 46, 70, 0.85);
+}
+
 .language-panel {
   margin-top: 0.82rem;
   border-radius: 0.95rem;
@@ -905,6 +932,18 @@ main {
   transition-delay: 310ms;
 }
 
+.reveal.is-visible .skills-grid article:nth-child(5) {
+  transition-delay: 390ms;
+}
+
+.reveal.is-visible .skills-grid article:nth-child(6) {
+  transition-delay: 470ms;
+}
+
+.reveal.is-visible .skills-grid article:nth-child(7) {
+  transition-delay: 550ms;
+}
+
 @keyframes accentFlow {
   0% {
     background-position: 0% 50%;
@@ -991,6 +1030,7 @@ main {
   .timeline-item,
   .work-card,
   .skills-grid article,
+  .skill-tag,
   .language-panel,
   .contact-grid a {
     transition: none;
