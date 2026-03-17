@@ -1,3 +1,5 @@
+const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 const revealItems = document.querySelectorAll(".reveal");
 
 const revealObserver = new IntersectionObserver(
@@ -15,6 +17,83 @@ const revealObserver = new IntersectionObserver(
 );
 
 revealItems.forEach((item) => revealObserver.observe(item));
+
+const textAnimationTargets = document.querySelectorAll(
+  ".hero h1, .hero-copy, .section-heading h2, .timeline-item p, .work-card h3, .work-card p, .skills-grid h3, .skills-grid p"
+);
+
+const splitTextToWords = (element) => {
+  if (element.dataset.wordsReady === "true") {
+    return;
+  }
+
+  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, {
+    acceptNode: (node) =>
+      node.nodeValue && node.nodeValue.trim().length > 0
+        ? NodeFilter.FILTER_ACCEPT
+        : NodeFilter.FILTER_REJECT,
+  });
+
+  const textNodes = [];
+  while (walker.nextNode()) {
+    textNodes.push(walker.currentNode);
+  }
+
+  let wordIndex = 0;
+
+  textNodes.forEach((textNode) => {
+    const fragment = document.createDocumentFragment();
+    const parts = textNode.nodeValue.split(/(\s+)/);
+
+    parts.forEach((part) => {
+      if (!part) {
+        return;
+      }
+
+      if (/^\s+$/.test(part)) {
+        fragment.appendChild(document.createTextNode(part));
+        return;
+      }
+
+      const word = document.createElement("span");
+      word.className = "text-word";
+      word.style.setProperty("--word-index", String(wordIndex));
+      word.textContent = part;
+      fragment.appendChild(word);
+      wordIndex += 1;
+    });
+
+    textNode.parentNode?.replaceChild(fragment, textNode);
+  });
+
+  element.classList.add("text-animate");
+  element.dataset.wordsReady = "true";
+};
+
+const textObserver = new IntersectionObserver(
+  (entries, observer) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) {
+        return;
+      }
+      entry.target.classList.add("is-visible");
+      observer.unobserve(entry.target);
+    });
+  },
+  {
+    threshold: 0.28,
+    rootMargin: "0px 0px -24px 0px",
+  }
+);
+
+textAnimationTargets.forEach((target) => {
+  splitTextToWords(target);
+  if (prefersReducedMotion) {
+    target.classList.add("is-visible");
+    return;
+  }
+  textObserver.observe(target);
+});
 
 const countupItems = document.querySelectorAll("[data-countup-target]");
 
@@ -78,8 +157,6 @@ if (carouselRoot) {
   const toggleButton = carouselRoot.querySelector("[data-carousel-toggle]");
   const toggleIconPath = carouselRoot.querySelector("[data-carousel-toggle-icon] path");
   const toggleLabel = carouselRoot.querySelector("[data-carousel-toggle-label]");
-  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
   let currentIndex = 0;
   let pointerStartX = 0;
   let pointerStepped = false;
