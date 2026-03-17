@@ -904,6 +904,26 @@ main {
   color: #92f4d3;
 }
 
+.tool-chatgpt .tool-icon {
+  color: #9ef8dc;
+}
+
+.tool-claude .tool-icon {
+  color: #ffd1a1;
+}
+
+.tool-gemini .tool-icon {
+  color: #9fc7ff;
+}
+
+.tool-git .tool-icon {
+  color: #ffb38f;
+}
+
+.tool-perforce .tool-icon {
+  color: #ffc59f;
+}
+
 .tool-vid360 .tool-icon {
   color: #ffe49c;
 }
@@ -1062,6 +1082,10 @@ main {
   transition-delay: 550ms;
 }
 
+.reveal.is-visible .skills-grid article:nth-child(8) {
+  transition-delay: 630ms;
+}
+
 .reveal.is-visible .tool-pill:nth-child(1) {
   transition-delay: 90ms;
 }
@@ -1084,6 +1108,26 @@ main {
 
 .reveal.is-visible .tool-pill:nth-child(6) {
   transition-delay: 440ms;
+}
+
+.reveal.is-visible .tool-pill:nth-child(7) {
+  transition-delay: 510ms;
+}
+
+.reveal.is-visible .tool-pill:nth-child(8) {
+  transition-delay: 580ms;
+}
+
+.reveal.is-visible .tool-pill:nth-child(9) {
+  transition-delay: 650ms;
+}
+
+.reveal.is-visible .tool-pill:nth-child(10) {
+  transition-delay: 720ms;
+}
+
+.reveal.is-visible .tool-pill:nth-child(11) {
+  transition-delay: 790ms;
 }
 
 body.lang-he {
