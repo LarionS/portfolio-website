@@ -104,7 +104,8 @@ const i18n = {
     skill_unreal_desc:
       "Advanced UE4/UE5 workflows with practical C++ and Blueprint implementation for gameplay, interaction, and systems design.",
     skill_arvr_title: "AR/VR Simulations",
-    skill_arvr_desc: "Scenario-based simulations for training and high-stakes environments.",
+    skill_arvr_desc:
+      "Scenario-based simulations for training and high-stakes environments, with strong hands-on work in UI/UMG, Behavior Trees, and VR interaction systems.",
     skill_creative_title: "Creative & Post Pipeline",
     skill_creative_desc:
       "End-to-end visual prep and delivery with Adobe Suite tools, including scene polish and edit-ready media outputs.",
@@ -116,13 +117,13 @@ const i18n = {
       "From PC and mobile to iOS and VR hardware deployments, including profiling and optimization for stable runtime performance.",
     skill_pm_title: "Project Management",
     skill_pm_desc:
-      "Structured planning, milestone tracking, and stakeholder coordination to keep technical delivery focused and reliable.",
+      "Structured planning, milestone tracking, UI/UX alignment, and stakeholder coordination to keep end-to-end delivery focused and reliable.",
     skill_ai_title: "AI Coding Workflows",
     skill_ai_desc:
-      "Strong AI-assisted development workflow for rapid prototyping, refactors, debugging, and production-quality iteration.",
+      "Strong AI-assisted development workflow for rapid prototyping, refactors, debugging, and production-quality iteration, including support for deeper C++ tasks when needed.",
     skill_team_title: "Collaboration & Delivery Leadership",
     skill_team_desc:
-      "Hands-on direction from concept to shipping milestones with practical Git/Perforce workflows and basic multiplayer implementation support.",
+      "Hands-on leadership across planning, QA, implementation, and release with practical Git/Perforce workflows and general multiplayer familiarity.",
     toolstack_title: "Tool Stack",
     tool_unreal: "Unreal Engine",
     tool_adobe: "Adobe Suite",
@@ -175,7 +176,7 @@ const i18n = {
     skill_unreal_title: "Unreal Engine",
     skill_unreal_desc: "עבודה מתקדמת ב-UE4/UE5 עם שילוב פרקטי של C++ ו-Blueprint למכניקות, אינטראקציה ומערכות.",
     skill_arvr_title: "סימולציות AR/VR",
-    skill_arvr_desc: "סימולציות מבוססות תרחיש לאימונים ולסביבות עם רמת חשיבות גבוהה.",
+    skill_arvr_desc: "סימולציות מבוססות תרחיש לאימונים ולסביבות עם רמת חשיבות גבוהה, כולל עבודה חזקה ב-UI/UMG, Behavior Trees ומערכות אינטראקציה ל-VR.",
     skill_creative_title: "קריאייטיב ופוסט",
     skill_creative_desc: "תהליך מלא של הכנה ויזואלית ומסירה בעזרת Adobe Suite, כולל ליטוש סצנות והפקת מדיה מוכנה לעריכה.",
     skill_content_title: "תהליכי תוכן בתוך Unreal",
@@ -183,11 +184,11 @@ const i18n = {
     skill_cross_title: "מסירה רב-פלטפורמית",
     skill_cross_desc: "מ-PC ומובייל ועד iOS וחומרות VR, כולל פרופיילינג ואופטימיזציה ליציבות ביצועים בזמן אמת.",
     skill_pm_title: "ניהול פרויקטים",
-    skill_pm_desc: "תכנון מובנה, ניהול אבני דרך וסנכרון בעלי עניין לשמירה על מסירה טכנית מדויקת ואמינה.",
+    skill_pm_desc: "תכנון מובנה, ניהול אבני דרך, התאמת UI/UX וסנכרון בעלי עניין לשמירה על מסירה מקצה לקצה בצורה מדויקת ואמינה.",
     skill_ai_title: "תהליכי פיתוח עם AI",
-    skill_ai_desc: "תהליך פיתוח חזק עם AI לאבטיפוס מהיר, רפקטורינג, דיבאג ואיטרציה ברמת פרודקשן.",
+    skill_ai_desc: "תהליך פיתוח חזק עם AI לאבטיפוס מהיר, רפקטורינג, דיבאג ואיטרציה ברמת פרודקשן, כולל תמיכה במשימות C++ עמוקות כשצריך.",
     skill_team_title: "שיתופיות והובלת מסירה",
-    skill_team_desc: "הובלה מעשית משלב הקונספט ועד למסירה, כולל עבודה עם Git/Perforce ותמיכה בסיסית בפיצ'רים של מולטיפלייר.",
+    skill_team_desc: "הובלה מעשית של תכנון, QA, מימוש ושחרור, כולל עבודה עם Git/Perforce והיכרות כללית עם מולטיפלייר.",
     toolstack_title: "סט כלי עבודה",
     tool_unreal: "Unreal Engine",
     tool_adobe: "Adobe Suite",
