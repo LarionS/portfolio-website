@@ -105,7 +105,7 @@ const i18n = {
       "Advanced UE4/UE5 workflows with practical C++ and Blueprint implementation for gameplay, interaction, and systems design.",
     skill_arvr_title: "AR/VR Simulations",
     skill_arvr_desc:
-      "Scenario-based simulations for training and high-stakes environments, with strong hands-on work in UI/UMG, Behavior Trees, and VR interaction systems.",
+      "Scenario-based simulations for training and high-stakes environments, with strong hands-on work in UI/UMG (HUD, menus/settings, in-world UI), Behavior Trees + EQS, and VR interaction systems.",
     skill_creative_title: "Creative & Post Pipeline",
     skill_creative_desc:
       "End-to-end visual prep and delivery with Adobe Suite tools, including scene polish and edit-ready media outputs.",
@@ -176,7 +176,7 @@ const i18n = {
     skill_unreal_title: "Unreal Engine",
     skill_unreal_desc: "עבודה מתקדמת ב-UE4/UE5 עם שילוב פרקטי של C++ ו-Blueprint למכניקות, אינטראקציה ומערכות.",
     skill_arvr_title: "סימולציות AR/VR",
-    skill_arvr_desc: "סימולציות מבוססות תרחיש לאימונים ולסביבות עם רמת חשיבות גבוהה, כולל עבודה חזקה ב-UI/UMG, Behavior Trees ומערכות אינטראקציה ל-VR.",
+    skill_arvr_desc: "סימולציות מבוססות תרחיש לאימונים ולסביבות עם רמת חשיבות גבוהה, כולל עבודה חזקה ב-UI/UMG (HUD, תפריטים/הגדרות ו-UI בתוך העולם), Behavior Trees + EQS ומערכות אינטראקציה ל-VR.",
     skill_creative_title: "קריאייטיב ופוסט",
     skill_creative_desc: "תהליך מלא של הכנה ויזואלית ומסירה בעזרת Adobe Suite, כולל ליטוש סצנות והפקת מדיה מוכנה לעריכה.",
     skill_content_title: "תהליכי תוכן בתוך Unreal",
