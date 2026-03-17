@@ -79,10 +79,18 @@ if (carouselRoot) {
 
   let currentIndex = 0;
   let pointerStartX = 0;
+  let pointerStepped = false;
   let isPointerDown = false;
   let autoRotateTimer = null;
+  let autoResumeTimer = null;
   let wheelAccumulator = 0;
   let wheelResetTimer = null;
+  let manualLockUntil = 0;
+
+  const AUTO_ROTATE_MS = 4600;
+  const DRAG_STEP_THRESHOLD = 92;
+  const WHEEL_STEP_THRESHOLD = 140;
+  const MANUAL_STEP_COOLDOWN = 460;
 
   const normalizeOffset = (index) => {
     let offset = index - currentIndex;
@@ -161,6 +169,41 @@ if (carouselRoot) {
       window.clearInterval(autoRotateTimer);
       autoRotateTimer = null;
     }
+    if (autoResumeTimer) {
+      window.clearTimeout(autoResumeTimer);
+      autoResumeTimer = null;
+    }
+  };
+
+  const queueAutoRotate = () => {
+    if (prefersReducedMotion || slides.length < 2) {
+      return;
+    }
+    if (autoResumeTimer) {
+      window.clearTimeout(autoResumeTimer);
+    }
+    autoResumeTimer = window.setTimeout(() => {
+      startAutoRotate();
+    }, 2200);
+  };
+
+  const tryStep = (direction) => {
+    if (!direction) {
+      return false;
+    }
+
+    const now = window.performance.now();
+    if (now < manualLockUntil) {
+      return false;
+    }
+
+    manualLockUntil = now + MANUAL_STEP_COOLDOWN;
+    if (direction > 0) {
+      goNext();
+    } else {
+      goPrev();
+    }
+    return true;
   };
 
   const startAutoRotate = () => {
@@ -168,17 +211,19 @@ if (carouselRoot) {
       return;
     }
     stopAutoRotate();
-    autoRotateTimer = window.setInterval(goNext, 4200);
+    autoRotateTimer = window.setInterval(goNext, AUTO_ROTATE_MS);
   };
 
   prevButton?.addEventListener("click", () => {
-    goPrev();
-    startAutoRotate();
+    stopAutoRotate();
+    tryStep(-1);
+    queueAutoRotate();
   });
 
   nextButton?.addEventListener("click", () => {
-    goNext();
-    startAutoRotate();
+    stopAutoRotate();
+    tryStep(1);
+    queueAutoRotate();
   });
 
   slides.forEach((slide, index) => {
@@ -186,16 +231,36 @@ if (carouselRoot) {
       if (index === currentIndex) {
         return;
       }
+      stopAutoRotate();
       goToIndex(index);
-      startAutoRotate();
+      queueAutoRotate();
     });
   });
 
   scene?.addEventListener("pointerdown", (event) => {
     isPointerDown = true;
+    pointerStepped = false;
     pointerStartX = event.clientX;
     scene.setPointerCapture(event.pointerId);
     stopAutoRotate();
+  });
+
+  scene?.addEventListener("pointermove", (event) => {
+    if (!isPointerDown) {
+      return;
+    }
+
+    const distance = event.clientX - pointerStartX;
+    if (Math.abs(distance) < DRAG_STEP_THRESHOLD) {
+      return;
+    }
+
+    const direction = distance < 0 ? 1 : -1;
+    const stepped = tryStep(direction);
+    if (stepped) {
+      pointerStepped = true;
+      pointerStartX = event.clientX;
+    }
   });
 
   scene?.addEventListener("pointerup", (event) => {
@@ -203,29 +268,28 @@ if (carouselRoot) {
       return;
     }
 
-    const distance = event.clientX - pointerStartX;
-    if (Math.abs(distance) > 42) {
-      if (distance < 0) {
-        goNext();
-      } else {
-        goPrev();
+    if (!pointerStepped) {
+      const distance = event.clientX - pointerStartX;
+      if (Math.abs(distance) > DRAG_STEP_THRESHOLD) {
+        const direction = distance < 0 ? 1 : -1;
+        tryStep(direction);
       }
     }
 
     isPointerDown = false;
-    startAutoRotate();
+    queueAutoRotate();
   });
 
   scene?.addEventListener("pointercancel", () => {
     isPointerDown = false;
-    startAutoRotate();
+    queueAutoRotate();
   });
 
   scene?.addEventListener(
     "wheel",
     (event) => {
       const dominantDelta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
-      if (Math.abs(dominantDelta) < 4) {
+      if (Math.abs(dominantDelta) < 2) {
         return;
       }
 
@@ -233,14 +297,10 @@ if (carouselRoot) {
       stopAutoRotate();
       wheelAccumulator += dominantDelta;
 
-      if (Math.abs(wheelAccumulator) >= 42) {
-        if (wheelAccumulator > 0) {
-          goNext();
-        } else {
-          goPrev();
-        }
+      if (Math.abs(wheelAccumulator) >= WHEEL_STEP_THRESHOLD) {
+        const direction = wheelAccumulator > 0 ? 1 : -1;
         wheelAccumulator = 0;
-        startAutoRotate();
+        tryStep(direction);
       }
 
       if (wheelResetTimer) {
@@ -248,7 +308,8 @@ if (carouselRoot) {
       }
       wheelResetTimer = window.setTimeout(() => {
         wheelAccumulator = 0;
-      }, 160);
+        queueAutoRotate();
+      }, 220);
     },
     { passive: false }
   );
@@ -256,13 +317,15 @@ if (carouselRoot) {
   scene?.addEventListener("keydown", (event) => {
     if (event.key === "ArrowLeft") {
       event.preventDefault();
-      goPrev();
-      startAutoRotate();
+      stopAutoRotate();
+      tryStep(-1);
+      queueAutoRotate();
     }
     if (event.key === "ArrowRight") {
       event.preventDefault();
-      goNext();
-      startAutoRotate();
+      stopAutoRotate();
+      tryStep(1);
+      queueAutoRotate();
     }
   });
 
