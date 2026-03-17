@@ -1,4 +1,6 @@
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const animatedTextSelector =
+  ".hero h1, .hero-copy, .section-heading h2, .timeline-item p, .work-card h3, .work-card p, .skills-grid h3, .skills-grid p, .language-panel h3, .toolstack-title";
 
 const revealItems = document.querySelectorAll(".reveal");
 
@@ -17,10 +19,6 @@ const revealObserver = new IntersectionObserver(
 );
 
 revealItems.forEach((item) => revealObserver.observe(item));
-
-const textAnimationTargets = document.querySelectorAll(
-  ".hero h1, .hero-copy, .section-heading h2, .timeline-item p, .work-card h3, .work-card p, .skills-grid h3, .skills-grid p, .language-panel h3"
-);
 
 const splitTextToWords = (element) => {
   if (element.dataset.wordsReady === "true") {
@@ -70,6 +68,206 @@ const splitTextToWords = (element) => {
   element.dataset.wordsReady = "true";
 };
 
+const i18n = {
+  en: {
+    nav_experience: "Experience",
+    nav_work: "Work",
+    nav_gallery: "Gallery",
+    nav_showreel: "Showreel",
+    nav_skills: "Skills",
+    nav_contact: "Contact",
+    hero_eyebrow: "Unreal Engine Developer",
+    hero_title: 'Building immersive <span>AR/VR worlds</span> with real impact.',
+    hero_copy:
+      "I design and ship high-impact interactive experiences across VR, AR, PC, mobile, and iOS, using both C++ and Blueprints where each fits best, with a strong focus on simulation quality, user clarity, and production reliability.",
+    hero_watch: "Watch Showreel",
+    hero_resume: "Download Resume",
+    profile_role: "Lead AR/VR Developer",
+    profile_link: "View LinkedIn",
+    metric_arvr: "AR/VR development",
+    metric_unreal: "C++ and Blueprint gameplay systems",
+    metric_projects: "Completed projects delivered",
+    metric_cross_title: "Cross Platform",
+    metric_cross_desc: "PC, Mobile, iOS, VR, Cinematics",
+    exp_eyebrow: "Experience",
+    exp_title: "Delivery across startups, freelance, and leadership roles",
+    work_eyebrow: "Selected Work",
+    work_title: "Examples of shipped AR/VR and Unreal projects",
+    work_reel: "View Project Reel",
+    gallery_eyebrow: "Project Gallery",
+    gallery_title: "Curated visuals from production work",
+    showreel_eyebrow: "Featured Video",
+    showreel_title: "Showreel 2024",
+    skills_eyebrow: "Core Expertise",
+    skills_title: "Production ready, immersion first",
+    skill_unreal_title: "Unreal Engine",
+    skill_unreal_desc:
+      "Advanced UE4/UE5 workflows with practical C++ and Blueprint implementation for gameplay, interaction, and systems design.",
+    skill_arvr_title: "AR/VR Simulations",
+    skill_arvr_desc: "Scenario-based simulations for training and high-stakes environments.",
+    skill_creative_title: "Creative & Post Pipeline",
+    skill_creative_desc:
+      "End-to-end visual prep and delivery with Adobe Suite tools, including scene polish and edit-ready media outputs.",
+    skill_cross_title: "Cross-Platform Delivery",
+    skill_cross_desc: "From PC and mobile to iOS and VR hardware deployments.",
+    skill_pm_title: "Project Management",
+    skill_pm_desc:
+      "Structured planning, milestone tracking, and stakeholder coordination to keep technical delivery focused and reliable.",
+    skill_ai_title: "AI Coding Workflows",
+    skill_ai_desc:
+      "Strong AI-assisted development workflow for rapid prototyping, refactors, debugging, and production-quality iteration.",
+    skill_team_title: "Team Leadership",
+    skill_team_desc: "Hands-on direction from concept to shipping milestones.",
+    toolstack_title: "Tool Stack",
+    tool_unreal: "Unreal Engine",
+    tool_adobe: "Adobe Suite",
+    tool_ps: "Photoshop",
+    tool_pr: "Premiere Pro",
+    tool_codex: "Codex",
+    tool_360: "360 Video Editing",
+    language_title: "Language Proficiency",
+    contact_eyebrow: "Contact",
+    contact_title: "Let's build something immersive together",
+    contact_linkedin: "LinkedIn Profile",
+    footer_text: "Larion Siments - Unreal Engine Developer",
+  },
+  he: {
+    nav_experience: "ניסיון",
+    nav_work: "עבודות",
+    nav_gallery: "גלריה",
+    nav_showreel: "שואוריל",
+    nav_skills: "יכולות",
+    nav_contact: "יצירת קשר",
+    hero_eyebrow: "מפתח Unreal Engine",
+    hero_title: 'בונה חוויות <span>AR/VR</span> אימרסיביות עם השפעה אמיתית.',
+    hero_copy:
+      "אני מתכנן ומספק חוויות אינטראקטיביות ברמת ביצוע גבוהה עבור VR, AR, PC, מובייל ו-iOS, תוך שילוב מדויק בין C++ ל-Blueprints לפי הצורך, עם דגש על איכות סימולציה, בהירות למשתמש ואמינות בפרודקשן.",
+    hero_watch: "צפה בשואוריל",
+    hero_resume: "הורד קורות חיים",
+    profile_role: "מוביל פיתוח AR/VR",
+    profile_link: "צפה בלינקדאין",
+    metric_arvr: "פיתוח AR/VR",
+    metric_unreal: "מערכות משחק ב-C++ וב-Blueprint",
+    metric_projects: "פרויקטים שהושלמו ונמסרו",
+    metric_cross_title: "מולטי-פלטפורם",
+    metric_cross_desc: "PC, מובייל, iOS, VR, סינמטיקס",
+    exp_eyebrow: "ניסיון",
+    exp_title: "מסירה מקצועית בסטארטאפים, פרילנס והובלת צוותים",
+    work_eyebrow: "עבודות נבחרות",
+    work_title: "דוגמאות לפרויקטי AR/VR ו-Unreal שעלו לאוויר",
+    work_reel: "צפה בריל הפרויקטים",
+    gallery_eyebrow: "גלריית פרויקטים",
+    gallery_title: "ויזואלים נבחרים מעבודות הפקה",
+    showreel_eyebrow: "וידאו מוביל",
+    showreel_title: "שואוריל 2024",
+    skills_eyebrow: "מומחיות מרכזית",
+    skills_title: "מוכן לפרודקשן, ממוקד אימרסיה",
+    skill_unreal_title: "Unreal Engine",
+    skill_unreal_desc: "עבודה מתקדמת ב-UE4/UE5 עם שילוב פרקטי של C++ ו-Blueprint למכניקות, אינטראקציה ומערכות.",
+    skill_arvr_title: "סימולציות AR/VR",
+    skill_arvr_desc: "סימולציות מבוססות תרחיש לאימונים ולסביבות עם רמת חשיבות גבוהה.",
+    skill_creative_title: "קריאייטיב ופוסט",
+    skill_creative_desc: "תהליך מלא של הכנה ויזואלית ומסירה בעזרת Adobe Suite, כולל ליטוש סצנות והפקת מדיה מוכנה לעריכה.",
+    skill_cross_title: "מסירה רב-פלטפורמית",
+    skill_cross_desc: "מ-PC ומובייל ועד iOS וחומרות VR.",
+    skill_pm_title: "ניהול פרויקטים",
+    skill_pm_desc: "תכנון מובנה, ניהול אבני דרך וסנכרון בעלי עניין לשמירה על מסירה טכנית מדויקת ואמינה.",
+    skill_ai_title: "תהליכי פיתוח עם AI",
+    skill_ai_desc: "תהליך פיתוח חזק עם AI לאבטיפוס מהיר, רפקטורינג, דיבאג ואיטרציה ברמת פרודקשן.",
+    skill_team_title: "הובלת צוות",
+    skill_team_desc: "הובלה מעשית משלב הקונספט ועד למסירה.",
+    toolstack_title: "סט כלי עבודה",
+    tool_unreal: "Unreal Engine",
+    tool_adobe: "Adobe Suite",
+    tool_ps: "Photoshop",
+    tool_pr: "Premiere Pro",
+    tool_codex: "Codex",
+    tool_360: "עריכת וידאו 360",
+    language_title: "רמת שפות",
+    contact_eyebrow: "יצירת קשר",
+    contact_title: "בואו נבנה משהו אימרסיבי ביחד",
+    contact_linkedin: "פרופיל לינקדאין",
+    footer_text: "לריון סימנטס - מפתח Unreal Engine",
+  },
+};
+
+const i18nNodes = Array.from(document.querySelectorAll("[data-i18n]"));
+const langToggle = document.querySelector("[data-lang-toggle]");
+const langLabel = document.querySelector("[data-lang-label]");
+let activeLanguage = "en";
+
+const unwrapAnimatedWords = (element) => {
+  const words = Array.from(element.querySelectorAll(".text-word"));
+  if (words.length === 0) {
+    return;
+  }
+  words.forEach((word) => {
+    word.replaceWith(document.createTextNode(word.textContent || ""));
+  });
+  element.normalize();
+};
+
+const refreshAnimatedElement = (element) => {
+  if (prefersReducedMotion || !element.matches(animatedTextSelector)) {
+    return;
+  }
+  unwrapAnimatedWords(element);
+  element.dataset.wordsReady = "false";
+  element.classList.remove("text-animate", "is-visible");
+  splitTextToWords(element);
+  element.classList.add("is-visible");
+};
+
+const updateLanguageToggleUi = () => {
+  if (!langLabel || !langToggle) {
+    return;
+  }
+  const nextLanguage = activeLanguage === "en" ? "HE" : "EN";
+  langLabel.textContent = nextLanguage;
+  const targetLabel = activeLanguage === "en" ? "Switch language to Hebrew" : "Switch language to English";
+  langToggle.setAttribute("aria-label", targetLabel);
+};
+
+const applyLanguage = (lang, options = {}) => {
+  const refreshAnimated = options.refreshAnimated === true;
+  activeLanguage = lang === "he" ? "he" : "en";
+  const dict = i18n[activeLanguage];
+
+  i18nNodes.forEach((node) => {
+    const key = node.dataset.i18n;
+    const translated = dict[key] ?? i18n.en[key];
+    if (!translated) {
+      return;
+    }
+
+    if (node.dataset.i18nHtml === "true") {
+      node.innerHTML = translated;
+    } else {
+      node.textContent = translated;
+    }
+
+    if (refreshAnimated) {
+      refreshAnimatedElement(node);
+    }
+  });
+
+  document.documentElement.lang = activeLanguage === "he" ? "he" : "en";
+  document.documentElement.dir = activeLanguage === "he" ? "rtl" : "ltr";
+  document.body.classList.toggle("lang-he", activeLanguage === "he");
+  updateLanguageToggleUi();
+  window.localStorage.setItem("portfolio_lang", activeLanguage);
+};
+
+const savedLanguage = window.localStorage.getItem("portfolio_lang");
+const browserIsHebrew = window.navigator.language?.toLowerCase().startsWith("he");
+const initialLanguage =
+  savedLanguage === "en" || savedLanguage === "he" ? savedLanguage : browserIsHebrew ? "he" : "en";
+applyLanguage(initialLanguage);
+
+langToggle?.addEventListener("click", () => {
+  applyLanguage(activeLanguage === "en" ? "he" : "en", { refreshAnimated: true });
+});
+
 const textObserver = new IntersectionObserver(
   (entries, observer) => {
     entries.forEach((entry) => {
@@ -85,6 +283,8 @@ const textObserver = new IntersectionObserver(
     rootMargin: "0px 0px -24px 0px",
   }
 );
+
+const textAnimationTargets = document.querySelectorAll(animatedTextSelector);
 
 textAnimationTargets.forEach((target) => {
   splitTextToWords(target);

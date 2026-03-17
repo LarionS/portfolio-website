@@ -21,53 +21,60 @@
 
     <header class="site-header">
       <a class="brand" href="#home">Larion Siments</a>
-      <nav class="site-nav" aria-label="Main navigation">
-        <a href="#experience">Experience</a>
-        <a href="#work">Work</a>
-        <a href="#gallery">Gallery</a>
-        <a href="#showreel">Showreel</a>
-        <a href="#skills">Skills</a>
-        <a href="#contact">Contact</a>
-        <a class="nav-contact" href="mailto:Larion1@gmail.com">Larion1@gmail.com</a>
-        <a
-          class="nav-contact"
-          href="https://wa.me/972504931021"
-          target="_blank"
-          rel="noreferrer"
-          >+972 50 493 1021</a
-        >
-        <a
-          class="nav-contact"
-          href="https://wa.me/66922470654"
-          target="_blank"
-          rel="noreferrer"
-          >+66 92 247 0654</a
-        >
-      </nav>
+      <div class="header-actions">
+        <nav class="site-nav" aria-label="Main navigation">
+          <a href="#experience" data-i18n="nav_experience">Experience</a>
+          <a href="#work" data-i18n="nav_work">Work</a>
+          <a href="#gallery" data-i18n="nav_gallery">Gallery</a>
+          <a href="#showreel" data-i18n="nav_showreel">Showreel</a>
+          <a href="#skills" data-i18n="nav_skills">Skills</a>
+          <a href="#contact" data-i18n="nav_contact">Contact</a>
+          <a class="nav-contact" href="mailto:Larion1@gmail.com">Larion1@gmail.com</a>
+          <a
+            class="nav-contact"
+            href="https://wa.me/972504931021"
+            target="_blank"
+            rel="noreferrer"
+            >+972 50 493 1021</a
+          >
+          <a
+            class="nav-contact"
+            href="https://wa.me/66922470654"
+            target="_blank"
+            rel="noreferrer"
+            >+66 92 247 0654</a
+          >
+        </nav>
+        <button class="lang-toggle" type="button" data-lang-toggle aria-label="Switch language to Hebrew">
+          <span class="lang-toggle-dot" aria-hidden="true"></span>
+          <span data-lang-label>HE</span>
+        </button>
+      </div>
     </header>
 
     <main id="home">
       <section class="hero section reveal">
         <div class="hero-layout">
           <div class="hero-main">
-            <p class="eyebrow">Unreal Engine Developer</p>
-            <h1>
+            <p class="eyebrow" data-i18n="hero_eyebrow">Unreal Engine Developer</p>
+            <h1 data-i18n="hero_title" data-i18n-html="true">
               Building immersive
               <span>AR/VR worlds</span>
               with real impact.
             </h1>
-            <p class="hero-copy">
+            <p class="hero-copy" data-i18n="hero_copy">
               I design and ship high-impact interactive experiences across VR,
               AR, PC, mobile, and iOS, using both C++ and Blueprints where
               each fits best, with a strong focus on simulation quality, user
               clarity, and production reliability.
             </p>
             <div class="hero-actions">
-              <a class="btn btn-primary" href="#showreel">Watch Showreel</a>
+              <a class="btn btn-primary" href="#showreel" data-i18n="hero_watch">Watch Showreel</a>
               <a
                 class="btn btn-ghost"
                 href="./assets/Larion-Siments-Resume-2024.docx"
                 download
+                data-i18n="hero_resume"
                 >Download Resume</a
               >
             </div>
@@ -82,12 +89,13 @@
             />
             <div class="profile-card-body">
               <p class="profile-name">Larion Siments</p>
-              <p class="profile-role">Lead AR/VR Developer</p>
+              <p class="profile-role" data-i18n="profile_role">Lead AR/VR Developer</p>
               <a
                 class="btn btn-ghost profile-link"
                 href="https://www.linkedin.com/in/larion-siments-b5bb82238/"
                 target="_blank"
                 rel="noreferrer"
+                data-i18n="profile_link"
                 >View LinkedIn</a
               >
             </div>
@@ -97,27 +105,27 @@
         <div class="hero-metrics">
           <article>
             <strong>6+ years</strong>
-            <span>AR/VR development</span>
+            <span data-i18n="metric_arvr">AR/VR development</span>
           </article>
           <article>
             <strong>UE4 / UE5</strong>
-            <span>C++ and Blueprint gameplay systems</span>
+            <span data-i18n="metric_unreal">C++ and Blueprint gameplay systems</span>
           </article>
           <article>
             <strong>Over <span class="countup" data-countup-target="100">0</span>+</strong>
-            <span>Completed projects delivered</span>
+            <span data-i18n="metric_projects">Completed projects delivered</span>
           </article>
           <article>
-            <strong>Cross Platform</strong>
-            <span>PC, Mobile, iOS, VR, Cinematics</span>
+            <strong data-i18n="metric_cross_title">Cross Platform</strong>
+            <span data-i18n="metric_cross_desc">PC, Mobile, iOS, VR, Cinematics</span>
           </article>
         </div>
       </section>
 
       <section id="experience" class="section reveal">
         <div class="section-heading">
-          <p class="eyebrow">Experience</p>
-          <h2>Delivery across startups, freelance, and leadership roles</h2>
+          <p class="eyebrow" data-i18n="exp_eyebrow">Experience</p>
+          <h2 data-i18n="exp_title">Delivery across startups, freelance, and leadership roles</h2>
         </div>
 
         <div class="timeline">
@@ -194,8 +202,8 @@
 
       <section id="work" class="section reveal">
         <div class="section-heading">
-          <p class="eyebrow">Selected Work</p>
-          <h2>Examples of shipped AR/VR and Unreal projects</h2>
+          <p class="eyebrow" data-i18n="work_eyebrow">Selected Work</p>
+          <h2 data-i18n="work_title">Examples of shipped AR/VR and Unreal projects</h2>
         </div>
 
         <div class="work-grid">
@@ -235,14 +243,14 @@
         </div>
 
         <div class="work-links">
-          <a class="btn btn-primary" href="#showreel">View Project Reel</a>
+          <a class="btn btn-primary" href="#showreel" data-i18n="work_reel">View Project Reel</a>
         </div>
       </section>
 
       <section id="gallery" class="section reveal">
         <div class="section-heading">
-          <p class="eyebrow">Project Gallery</p>
-          <h2>Curated visuals from production work</h2>
+          <p class="eyebrow" data-i18n="gallery_eyebrow">Project Gallery</p>
+          <h2 data-i18n="gallery_title">Curated visuals from production work</h2>
         </div>
 
         <div class="media-carousel" data-carousel>
@@ -386,8 +394,8 @@
 
       <section id="showreel" class="section reveal">
         <div class="section-heading">
-          <p class="eyebrow">Featured Video</p>
-          <h2>Showreel 2024</h2>
+          <p class="eyebrow" data-i18n="showreel_eyebrow">Featured Video</p>
+          <h2 data-i18n="showreel_title">Showreel 2024</h2>
         </div>
 
         <div class="showreel-grid">
@@ -406,14 +414,14 @@
 
       <section id="skills" class="section reveal">
         <div class="section-heading">
-          <p class="eyebrow">Core Expertise</p>
-          <h2>Production ready, immersion first</h2>
+          <p class="eyebrow" data-i18n="skills_eyebrow">Core Expertise</p>
+          <h2 data-i18n="skills_title">Production ready, immersion first</h2>
         </div>
 
         <div class="skills-grid">
           <article>
-            <h3>Unreal Engine</h3>
-            <p>
+            <h3 data-i18n="skill_unreal_title">Unreal Engine</h3>
+            <p data-i18n="skill_unreal_desc">
               Advanced UE4/UE5 workflows with practical C++ and Blueprint
               implementation for gameplay, interaction, and systems design.
             </p>
@@ -424,8 +432,8 @@
             </div>
           </article>
           <article>
-            <h3>AR/VR Simulations</h3>
-            <p>Scenario-based simulations for training and high-stakes environments.</p>
+            <h3 data-i18n="skill_arvr_title">AR/VR Simulations</h3>
+            <p data-i18n="skill_arvr_desc">Scenario-based simulations for training and high-stakes environments.</p>
             <div class="skill-tags">
               <span class="skill-tag">VR Training</span>
               <span class="skill-tag">AR Workflows</span>
@@ -433,8 +441,8 @@
             </div>
           </article>
           <article>
-            <h3>Creative & Post Pipeline</h3>
-            <p>
+            <h3 data-i18n="skill_creative_title">Creative & Post Pipeline</h3>
+            <p data-i18n="skill_creative_desc">
               End-to-end visual prep and delivery with Adobe Suite tools,
               including scene polish and edit-ready media outputs.
             </p>
@@ -446,8 +454,8 @@
             </div>
           </article>
           <article>
-            <h3>Cross-Platform Delivery</h3>
-            <p>From PC and mobile to iOS and VR hardware deployments.</p>
+            <h3 data-i18n="skill_cross_title">Cross-Platform Delivery</h3>
+            <p data-i18n="skill_cross_desc">From PC and mobile to iOS and VR hardware deployments.</p>
             <div class="skill-tags">
               <span class="skill-tag">PC</span>
               <span class="skill-tag">Mobile</span>
@@ -456,8 +464,8 @@
             </div>
           </article>
           <article>
-            <h3>Project Management</h3>
-            <p>
+            <h3 data-i18n="skill_pm_title">Project Management</h3>
+            <p data-i18n="skill_pm_desc">
               Structured planning, milestone tracking, and stakeholder
               coordination to keep technical delivery focused and reliable.
             </p>
@@ -468,8 +476,8 @@
             </div>
           </article>
           <article>
-            <h3>AI Coding Workflows</h3>
-            <p>
+            <h3 data-i18n="skill_ai_title">AI Coding Workflows</h3>
+            <p data-i18n="skill_ai_desc">
               Strong AI-assisted development workflow for rapid prototyping,
               refactors, debugging, and production-quality iteration.
             </p>
@@ -480,8 +488,8 @@
             </div>
           </article>
           <article>
-            <h3>Team Leadership</h3>
-            <p>Hands-on direction from concept to shipping milestones.</p>
+            <h3 data-i18n="skill_team_title">Team Leadership</h3>
+            <p data-i18n="skill_team_desc">Hands-on direction from concept to shipping milestones.</p>
             <div class="skill-tags">
               <span class="skill-tag">Mentoring</span>
               <span class="skill-tag">Code Reviews</span>
@@ -490,8 +498,38 @@
           </article>
         </div>
 
+        <div class="toolstack-panel" aria-label="Tool stack">
+          <p class="toolstack-title" data-i18n="toolstack_title">Tool Stack</p>
+          <div class="toolstack-grid">
+            <article class="tool-pill tool-ue">
+              <span class="tool-icon">UE</span>
+              <span data-i18n="tool_unreal">Unreal Engine</span>
+            </article>
+            <article class="tool-pill tool-adobe">
+              <span class="tool-icon">Ae</span>
+              <span data-i18n="tool_adobe">Adobe Suite</span>
+            </article>
+            <article class="tool-pill tool-ps">
+              <span class="tool-icon">Ps</span>
+              <span data-i18n="tool_ps">Photoshop</span>
+            </article>
+            <article class="tool-pill tool-pr">
+              <span class="tool-icon">Pr</span>
+              <span data-i18n="tool_pr">Premiere Pro</span>
+            </article>
+            <article class="tool-pill tool-codex">
+              <span class="tool-icon">Cx</span>
+              <span data-i18n="tool_codex">Codex</span>
+            </article>
+            <article class="tool-pill tool-vid360">
+              <span class="tool-icon">360</span>
+              <span data-i18n="tool_360">360 Video Editing</span>
+            </article>
+          </div>
+        </div>
+
         <div class="language-panel" aria-label="Language proficiency">
-          <h3>Language Proficiency</h3>
+          <h3 data-i18n="language_title">Language Proficiency</h3>
           <div class="language-list">
             <article class="language-item" style="--lang-level: 1">
               <div class="language-head">
@@ -526,8 +564,8 @@
 
       <section id="contact" class="section reveal contact-section">
         <div class="section-heading">
-          <p class="eyebrow">Contact</p>
-          <h2>Let's build something immersive together</h2>
+          <p class="eyebrow" data-i18n="contact_eyebrow">Contact</p>
+          <h2 data-i18n="contact_title">Let's build something immersive together</h2>
         </div>
 
         <div class="contact-grid">
@@ -542,6 +580,7 @@
             href="https://www.linkedin.com/in/larion-siments-b5bb82238/"
             target="_blank"
             rel="noreferrer"
+            data-i18n="contact_linkedin"
             >LinkedIn Profile</a
           >
         </div>
@@ -549,7 +588,7 @@
     </main>
 
     <footer class="site-footer">
-      <p>Larion Siments - Unreal Engine Developer</p>
+      <p data-i18n="footer_text">Larion Siments - Unreal Engine Developer</p>
     </footer>
 
     <script src="./script.js"></script>

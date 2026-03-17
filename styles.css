@@ -94,6 +94,12 @@ body {
   backdrop-filter: blur(12px);
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
 .brand {
   text-decoration: none;
   color: var(--ink);
@@ -131,6 +137,36 @@ body {
 
 .site-nav .nav-contact:hover {
   border-color: rgba(108, 174, 255, 0.5);
+}
+
+.lang-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid rgba(117, 181, 255, 0.34);
+  border-radius: 999px;
+  background: rgba(17, 31, 48, 0.82);
+  color: #dff0ff;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  padding: 0.38rem 0.7rem;
+  cursor: pointer;
+  transition: transform 200ms var(--ease-spring), border-color 180ms ease, background-color 180ms ease;
+}
+
+.lang-toggle:hover {
+  transform: translateY(-2px);
+  border-color: rgba(113, 188, 255, 0.55);
+  background: rgba(23, 41, 63, 0.95);
+}
+
+.lang-toggle-dot {
+  width: 0.42rem;
+  height: 0.42rem;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #7ff6d1, #57bcff);
+  box-shadow: 0 0 0 1px rgba(130, 195, 255, 0.26);
 }
 
 main {
@@ -792,6 +828,86 @@ main {
   transition-delay: 250ms;
 }
 
+.toolstack-panel {
+  margin-top: 0.82rem;
+  border-radius: 0.95rem;
+  border: 1px solid var(--line);
+  background: rgba(12, 23, 37, 0.72);
+  box-shadow: var(--shadow);
+  padding: 0.9rem;
+}
+
+.toolstack-title {
+  margin: 0 0 0.7rem;
+  font-family: "Syne", "Trebuchet MS", sans-serif;
+  font-size: 1.08rem;
+}
+
+.toolstack-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.58rem;
+}
+
+.tool-pill {
+  border: 1px solid rgba(114, 165, 219, 0.28);
+  border-radius: 0.84rem;
+  background: rgba(14, 28, 44, 0.74);
+  color: #dcecff;
+  min-height: 3rem;
+  padding: 0.45rem 0.62rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 0.84rem;
+  transition: transform 240ms var(--ease-spring), border-color 200ms ease, background-color 200ms ease;
+}
+
+.tool-pill:hover {
+  transform: translateY(-3px);
+  border-color: rgba(117, 188, 255, 0.5);
+  background: rgba(22, 40, 62, 0.88);
+}
+
+.tool-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.7rem;
+  height: 1.7rem;
+  border-radius: 0.48rem;
+  border: 1px solid rgba(127, 182, 241, 0.35);
+  background: rgba(17, 33, 53, 0.9);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+
+.tool-ue .tool-icon {
+  color: #bde1ff;
+}
+
+.tool-adobe .tool-icon {
+  color: #ff9f96;
+}
+
+.tool-ps .tool-icon {
+  color: #88d4ff;
+}
+
+.tool-pr .tool-icon {
+  color: #d9aeff;
+}
+
+.tool-codex .tool-icon {
+  color: #92f4d3;
+}
+
+.tool-vid360 .tool-icon {
+  color: #ffe49c;
+}
+
 .contact-section {
   padding-bottom: 2.6rem;
 }
@@ -868,6 +984,7 @@ main {
 .reveal .timeline-item,
 .reveal .work-card,
 .reveal .skills-grid article,
+.reveal .tool-pill,
 .reveal .contact-grid a {
   opacity: 0;
   transform: translateY(20px) scale(0.99);
@@ -881,6 +998,7 @@ main {
 .reveal.is-visible .timeline-item,
 .reveal.is-visible .work-card,
 .reveal.is-visible .skills-grid article,
+.reveal.is-visible .tool-pill,
 .reveal.is-visible .contact-grid a {
   opacity: 1;
   transform: translateY(0) scale(1);
@@ -942,6 +1060,34 @@ main {
 
 .reveal.is-visible .skills-grid article:nth-child(7) {
   transition-delay: 550ms;
+}
+
+.reveal.is-visible .tool-pill:nth-child(1) {
+  transition-delay: 90ms;
+}
+
+.reveal.is-visible .tool-pill:nth-child(2) {
+  transition-delay: 160ms;
+}
+
+.reveal.is-visible .tool-pill:nth-child(3) {
+  transition-delay: 230ms;
+}
+
+.reveal.is-visible .tool-pill:nth-child(4) {
+  transition-delay: 300ms;
+}
+
+.reveal.is-visible .tool-pill:nth-child(5) {
+  transition-delay: 370ms;
+}
+
+.reveal.is-visible .tool-pill:nth-child(6) {
+  transition-delay: 440ms;
+}
+
+body.lang-he {
+  direction: rtl;
 }
 
 @keyframes accentFlow {
@@ -1021,6 +1167,10 @@ main {
   .language-list {
     grid-template-columns: 1fr;
   }
+
+  .toolstack-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1030,6 +1180,7 @@ main {
   .timeline-item,
   .work-card,
   .skills-grid article,
+  .tool-pill,
   .skill-tag,
   .language-panel,
   .contact-grid a {
