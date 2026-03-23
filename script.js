@@ -82,9 +82,9 @@ const i18n = {
     nav_contact: "Contact",
     header_cta: "Work With Me",
     hero_eyebrow: "AI-Accelerated Product Prototyping",
-    hero_title: "AI-Accelerated <span>Prototypes, Tools,</span> and Interactive Experiences",
+    hero_title: "AI-Accelerated MVPs, <span>Internal Tools,</span> and Interactive Prototypes",
     hero_copy:
-      "I help founders and teams turn rough ideas into working MVPs, internal tools, and immersive prototypes, with a background in Unreal Engine, VR, and interactive systems.",
+      "I help founders and teams turn rough ideas into working builds: MVPs, internal tools, and immersive prototypes, backed by Unreal Engine and VR experience.",
     hero_choose: "Choose a Lane",
     hero_contact: "Discuss a Build",
     hero_resume: "Download Resume",
@@ -330,9 +330,9 @@ const i18n = {
     nav_contact: "יצירת קשר",
     header_cta: "בואו נעבוד יחד",
     hero_eyebrow: "פרוטוטייפים ומוצרים מהירים בעזרת AI",
-    hero_title: "<span>פרוטוטייפים, כלים,</span> וחוויות אינטראקטיביות מואצות AI",
+    hero_title: "MVPs מואצים ב-AI, <span>כלים פנימיים,</span> ופרוטוטייפים אינטראקטיביים",
     hero_copy:
-      "אני עוזר ליזמים ולצוותים להפוך רעיונות גולמיים ל-MVP עובד, כלים פנימיים ופרוטוטייפים אימרסיביים, עם רקע חזק ב-Unreal Engine, VR ומערכות אינטראקטיביות.",
+      "אני עוזר ליזמים ולצוותים להפוך רעיונות גולמיים לבניות עובדות: MVP, כלים פנימיים ופרוטוטייפים אימרסיביים, עם עומק ב-Unreal Engine ו-VR.",
     hero_choose: "בחר מסלול",
     hero_contact: "נדבר על הבנייה",
     hero_resume: "הורד קורות חיים",
