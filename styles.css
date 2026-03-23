@@ -462,7 +462,7 @@ main {
   display: flex;
   flex-direction: column;
   min-height: 100%;
-  padding: 1.35rem;
+  padding: 1.48rem;
   transition: transform 300ms var(--ease-spring), border-color 220ms ease, box-shadow 260ms ease;
 }
 
@@ -564,7 +564,7 @@ main {
 }
 
 .overview-card {
-  padding: 1.28rem;
+  padding: 1.42rem;
   transition: transform 300ms var(--ease-spring), border-color 240ms ease, box-shadow 260ms ease;
 }
 
@@ -595,7 +595,7 @@ main {
 }
 
 .lane-panel {
-  padding: 1.3rem;
+  padding: 1.42rem;
   transition: transform 280ms var(--ease-spring), border-color 240ms ease, box-shadow 260ms ease;
 }
 
@@ -679,7 +679,7 @@ main {
 }
 
 .work-card {
-  padding: 1.22rem;
+  padding: 1.34rem;
   transition: transform 300ms var(--ease-spring), border-color 240ms ease, box-shadow 260ms ease;
 }
 
@@ -706,7 +706,7 @@ main {
 
 .cta-panel {
   margin-top: 1.3rem;
-  padding: 1.35rem;
+  padding: 1.46rem;
   background:
     radial-gradient(circle at 88% 10%, rgba(102, 231, 193, 0.12), transparent 30%),
     radial-gradient(circle at 14% 88%, rgba(90, 171, 255, 0.13), transparent 34%),
@@ -1063,21 +1063,27 @@ main {
 .contact-layout {
   display: grid;
   grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
-  gap: 1rem;
+  gap: 1.08rem;
   margin-top: 1.25rem;
-  align-items: start;
+  align-items: stretch;
 }
 
 .contact-panel {
+  height: 100%;
   display: grid;
   align-content: start;
   gap: 0.9rem;
+  padding: 1.38rem;
+  border-radius: var(--radius-card);
+  background: linear-gradient(165deg, rgba(16, 31, 49, 0.82), rgba(9, 20, 33, 0.94));
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
 }
 
 .contact-request {
   display: grid;
   gap: 0.92rem;
-  padding: 1.28rem;
+  padding: 1.38rem;
   border-radius: var(--radius-card);
   background: linear-gradient(165deg, rgba(16, 31, 49, 0.82), rgba(9, 20, 33, 0.94));
   border: 1px solid var(--line);
@@ -1594,6 +1600,10 @@ body.lang-he .media-carousel-controls {
   }
 
   .contact-request {
+    padding: 1.08rem;
+  }
+
+  .contact-panel {
     padding: 1.08rem;
   }
 }
