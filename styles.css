@@ -1160,6 +1160,19 @@ main {
   margin: 0;
   color: var(--muted);
   font-size: 0.86rem;
+  min-height: 1.2em;
+}
+
+.contact-request-note[data-state="sending"] {
+  color: #b6dfff;
+}
+
+.contact-request-note[data-state="success"] {
+  color: var(--accent-2);
+}
+
+.contact-request-note[data-state="error"] {
+  color: #ffb7b7;
 }
 
 .contact-grid {

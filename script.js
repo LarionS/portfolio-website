@@ -283,7 +283,7 @@ const i18n = {
     contact_widget_eyebrow: "Leave a Request",
     contact_widget_title: "Send the rough idea here",
     contact_widget_copy:
-      "Fill in a few details and your email app opens with the request prefilled. Bullet points are enough.",
+      "Fill in a few details and I’ll receive it directly in my inbox. Bullet points are enough.",
     contact_widget_name: "Name",
     contact_widget_contact: "Email or WhatsApp",
     contact_widget_message: "What do you want to build?",
@@ -291,7 +291,10 @@ const i18n = {
     contact_widget_contact_placeholder: "Best way to reach you",
     contact_widget_message_placeholder: "A few lines about the idea, goal, or timeline",
     contact_widget_submit: "Send Request",
-    contact_widget_note: "This opens your email app with the request ready to send.",
+    contact_widget_note: "This sends straight to my inbox.",
+    contact_widget_sending: "Sending your request...",
+    contact_widget_success: "Sent. I’ll get back to you soon.",
+    contact_widget_error: "Something went wrong. Please email me directly at Larion1@gmail.com.",
     background_eyebrow: "Background",
     background_title: "A mix of delivery leadership, hands-on development, and product-minded execution.",
     background_role_1: "Lead Developer, ARVR Israel",
@@ -567,7 +570,7 @@ const i18n = {
     contact_widget_eyebrow: "השאירו בקשה",
     contact_widget_title: "שלחו כאן את הרעיון הגולמי",
     contact_widget_copy:
-      "ממלאים כמה פרטים וקופצת אפליקציית המייל עם הבקשה מוכנה. גם נקודות קצרות מספיקות.",
+      "ממלאים כמה פרטים ואני מקבל את זה ישירות לתיבת המייל. גם נקודות קצרות מספיקות.",
     contact_widget_name: "שם",
     contact_widget_contact: "אימייל או וואטסאפ",
     contact_widget_message: "מה רוצים לבנות?",
@@ -575,7 +578,10 @@ const i18n = {
     contact_widget_contact_placeholder: "איך הכי נוח לחזור אליך",
     contact_widget_message_placeholder: "כמה שורות על הרעיון, המטרה או הלוח זמנים",
     contact_widget_submit: "שליחת בקשה",
-    contact_widget_note: "זה פותח את אפליקציית המייל שלך עם בקשה מוכנה לשליחה.",
+    contact_widget_note: "זה נשלח ישירות לתיבת המייל שלי.",
+    contact_widget_sending: "הבקשה נשלחת...",
+    contact_widget_success: "נשלח. אחזור אליך בקרוב.",
+    contact_widget_error: "משהו השתבש. אפשר לשלוח לי מייל ישירות ל-Larion1@gmail.com.",
     background_eyebrow: "רקע",
     background_title: "שילוב של הובלת מסירה, פיתוח hands-on וחשיבה מוצרית בביצוע.",
     skills_eyebrow: "יכולות",
@@ -1070,30 +1076,97 @@ if (carouselRoot) {
 }
 
 const contactForms = document.querySelectorAll("[data-contact-form]");
+const contactFormStateMessages = {
+  idle: () => getTranslation("contact_widget_note"),
+  sending: () => getTranslation("contact_widget_sending"),
+  success: () => getTranslation("contact_widget_success"),
+  error: () => getTranslation("contact_widget_error"),
+};
+
 contactForms.forEach((form) => {
+  const statusElement = form.querySelector(".contact-request-note");
+  const submitButton = form.querySelector(".contact-submit");
+  const formSubmitEndpoint = "https://formsubmit.co/ajax/Larion1@gmail.com";
+  const emailLikePattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  form.setAttribute("action", "https://formsubmit.co/Larion1@gmail.com");
+  form.setAttribute("method", "POST");
+  form.setAttribute("enctype", "multipart/form-data");
+
+  const setStatus = (message, state = "idle") => {
+    if (!statusElement) {
+      return;
+    }
+    statusElement.textContent = message;
+    statusElement.dataset.state = state;
+    form.dataset.contactState = state;
+  };
+
+  const refreshStatusForLanguage = () => {
+    const state = form.dataset.contactState || "idle";
+    const messageFactory = contactFormStateMessages[state] || contactFormStateMessages.idle;
+    setStatus(messageFactory(), state);
+  };
+
+  refreshStatusForLanguage();
+
   form.addEventListener("submit", (event) => {
     event.preventDefault();
-
-    const recipient = "Larion1@gmail.com";
     const subject = form.dataset.requestSubject || "Website request from portfolio";
     const formData = new FormData(form);
-    const name = String(formData.get("name") || "").trim();
-    const contact = String(formData.get("contact") || "").trim();
-    const message = String(formData.get("message") || "").trim();
+    const contactValue = String(formData.get("contact") || "").trim();
 
-    const bodyLines = [
-      "Hi Larion,",
-      "",
-      `Name: ${name || "Not provided"}`,
-      `Contact: ${contact || "Not provided"}`,
-      `Page: ${document.title}`,
-      `URL: ${window.location.href}`,
-      "",
-      "Request:",
-      message || "Not provided",
-    ];
+    formData.set("_subject", subject);
+    formData.set("_template", "table");
+    formData.set("_captcha", "false");
+    formData.set("_next", window.location.href);
 
-    const mailtoHref = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyLines.join("\n"))}`;
-    window.location.href = mailtoHref;
+    if (emailLikePattern.test(contactValue)) {
+      formData.set("_replyto", contactValue);
+    } else {
+      formData.delete("_replyto");
+    }
+
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.setAttribute("aria-busy", "true");
+    }
+    setStatus(getTranslation("contact_widget_sending"), "sending");
+
+    fetch(formSubmitEndpoint, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+      },
+      body: formData,
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Form submit failed with status ${response.status}`);
+        }
+        return response.json().catch(() => ({}));
+      })
+      .then(() => {
+        form.reset();
+        setStatus(getTranslation("contact_widget_success"), "success");
+        window.setTimeout(() => {
+          setStatus(getTranslation("contact_widget_note"), "idle");
+        }, 4500);
+      })
+      .catch((error) => {
+        console.error("Contact form submit failed:", error);
+        setStatus(getTranslation("contact_widget_error"), "error");
+        window.setTimeout(() => {
+          setStatus(getTranslation("contact_widget_note"), "idle");
+        }, 5500);
+      })
+      .finally(() => {
+        if (submitButton) {
+          submitButton.disabled = false;
+          submitButton.removeAttribute("aria-busy");
+        }
+      });
   });
+
+  window.addEventListener("portfolio-language-change", refreshStatusForLanguage);
 });
