@@ -287,9 +287,10 @@ const i18n = {
     contact_widget_name: "Name",
     contact_widget_contact: "Email or WhatsApp",
     contact_widget_message_label: "Project details",
+    contact_widget_message_hint: "What do you want to build?",
     contact_widget_name_placeholder: "Your name",
     contact_widget_contact_placeholder: "Best way to reach you",
-    contact_widget_message_placeholder: "What do you want to build?",
+    contact_widget_message_placeholder: "A few lines about the idea, goal, or timeline",
     contact_widget_submit: "Send Request",
     contact_widget_note: "This sends straight to my inbox.",
     contact_widget_sending: "Sending your request...",
@@ -574,9 +575,10 @@ const i18n = {
     contact_widget_name: "שם",
     contact_widget_contact: "אימייל או וואטסאפ",
     contact_widget_message_label: "פרטי הפרויקט",
+    contact_widget_message_hint: "מה רוצים לבנות?",
     contact_widget_name_placeholder: "השם שלך",
     contact_widget_contact_placeholder: "איך הכי נוח לחזור אליך",
-    contact_widget_message_placeholder: "מה רוצים לבנות?",
+    contact_widget_message_placeholder: "כמה שורות על הרעיון, המטרה או לוח הזמנים",
     contact_widget_submit: "שליחת בקשה",
     contact_widget_note: "זה נשלח ישירות לתיבת המייל שלי.",
     contact_widget_sending: "הבקשה נשלחת...",
@@ -638,7 +640,7 @@ const updateLanguageToggleUi = () => {
   langToggle.setAttribute("aria-label", targetLabel);
 };
 
-const applyLanguage = (lang, options = {}) => {
+  const applyLanguage = (lang, options = {}) => {
   const refreshAnimated = options.refreshAnimated === true;
   activeLanguage = lang === "he" ? "he" : "en";
   const dict = i18n[activeLanguage];
@@ -652,7 +654,7 @@ const applyLanguage = (lang, options = {}) => {
 
     if (node.dataset.i18nHtml === "true") {
       node.innerHTML = translated;
-    } else {
+    } else if (node.dataset.i18nPreserve !== "true") {
       node.textContent = translated;
     }
 
