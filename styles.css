@@ -1088,7 +1088,7 @@ main {
   overflow: hidden;
   height: 100%;
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-rows: auto minmax(0, 1fr);
   gap: 1.08rem;
   align-content: stretch;
   padding: clamp(1.4rem, 2.2vw, 1.7rem);
@@ -1213,43 +1213,6 @@ main {
     rgba(12, 24, 38, 0.88);
 }
 
-.contact-panel-foot {
-  display: grid;
-  gap: 0.7rem;
-  padding: 1rem 1rem 1.02rem;
-  border-radius: 1rem;
-  border: 1px solid rgba(118, 159, 201, 0.16);
-  background: rgba(6, 14, 24, 0.44);
-}
-
-.contact-panel-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 0.62rem;
-}
-
-.contact-panel-list li {
-  position: relative;
-  padding-left: 1.05rem;
-  color: var(--muted);
-  font-size: 0.93rem;
-  line-height: 1.48;
-}
-
-.contact-panel-list li::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0.62rem;
-  width: 0.4rem;
-  height: 0.4rem;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--accent), var(--accent-2));
-  box-shadow: 0 0 0 4px rgba(88, 177, 255, 0.09);
-}
-
 body.lang-he .contact-channel strong {
   direction: ltr;
   unicode-bidi: plaintext;
@@ -1258,16 +1221,6 @@ body.lang-he .contact-channel strong {
 body.lang-he .contact-channel-label {
   letter-spacing: 0.06em;
   text-transform: none;
-}
-
-body.lang-he .contact-panel-list li {
-  padding-left: 0;
-  padding-right: 1.05rem;
-}
-
-body.lang-he .contact-panel-list li::before {
-  left: auto;
-  right: 0;
 }
 
 .contact-request {
@@ -1366,7 +1319,10 @@ body.lang-he .contact-panel-list li::before {
   margin: 0;
   color: var(--muted);
   font-size: 0.86rem;
-  min-height: 1.2em;
+}
+
+.contact-request-note:empty {
+  display: none;
 }
 
 .contact-request-note[data-state="sending"] {
