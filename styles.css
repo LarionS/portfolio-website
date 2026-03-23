@@ -210,6 +210,146 @@ main {
   margin: 0 auto;
 }
 
+body.home-gate .site-header {
+  padding: 0.78rem 0;
+}
+
+.gate-header-shell {
+  width: var(--page-width);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.gate-main {
+  min-height: calc(100svh - 80px);
+  display: grid;
+  align-items: center;
+  padding: clamp(1.1rem, 3vw, 2.4rem) 0;
+}
+
+.gate-section {
+  border-radius: var(--radius-panel);
+  border: 1px solid rgba(129, 171, 218, 0.24);
+  background:
+    radial-gradient(circle at 8% 14%, rgba(96, 170, 255, 0.14), transparent 34%),
+    radial-gradient(circle at 88% 18%, rgba(104, 231, 201, 0.12), transparent 34%),
+    linear-gradient(163deg, rgba(14, 29, 47, 0.88), rgba(8, 18, 30, 0.96));
+  box-shadow: var(--shadow-strong);
+  padding: clamp(1.35rem, 2.8vw, 2.2rem);
+}
+
+.gate-section h1 {
+  margin: 0.2rem 0 0;
+  font-family: "Syne", "Trebuchet MS", sans-serif;
+  font-size: clamp(2rem, 4.1vw, 3.6rem);
+  line-height: 0.97;
+  letter-spacing: -0.02em;
+  max-width: 16ch;
+}
+
+.gate-copy {
+  margin: 0.95rem 0 0;
+  color: var(--muted);
+  max-width: 48ch;
+  font-size: clamp(1rem, 1.8vw, 1.12rem);
+}
+
+.door-grid {
+  margin-top: clamp(1.2rem, 2.5vw, 1.8rem);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.door-card {
+  min-height: clamp(230px, 29vw, 310px);
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  gap: 0.58rem;
+  text-decoration: none;
+  color: var(--ink);
+  border-radius: 1.08rem;
+  padding: clamp(1rem, 2vw, 1.25rem);
+  border: 1px solid rgba(121, 165, 210, 0.24);
+  background:
+    radial-gradient(circle at 83% 18%, rgba(100, 193, 255, 0.13), transparent 38%),
+    linear-gradient(163deg, rgba(12, 24, 39, 0.9), rgba(9, 18, 30, 0.95));
+  transition: transform 280ms var(--ease-spring), border-color 200ms ease, box-shadow 260ms ease;
+}
+
+.door-card:hover,
+.door-card:focus-visible {
+  transform: translateY(-4px);
+  border-color: rgba(123, 193, 255, 0.52);
+  box-shadow: 0 24px 44px rgba(0, 0, 0, 0.3);
+}
+
+.door-kicker {
+  margin: 0;
+  color: #b8cae4;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.door-card h2 {
+  margin: 0;
+  font-family: "Syne", "Trebuchet MS", sans-serif;
+  font-size: clamp(1.4rem, 2.2vw, 1.9rem);
+  line-height: 0.95;
+}
+
+.door-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+  font-size: 0.98rem;
+  max-width: 28ch;
+}
+
+.door-link {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38rem;
+  color: #e5f1ff;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.door-link::after {
+  content: "->";
+  color: var(--accent-2);
+  font-weight: 800;
+  transition: transform 220ms var(--ease-spring);
+}
+
+.door-card:hover .door-link::after,
+.door-card:focus-visible .door-link::after {
+  transform: translateX(4px);
+}
+
+.door-card-founder {
+  background:
+    radial-gradient(circle at 80% 17%, rgba(104, 231, 201, 0.14), transparent 40%),
+    linear-gradient(163deg, rgba(12, 24, 39, 0.9), rgba(9, 18, 30, 0.95));
+}
+
+.door-card-tools {
+  background:
+    radial-gradient(circle at 84% 14%, rgba(76, 160, 255, 0.16), transparent 42%),
+    linear-gradient(163deg, rgba(12, 24, 39, 0.9), rgba(9, 18, 30, 0.95));
+}
+
+.door-card-immersive {
+  background:
+    radial-gradient(circle at 86% 18%, rgba(158, 216, 255, 0.16), transparent 42%),
+    linear-gradient(163deg, rgba(12, 24, 39, 0.9), rgba(9, 18, 30, 0.95));
+}
+
 .section {
   padding: clamp(2.4rem, 5vw, 4.3rem) 0;
 }
@@ -1474,6 +1614,24 @@ body.lang-he .media-carousel-controls {
   direction: rtl;
 }
 
+body.lang-he.home-gate .gate-section,
+body.lang-he.home-gate .door-card {
+  text-align: right;
+}
+
+body.lang-he.home-gate .door-grid {
+  direction: rtl;
+}
+
+body.lang-he.home-gate .door-link::after {
+  content: "<-";
+}
+
+body.lang-he.home-gate .door-card:hover .door-link::after,
+body.lang-he.home-gate .door-card:focus-visible .door-link::after {
+  transform: translateX(-4px);
+}
+
 body.lang-he .entry-main-centered .hero-actions,
 body.lang-he .hero-actions,
 body.lang-he .work-links {
@@ -1636,6 +1794,14 @@ body.lang-he .media-carousel-controls {
     justify-content: flex-start;
   }
 
+  .door-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .door-card {
+    min-height: 220px;
+  }
+
   .site-nav a {
     font-size: 0.88rem;
   }
@@ -1728,6 +1894,29 @@ body.lang-he .media-carousel-controls {
   .page-title {
     max-width: 12.5ch;
     font-size: clamp(1.86rem, 10.5vw, 2.7rem);
+  }
+
+  .gate-main {
+    min-height: auto;
+    padding: 1rem 0 1.4rem;
+  }
+
+  .gate-section {
+    padding: 1rem;
+  }
+
+  .gate-section h1 {
+    font-size: clamp(1.8rem, 11vw, 2.5rem);
+  }
+
+  .door-grid {
+    grid-template-columns: 1fr;
+    gap: 0.72rem;
+  }
+
+  .door-card {
+    min-height: 0;
+    padding: 0.95rem;
   }
 
   .entry-main,
