@@ -1,6 +1,6 @@
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const animatedTextSelector =
-  ".entry-hero h1, .hero-copy, .section-heading h2, .lane-lead, .lane-card h3, .lane-card p, .lane-panel h3, .lane-panel li, .process-step h3, .process-step p, .timeline-item p, .work-card h3, .work-card p, .skills-grid h3, .skills-grid p, .language-panel h3, .toolstack-title, .cta-panel h3, .cta-panel p, .contact-copy";
+  ".entry-hero h1, .page-title, .hero-copy, .selector-copy, .section-copy, .section-heading h2, .lane-lead, .lane-card h3, .lane-card p, .lane-panel h3, .lane-panel li, .process-step h3, .process-step p, .timeline-item p, .work-card h3, .work-card p, .overview-card h3, .overview-card p, .skills-grid h3, .skills-grid p, .language-panel h3, .toolstack-title, .cta-panel h3, .cta-panel p, .contact-copy";
 
 const revealItems = document.querySelectorAll(".reveal");
 
@@ -70,10 +70,12 @@ const splitTextToWords = (element) => {
 
 const i18n = {
   en: {
+    nav_home: "Home",
     nav_work: "Work Lanes",
     nav_founder: "Founder MVPs",
     nav_tools: "Internal Tools",
     nav_interactive: "Interactive / Immersive",
+    nav_about: "About",
     nav_showreel: "Showreel",
     nav_background: "Background",
     nav_skills: "Skills",
@@ -86,11 +88,15 @@ const i18n = {
     hero_choose: "Choose a Lane",
     hero_contact: "Discuss a Build",
     hero_resume: "Download Resume",
+    hero_proof_1: "Founder MVPs",
+    hero_proof_2: "Internal Tools",
+    hero_proof_3: "Unreal / VR Prototypes",
     profile_role: "Technical Prototyper • Unreal / VR Developer",
     profile_note: "Fast, practical execution across MVPs, internal tools, and immersive prototypes.",
     profile_link: "View LinkedIn",
     selector_eyebrow: "Choose The Lane",
     selector_title: "What are you trying to get built?",
+    selector_copy: "Pick the path that matches the outcome you need. Each lane is tailored to a different kind of build.",
     lane_best_fit: "Best fit",
     lane_founder_kicker: "Founder Lane",
     lane_founder_title: "Founder MVPs",
@@ -112,6 +118,17 @@ const i18n = {
     cred_2: "AI-Accelerated Development",
     cred_3: "Rapid Prototyping",
     cred_4: "C++ / Blueprints / Product Thinking",
+    about_eyebrow: "Why Clients Bring Me In",
+    about_title: "Broad enough for MVPs and tools, strongest where interaction matters.",
+    about_copy:
+      "I move quickly from rough scope to working builds, using AI to accelerate implementation while staying practical about what needs to ship first.",
+    overview_title_1: "Fast First Versions",
+    overview_body_1: "Investor demos, product prototypes, and validation builds that make an idea tangible quickly.",
+    overview_title_2: "Useful Internal Systems",
+    overview_body_2: "Dashboards, workflow tools, and AI-assisted utilities shaped around real operational friction.",
+    overview_title_3: "Unreal / VR Depth",
+    overview_body_3:
+      "Real-time interaction, simulation logic, immersive demos, and training prototypes when the build needs spatial thinking.",
     metric_years: "Shipping interactive products and simulations",
     metric_projects: "Completed projects delivered",
     metric_stack: "Technical prototyping across C++, Blueprints, and AI-assisted workflows",
@@ -301,10 +318,12 @@ const i18n = {
     footer_text: "Larion Siments - AI-Accelerated Prototypes, Tools, and Immersive Builds",
   },
   he: {
+    nav_home: "בית",
     nav_work: "מסלולי עבודה",
     nav_founder: "MVP ליזמים",
     nav_tools: "כלים פנימיים",
     nav_interactive: "אינטראקטיבי / אימרסיבי",
+    nav_about: "אודות",
     nav_showreel: "שואוריל",
     nav_background: "רקע",
     nav_skills: "יכולות",
@@ -317,11 +336,15 @@ const i18n = {
     hero_choose: "בחר מסלול",
     hero_contact: "נדבר על הבנייה",
     hero_resume: "הורד קורות חיים",
+    hero_proof_1: "MVP ליזמים",
+    hero_proof_2: "כלים פנימיים",
+    hero_proof_3: "פרוטוטייפים ב-Unreal / VR",
     profile_role: "טכני לפרוטוטייפים • מפתח Unreal / VR",
     profile_note: "ביצוע מהיר ופרקטי ל-MVP, כלים פנימיים ופרוטוטייפים אימרסיביים.",
     profile_link: "צפה בלינקדאין",
     selector_eyebrow: "בחרו מסלול",
     selector_title: "מה אתם צריכים לבנות?",
+    selector_copy: "בחרו את המסלול שמתאים לתוצאה שאתם צריכים. כל מסלול בנוי סביב סוג אחר של פרויקט.",
     lane_best_fit: "מתאים במיוחד",
     lane_founder_kicker: "מסלול יזמים",
     lane_founder_desc: "ליזמים שצריכים פרוטוטייפ אמיתי, דמו למשקיעים או MVP במהירות.",
@@ -335,9 +358,20 @@ const i18n = {
     lane_interactive_desc: "ללקוחות שצריכים דמואים אינטראקטיביים, פרוטוטייפים ב-Unreal, קונספטים ל-VR או חוויות אימון אימרסיביות.",
     lane_interactive_fit: "צוותים שצריכים אינטראקציה בזמן אמת, חשיבת סימולציה או UX מרחבי.",
     lane_interactive_cta: "לעבודות האינטראקטיביות",
+    cred_1: "Unreal Engine / VR",
     cred_2: "פיתוח מואץ AI",
     cred_3: "פרוטוטייפינג מהיר",
     cred_4: "C++ / Blueprints / חשיבה מוצרית",
+    about_eyebrow: "למה מביאים אותי",
+    about_title: "רחב מספיק ל-MVPs ולכלים, והכי חזק במקום שבו אינטראקציה באמת חשובה.",
+    about_copy:
+      "אני זז מהר מהיקף גולמי לבנייה עובדת, משתמש ב-AI כדי להאיץ מימוש, ונשאר פרקטי לגבי מה באמת צריך לעלות ראשון.",
+    overview_title_1: "גרסאות ראשונות מהירות",
+    overview_body_1: "דמואים למשקיעים, פרוטוטייפים מוצריים ובניות ולידציה שהופכות רעיון למשהו מוחשי במהירות.",
+    overview_title_2: "מערכות פנימיות שימושיות",
+    overview_body_2: "דשבורדים, כלי workflow וכלים עם AI שנבנים סביב חיכוך תפעולי אמיתי.",
+    overview_title_3: "עומק ב-Unreal / VR",
+    overview_body_3: "אינטראקציה בזמן אמת, לוגיקת סימולציה, דמואים אימרסיביים ופרוטוטייפים להדרכה כשהפרויקט צריך חשיבה מרחבית.",
     metric_years: "שנים של בניית מוצרים אינטראקטיביים וסימולציות",
     metric_projects: "פרויקטים שהושלמו ונמסרו",
     metric_stack: "פרוטוטייפינג טכני עם C++, Blueprints ותהליכי AI",
