@@ -1,6 +1,6 @@
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const animatedTextSelector =
-  ".hero h1, .hero-copy, .section-heading h2, .timeline-item p, .work-card h3, .work-card p, .skills-grid h3, .skills-grid p, .language-panel h3, .toolstack-title";
+  ".entry-hero h1, .hero-copy, .section-heading h2, .lane-lead, .lane-card h3, .lane-card p, .lane-panel h3, .lane-panel li, .process-step h3, .process-step p, .timeline-item p, .work-card h3, .work-card p, .skills-grid h3, .skills-grid p, .language-panel h3, .toolstack-title, .cta-panel h3, .cta-panel p, .contact-copy";
 
 const revealItems = document.querySelectorAll(".reveal");
 
@@ -70,42 +70,198 @@ const splitTextToWords = (element) => {
 
 const i18n = {
   en: {
-    nav_experience: "Experience",
-    nav_work: "Work",
-    nav_gallery: "Gallery",
+    nav_work: "Work Lanes",
+    nav_founder: "Founder MVPs",
+    nav_tools: "Internal Tools",
+    nav_interactive: "Interactive / Immersive",
     nav_showreel: "Showreel",
+    nav_background: "Background",
     nav_skills: "Skills",
     nav_contact: "Contact",
-    hero_eyebrow: "Unreal Engine Developer",
-    hero_title: 'Building immersive <span>AR/VR worlds</span> with real impact.',
+    header_cta: "Work With Me",
+    hero_eyebrow: "AI-Accelerated Product Prototyping",
+    hero_title: "AI-Accelerated <span>Prototypes, Tools,</span> and Interactive Experiences",
     hero_copy:
-      "I design and ship high-impact interactive experiences across VR, AR, PC, mobile, and iOS, using both C++ and Blueprints where each fits best, with a strong focus on simulation quality, user clarity, and production reliability.",
-    hero_watch: "Watch Showreel",
+      "I help founders and teams turn rough ideas into working MVPs, internal tools, and immersive prototypes, with a background in Unreal Engine, VR, and interactive systems.",
+    hero_choose: "Choose a Lane",
+    hero_contact: "Discuss a Build",
     hero_resume: "Download Resume",
-    profile_role: "Lead AR/VR Developer",
+    profile_role: "Technical Prototyper • Unreal / VR Developer",
+    profile_note: "Fast, practical execution across MVPs, internal tools, and immersive prototypes.",
     profile_link: "View LinkedIn",
-    metric_arvr: "AR/VR development",
-    metric_unreal: "C++ and Blueprint gameplay systems",
+    selector_eyebrow: "Choose The Lane",
+    selector_title: "What are you trying to get built?",
+    lane_best_fit: "Best fit",
+    lane_founder_kicker: "Founder Lane",
+    lane_founder_title: "Founder MVPs",
+    lane_founder_desc: "For founders who need a real product prototype, investor demo, or MVP fast.",
+    lane_founder_fit: "Founders validating a concept before hiring a full team.",
+    lane_founder_cta: "Explore Founder MVPs",
+    lane_tools_kicker: "Operations Lane",
+    lane_tools_title: "Internal Tools / Automation",
+    lane_tools_desc: "For teams that need dashboards, workflow tools, admin systems, or AI-assisted internal apps.",
+    lane_tools_fit: "Teams replacing spreadsheet chaos and repetitive manual work.",
+    lane_tools_cta: "Explore Internal Tools",
+    lane_interactive_kicker: "Real-Time Lane",
+    lane_interactive_title: "Interactive / Immersive Prototypes",
+    lane_interactive_desc:
+      "For clients who need interactive demos, Unreal prototypes, VR concepts, or immersive training experiences.",
+    lane_interactive_fit: "Teams that need real-time interaction, simulation thinking, or spatial UX.",
+    lane_interactive_cta: "Explore Interactive Work",
+    cred_1: "Unreal Engine / VR",
+    cred_2: "AI-Accelerated Development",
+    cred_3: "Rapid Prototyping",
+    cred_4: "C++ / Blueprints / Product Thinking",
+    metric_years: "Shipping interactive products and simulations",
     metric_projects: "Completed projects delivered",
-    metric_cross_title: "Cross Platform",
-    metric_cross_desc: "PC, Mobile, iOS, VR, Cinematics",
-    exp_eyebrow: "Experience",
-    exp_title: "Delivery across startups, freelance, and leadership roles",
-    work_eyebrow: "Selected Work",
-    work_title: "Examples of shipped AR/VR and Unreal projects",
-    work_reel: "View Project Reel",
+    metric_stack: "Technical prototyping across C++, Blueprints, and AI-assisted workflows",
+    metric_scope_title: "End-To-End Delivery",
+    metric_scope_desc: "Planning, UX, implementation, QA, iteration, and launch-ready demos",
+    founder_eyebrow: "Founder MVPs",
+    founder_title: "Working first versions for founders who need momentum, not overhead.",
+    founder_lead:
+      "Best for founders who have a promising idea, need something real to show investors or early customers, and want practical scope control instead of an oversized first build.",
+    founder_for_title: "Who this is for",
+    founder_for_1: "Founders with an idea but no product yet",
+    founder_for_2: "Startups that need an investor demo or customer-facing proof point",
+    founder_for_3: "Teams validating a concept before hiring full-time",
+    founder_build_title: "What I can build",
+    founder_build_1: "Product prototypes and clickable core flows",
+    founder_build_2: "Investor demos and proof-of-concept apps",
+    founder_build_3: "Fast first-version MVPs focused on validation",
+    founder_build_4: "Interactive demos that make the product easy to explain",
+    founder_step_1_title: "Define the smallest useful version",
+    founder_step_1_body: "Strip the idea down to the core flow that needs to be tested or shown.",
+    founder_step_2_title: "Build a working prototype fast",
+    founder_step_2_body: "Focus on the interaction, logic, and presentation that matter most.",
+    founder_step_3_title: "Keep a tight feedback loop",
+    founder_step_3_body: "Review early, adjust scope quickly, and avoid spending time on the wrong layer.",
+    founder_step_4_title: "Refine the core experience",
+    founder_step_4_body: "Polish what a user or investor actually needs to understand in one session.",
+    founder_step_5_title: "Deliver something testable",
+    founder_step_5_body: "The result should be presentable, reviewable, and useful for the next decision.",
+    founder_example_chip_1: "Investor Demo",
+    founder_example_title_1: "A product story someone can understand in minutes",
+    founder_example_body_1:
+      "Good for investor meetings, sales conversations, or early partner buy-in when a deck is no longer enough.",
+    founder_example_chip_2: "Validation MVP",
+    founder_example_title_2: "A focused first version around one core workflow",
+    founder_example_body_2:
+      "Useful when the goal is to test the concept with real users before committing to a heavier build.",
+    founder_example_chip_3: "Interactive Demo",
+    founder_example_title_3: "A clickable experience that makes the product tangible",
+    founder_example_body_3:
+      "Especially strong when the idea is hard to explain without showing the flow, interface, and interaction.",
+    founder_cta_title: "Need a working MVP fast?",
+    founder_cta_body:
+      "Send the rough idea, not the polished spec. I can help define the smallest useful build and turn it into something real.",
+    founder_cta_button: "Talk About an MVP",
+    tools_eyebrow: "Internal Tools / Automation",
+    tools_title: "Practical internal systems that reduce friction and clean up messy workflows.",
+    tools_lead:
+      "For teams that need something useful, not enterprise theater: dashboards, internal portals, workflow utilities, and AI-assisted tools built around the way the work actually happens.",
+    tools_build_title: "What I can build",
+    tools_build_1: "Dashboards and admin panels",
+    tools_build_2: "Workflow systems and internal portals",
+    tools_build_3: "AI-assisted utilities for repetitive team tasks",
+    tools_build_4: "Custom lightweight business apps",
+    tools_outcomes_title: "Why teams bring me in",
+    tools_outcomes_1: "Reduce repetitive work and handoff friction",
+    tools_outcomes_2: "Centralize messy processes into one useful surface",
+    tools_outcomes_3: "Replace spreadsheet sprawl with purpose-built interfaces",
+    tools_outcomes_4: "Ship something useful quickly and improve it with real usage",
+    tools_example_chip_1: "Ops Dashboard",
+    tools_example_title_1: "A dashboard that surfaces the few numbers and actions that matter",
+    tools_example_body_1:
+      "Good for operational visibility, approvals, queues, and status tracking without overcomplicating the system.",
+    tools_example_chip_2: "Workflow Portal",
+    tools_example_title_2: "An internal tool shaped around the team's real handoffs",
+    tools_example_body_2: "Useful when generic software creates workarounds instead of solving the process.",
+    tools_example_chip_3: "AI Utility",
+    tools_example_title_3: "A focused AI-assisted helper for intake, review, or admin tasks",
+    tools_example_body_3:
+      "Best when the goal is saving team time with a narrow, clearly defined workflow rather than a massive platform.",
+    tools_step_1_title: "Map the workflow",
+    tools_step_1_body: "Find the bottleneck, the duplicate effort, and the decisions that need a clearer interface.",
+    tools_step_2_title: "Build the useful surface first",
+    tools_step_2_body: "Start with the dashboard, panel, or flow that removes the most friction.",
+    tools_step_3_title: "Tighten the loop",
+    tools_step_3_body: "Use the team quickly, spot edge cases, and simplify based on actual usage.",
+    tools_step_4_title: "Layer in automation where it helps",
+    tools_step_4_body: "Bring AI or workflow automation into the narrow tasks where it saves time reliably.",
+    tools_cta_title: "Need an internal tool that actually fits the workflow?",
+    tools_cta_body:
+      "If the current process is spread across spreadsheets, chat threads, and manual follow-ups, I can help turn it into one usable system.",
+    tools_cta_button: "Talk About a Tool Build",
+    interactive_eyebrow: "Interactive / Immersive Prototypes",
+    interactive_title: "Real-time experiences where Unreal, VR, and simulation thinking become the advantage.",
+    interactive_lead:
+      "This is the strongest part of the portfolio: immersive training, interactive demos, simulation-driven concepts, and Unreal Engine prototypes that need convincing real-time interaction.",
+    interactive_build_title: "What I can build",
+    interactive_build_1: "Unreal Engine prototypes and interactive 3D demos",
+    interactive_build_2: "VR training simulations and scenario-based experiences",
+    interactive_build_3: "AR/VR concepts and experiential product showcases",
+    interactive_build_4: "Simulation-focused prototypes with strong UX readability",
+    interactive_for_title: "Best fit clients",
+    interactive_for_1: "Teams pitching or validating spatial or real-time products",
+    interactive_for_2: "Training organizations that need realistic interaction and simulation logic",
+    interactive_for_3: "Studios or product teams that need a prototype before full production",
+    interactive_for_4: "Companies that need an experiential demo rather than a flat mockup",
+    immersive_work_eyebrow: "Selected Interactive Work",
+    immersive_work_title: "Production work drawn from training, games, and real-time demos",
+    immersive_chip_1: "Training Simulation",
+    immersive_title_1: "Emergency and clinical simulation programs",
+    immersive_body_1:
+      "Led delivery of simulation-focused AR/VR environments for emergency services, hospitals, and enterprise training contexts.",
+    immersive_chip_2: "Published VR Title",
+    immersive_title_2: "Hover The Edge",
+    immersive_body_2:
+      "Built and released a VR title on Steam while handling Unreal production workflows from concept through launch.",
+    immersive_chip_3: "Real-Time Delivery",
+    immersive_title_3: "Cross-platform Unreal prototypes across five platforms",
+    immersive_body_3:
+      "Delivered Unreal Engine 4/5 work across PC, mobile, iOS, VR, and cinematic pipelines, balancing performance, interaction, and deployment requirements.",
+    immersive_link: "View on Steam",
+    interactive_cta_title: "Need an Unreal / VR prototype or immersive demo?",
+    interactive_cta_body:
+      "If the build needs believable interaction, simulation logic, or real-time presentation quality, that is where I bring the most depth.",
+    interactive_cta_button: "Talk About an Interactive Prototype",
     gallery_eyebrow: "Project Gallery",
-    gallery_title: "Curated visuals from production work",
+    gallery_title: "Frames from immersive production work",
     showreel_eyebrow: "Featured Video",
     showreel_title: "Showreel 2024",
-    skills_eyebrow: "Core Expertise",
-    skills_title: "Production ready, immersion first",
+    background_eyebrow: "Background",
+    background_title: "A mix of delivery leadership, hands-on development, and product-minded execution.",
+    background_role_1: "Lead Developer, ARVR Israel",
+    background_body_1a:
+      "Leading AR/VR simulation work for emergency services, healthcare, and enterprise training environments.",
+    background_body_1b:
+      "I define technical direction, build core systems, and keep delivery aligned with real operational goals and stakeholder feedback.",
+    background_role_2: "Freelance Technical Prototyper",
+    background_body_2a:
+      "Delivered Unreal Engine 4/5 projects across PC, mobile, iOS, VR, and cinematic pipelines as both a solo contributor and part of larger teams.",
+    background_body_2b:
+      "Practical mix of C++, Blueprints, UI/UX thinking, optimization, and shipping workflows depending on what the build actually needs.",
+    background_role_3: "Project Manager, Ador Diagnostics",
+    background_body_3a:
+      "Managed technical and operational programs including sensor development, HQ relocation, and rollout of new technologies.",
+    background_body_3b:
+      "That experience sharpened how I think about planning, execution, coordination, and building tools around real organizational needs.",
+    background_role_4: "Founder, EventVR",
+    background_body_4a: "Ran a VR event business delivering immersive hardware experiences for social and corporate events.",
+    background_body_4b:
+      "Built the operation end to end, from setup and logistics to on-site execution and audience-facing experience design.",
+    skills_eyebrow: "Skills",
+    skills_title: "Broad technical coverage, strongest where fast prototyping meets real interaction.",
     skill_unreal_title: "Unreal Engine",
     skill_unreal_desc:
       "Advanced UE4/UE5 workflows with practical C++ and Blueprint implementation for gameplay, interaction, and systems design.",
     skill_arvr_title: "AR/VR Simulations",
     skill_arvr_desc:
-      "Scenario-based simulations for training and high-stakes environments, with strong hands-on work in UI/UMG (HUD, menus/settings, in-world UI), Behavior Trees + EQS, and VR interaction systems.",
+      "Scenario-based simulations for training and high-stakes environments, with strong hands-on work in UI/UMG, Behavior Trees + EQS, and VR interaction systems.",
+    skill_product_title: "Product Prototyping",
+    skill_product_desc:
+      "MVP shaping, investor demos, workflow mapping, and practical first-version planning with a strong product-thinking mindset.",
     skill_creative_title: "Creative & Post Pipeline",
     skill_creative_desc:
       "End-to-end visual prep and delivery with Adobe Suite tools, including scene polish and edit-ready media outputs.",
@@ -120,7 +276,7 @@ const i18n = {
       "Structured planning, milestone tracking, UI/UX alignment, and stakeholder coordination to keep end-to-end delivery focused and reliable.",
     skill_ai_title: "AI Coding Workflows",
     skill_ai_desc:
-      "Strong AI-assisted development workflow for rapid prototyping, refactors, debugging, and production-quality iteration, including support for deeper C++ tasks when needed.",
+      "Strong AI-assisted development workflow for rapid prototyping, refactors, debugging, and deeper C++ assistance when needed.",
     skill_team_title: "Collaboration & Delivery Leadership",
     skill_team_desc:
       "Hands-on leadership across planning, QA, implementation, and release with practical Git/Perforce workflows and general multiplayer familiarity.",
@@ -137,75 +293,85 @@ const i18n = {
     tool_perforce: "Perforce",
     tool_360: "360 Video Editing",
     language_title: "Language Proficiency",
-    contact_eyebrow: "Contact",
-    contact_title: "Let's build something immersive together",
+    contact_eyebrow: "Work With Me",
+    contact_title: "Have a rough idea? That's enough to start.",
+    contact_copy:
+      "If you need an MVP, an internal tool, or an Unreal / VR prototype, send the rough version. Bullet points, sketches, and half-formed notes are completely fine.",
     contact_linkedin: "LinkedIn Profile",
-    footer_text: "Larion Siments - Unreal Engine Developer",
+    footer_text: "Larion Siments - AI-Accelerated Prototypes, Tools, and Immersive Builds",
   },
   he: {
-    nav_experience: "ניסיון",
-    nav_work: "עבודות",
-    nav_gallery: "גלריה",
+    nav_work: "מסלולי עבודה",
+    nav_founder: "MVP ליזמים",
+    nav_tools: "כלים פנימיים",
+    nav_interactive: "אינטראקטיבי / אימרסיבי",
     nav_showreel: "שואוריל",
+    nav_background: "רקע",
     nav_skills: "יכולות",
     nav_contact: "יצירת קשר",
-    hero_eyebrow: "מפתח Unreal Engine",
-    hero_title: 'בונה חוויות <span>AR/VR</span> אימרסיביות עם השפעה אמיתית.',
+    header_cta: "בואו נעבוד יחד",
+    hero_eyebrow: "פרוטוטייפים ומוצרים מהירים בעזרת AI",
+    hero_title: "<span>פרוטוטייפים, כלים,</span> וחוויות אינטראקטיביות מואצות AI",
     hero_copy:
-      "אני מתכנן ומספק חוויות אינטראקטיביות ברמת ביצוע גבוהה עבור VR, AR, PC, מובייל ו-iOS, תוך שילוב מדויק בין C++ ל-Blueprints לפי הצורך, עם דגש על איכות סימולציה, בהירות למשתמש ואמינות בפרודקשן.",
-    hero_watch: "צפה בשואוריל",
+      "אני עוזר ליזמים ולצוותים להפוך רעיונות גולמיים ל-MVP עובד, כלים פנימיים ופרוטוטייפים אימרסיביים, עם רקע חזק ב-Unreal Engine, VR ומערכות אינטראקטיביות.",
+    hero_choose: "בחר מסלול",
+    hero_contact: "נדבר על הבנייה",
     hero_resume: "הורד קורות חיים",
-    profile_role: "מוביל פיתוח AR/VR",
+    profile_role: "טכני לפרוטוטייפים • מפתח Unreal / VR",
+    profile_note: "ביצוע מהיר ופרקטי ל-MVP, כלים פנימיים ופרוטוטייפים אימרסיביים.",
     profile_link: "צפה בלינקדאין",
-    metric_arvr: "פיתוח AR/VR",
-    metric_unreal: "מערכות משחק ב-C++ וב-Blueprint",
+    selector_eyebrow: "בחרו מסלול",
+    selector_title: "מה אתם צריכים לבנות?",
+    lane_best_fit: "מתאים במיוחד",
+    lane_founder_kicker: "מסלול יזמים",
+    lane_founder_desc: "ליזמים שצריכים פרוטוטייפ אמיתי, דמו למשקיעים או MVP במהירות.",
+    lane_founder_fit: "יזמים שמאמתים קונספט לפני הקמת צוות מלא.",
+    lane_founder_cta: "למסלול ה-MVP",
+    lane_tools_kicker: "מסלול תפעולי",
+    lane_tools_desc: "לצוותים שצריכים דשבורדים, כלים תהליכיים, מערכות אדמין או אפליקציות פנימיות עם עזרת AI.",
+    lane_tools_fit: "צוותים שרוצים להחליף כאוס של גיליונות ותהליכים ידניים.",
+    lane_tools_cta: "למסלול הכלים",
+    lane_interactive_kicker: "מסלול Real-Time",
+    lane_interactive_desc: "ללקוחות שצריכים דמואים אינטראקטיביים, פרוטוטייפים ב-Unreal, קונספטים ל-VR או חוויות אימון אימרסיביות.",
+    lane_interactive_fit: "צוותים שצריכים אינטראקציה בזמן אמת, חשיבת סימולציה או UX מרחבי.",
+    lane_interactive_cta: "לעבודות האינטראקטיביות",
+    cred_2: "פיתוח מואץ AI",
+    cred_3: "פרוטוטייפינג מהיר",
+    cred_4: "C++ / Blueprints / חשיבה מוצרית",
+    metric_years: "שנים של בניית מוצרים אינטראקטיביים וסימולציות",
     metric_projects: "פרויקטים שהושלמו ונמסרו",
-    metric_cross_title: "מולטי-פלטפורם",
-    metric_cross_desc: "PC, מובייל, iOS, VR, סינמטיקס",
-    exp_eyebrow: "ניסיון",
-    exp_title: "מסירה מקצועית בסטארטאפים, פרילנס והובלת צוותים",
-    work_eyebrow: "עבודות נבחרות",
-    work_title: "דוגמאות לפרויקטי AR/VR ו-Unreal שעלו לאוויר",
-    work_reel: "צפה בריל הפרויקטים",
+    metric_stack: "פרוטוטייפינג טכני עם C++, Blueprints ותהליכי AI",
+    metric_scope_title: "מסירה מקצה לקצה",
+    metric_scope_desc: "תכנון, UX, מימוש, QA, איטרציה ודמואים מוכנים להצגה",
+    founder_title: "גרסאות ראשונות עובדות ליזמים שצריכים תנופה, לא עומס.",
+    founder_lead:
+      "מתאים ליזמים שיש להם רעיון טוב, צריכים משהו אמיתי להראות למשקיעים או ללקוחות מוקדמים, ורוצים שליטה פרקטית בהיקף במקום בנייה ראשונה מנופחת.",
+    tools_title: "מערכות פנימיות פרקטיות שמורידות חיכוך ומסדרות תהליכים מבולגנים.",
+    tools_lead:
+      "לצוותים שצריכים משהו שימושי, לא תיאטרון ארגוני: דשבורדים, פורטלים פנימיים, כלי workflow וכלים עם AI שנבנים סביב איך שהעבודה באמת מתבצעת.",
+    interactive_title: "חוויות זמן אמת שבהן Unreal, VR וחשיבת סימולציה הם היתרון.",
+    interactive_lead:
+      "זה החלק הכי חזק בפורטפוליו: אימונים אימרסיביים, דמואים אינטראקטיביים, קונספטים מבוססי סימולציה ופרוטוטייפים ב-Unreal שצריכים אינטראקציה משכנעת בזמן אמת.",
+    immersive_work_eyebrow: "עבודות אינטראקטיביות נבחרות",
+    immersive_work_title: "עבודות פרודקשן מעולמות הדרכה, משחקים ודמואים בזמן אמת",
     gallery_eyebrow: "גלריית פרויקטים",
-    gallery_title: "ויזואלים נבחרים מעבודות הפקה",
+    gallery_title: "פריימים מעבודת פרודקשן אימרסיבית",
     showreel_eyebrow: "וידאו מוביל",
     showreel_title: "שואוריל 2024",
-    skills_eyebrow: "מומחיות מרכזית",
-    skills_title: "מוכן לפרודקשן, ממוקד אימרסיה",
-    skill_unreal_title: "Unreal Engine",
-    skill_unreal_desc: "עבודה מתקדמת ב-UE4/UE5 עם שילוב פרקטי של C++ ו-Blueprint למכניקות, אינטראקציה ומערכות.",
-    skill_arvr_title: "סימולציות AR/VR",
-    skill_arvr_desc: "סימולציות מבוססות תרחיש לאימונים ולסביבות עם רמת חשיבות גבוהה, כולל עבודה חזקה ב-UI/UMG (HUD, תפריטים/הגדרות ו-UI בתוך העולם), Behavior Trees + EQS ומערכות אינטראקציה ל-VR.",
-    skill_creative_title: "קריאייטיב ופוסט",
-    skill_creative_desc: "תהליך מלא של הכנה ויזואלית ומסירה בעזרת Adobe Suite, כולל ליטוש סצנות והפקת מדיה מוכנה לעריכה.",
-    skill_content_title: "תהליכי תוכן בתוך Unreal",
-    skill_content_desc: "עבודה פרקטית בתוך המנוע כולל עריכת Mesh, פאסים של אנימציה עם Control Rig ועבודה עם כלי המידול של Unreal.",
-    skill_cross_title: "מסירה רב-פלטפורמית",
-    skill_cross_desc: "מ-PC ומובייל ועד iOS וחומרות VR, כולל פרופיילינג ואופטימיזציה ליציבות ביצועים בזמן אמת.",
-    skill_pm_title: "ניהול פרויקטים",
-    skill_pm_desc: "תכנון מובנה, ניהול אבני דרך, התאמת UI/UX וסנכרון בעלי עניין לשמירה על מסירה מקצה לקצה בצורה מדויקת ואמינה.",
-    skill_ai_title: "תהליכי פיתוח עם AI",
-    skill_ai_desc: "תהליך פיתוח חזק עם AI לאבטיפוס מהיר, רפקטורינג, דיבאג ואיטרציה ברמת פרודקשן, כולל תמיכה במשימות C++ עמוקות כשצריך.",
-    skill_team_title: "שיתופיות והובלת מסירה",
-    skill_team_desc: "הובלה מעשית של תכנון, QA, מימוש ושחרור, כולל עבודה עם Git/Perforce והיכרות כללית עם מולטיפלייר.",
+    background_eyebrow: "רקע",
+    background_title: "שילוב של הובלת מסירה, פיתוח hands-on וחשיבה מוצרית בביצוע.",
+    skills_eyebrow: "יכולות",
+    skills_title: "כיסוי טכני רחב, הכי חזק במקום שבו פרוטוטייפינג מהיר פוגש אינטראקציה אמיתית.",
+    skill_product_title: "פרוטוטייפינג מוצרי",
+    skill_product_desc: "עיצוב MVP, דמואים למשקיעים, מיפוי workflow ותכנון גרסה ראשונה פרקטית עם חשיבה מוצרית חזקה.",
     toolstack_title: "סט כלי עבודה",
-    tool_unreal: "Unreal Engine",
-    tool_adobe: "Adobe Suite",
-    tool_ps: "Photoshop",
-    tool_pr: "Premiere Pro",
-    tool_codex: "Codex",
-    tool_chatgpt: "ChatGPT",
-    tool_claude: "Claude",
-    tool_gemini: "Gemini",
-    tool_git: "Git",
-    tool_perforce: "Perforce",
-    tool_360: "עריכת וידאו 360",
     language_title: "רמת שפות",
-    contact_eyebrow: "יצירת קשר",
-    contact_title: "בואו נבנה משהו אימרסיבי ביחד",
+    contact_eyebrow: "בואו נעבוד יחד",
+    contact_title: "יש לכם רעיון גולמי? זה מספיק כדי להתחיל.",
+    contact_copy:
+      "אם אתם צריכים MVP, כלי פנימי או פרוטוטייפ Unreal / VR, שלחו את הגרסה הגולמית. נקודות, סקיצות והערות חצי-מוכנות זה לגמרי מספיק.",
     contact_linkedin: "פרופיל לינקדאין",
-    footer_text: "לריון סימנטס - מפתח Unreal Engine",
+    footer_text: "לריון סימנטס - פרוטוטייפים, כלים ובניות אימרסיביות מואצות AI",
   },
 };
 
@@ -388,9 +554,9 @@ if (carouselRoot) {
   let autoBehaviorEnabled = !prefersReducedMotion;
 
   const AUTO_ROTATE_MS = 7000;
-  const DRAG_STEP_THRESHOLD = 92;
-  const WHEEL_STEP_THRESHOLD = 140;
-  const MANUAL_STEP_COOLDOWN = 460;
+  const DRAG_STEP_THRESHOLD = 112;
+  const WHEEL_STEP_THRESHOLD = 180;
+  const MANUAL_STEP_COOLDOWN = 520;
 
   const normalizeOffset = (index) => {
     let offset = index - currentIndex;
@@ -419,20 +585,20 @@ if (carouselRoot) {
       let zIndex = 20;
 
       if (absOffset === 1) {
-        translateX = direction * (compactLayout ? sceneWidth * 0.44 : sceneWidth * 0.31);
-        rotateY = direction * (compactLayout ? -20 : -28);
-        scale = compactLayout ? 0.84 : 0.8;
-        opacity = compactLayout ? 0.42 : 0.6;
+        translateX = direction * (compactLayout ? sceneWidth * 0.42 : sceneWidth * 0.28);
+        rotateY = direction * (compactLayout ? -18 : -24);
+        scale = compactLayout ? 0.86 : 0.82;
+        opacity = compactLayout ? 0.46 : 0.62;
         zIndex = 12;
       } else if (absOffset === 2 && !compactLayout) {
-        translateX = direction * sceneWidth * 0.49;
-        rotateY = direction * -38;
-        scale = 0.68;
-        opacity = 0.2;
+        translateX = direction * sceneWidth * 0.46;
+        rotateY = direction * -34;
+        scale = 0.7;
+        opacity = 0.24;
         zIndex = 6;
       } else if (absOffset >= 2) {
-        translateX = direction * sceneWidth * (compactLayout ? 0.62 : 0.58);
-        rotateY = direction * -44;
+        translateX = direction * sceneWidth * (compactLayout ? 0.58 : 0.56);
+        rotateY = direction * -40;
         scale = 0.58;
         opacity = 0;
         zIndex = 1;
@@ -449,7 +615,6 @@ if (carouselRoot) {
       slide.classList.toggle("is-active", isActive);
       slide.setAttribute("aria-hidden", isActive ? "false" : "true");
       slide.setAttribute("tabindex", isActive ? "0" : "-1");
-      slide.dataset.slideIndex = String(index);
       slide.style.pointerEvents = absOffset <= 1 ? "auto" : "none";
     });
   };
@@ -500,7 +665,7 @@ if (carouselRoot) {
     }
     autoResumeTimer = window.setTimeout(() => {
       startAutoRotate();
-    }, 2200);
+    }, 2400);
   };
 
   const tryStep = (direction) => {
@@ -544,9 +709,6 @@ if (carouselRoot) {
 
   slides.forEach((slide, index) => {
     slide.addEventListener("click", () => {
-      if (index === currentIndex) {
-        return;
-      }
       stopAutoRotate();
       goToIndex(index);
       queueAutoRotate();
@@ -615,7 +777,7 @@ if (carouselRoot) {
     "wheel",
     (event) => {
       const dominantDelta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
-      if (Math.abs(dominantDelta) < 2) {
+      if (Math.abs(dominantDelta) < 3) {
         return;
       }
 
@@ -635,7 +797,7 @@ if (carouselRoot) {
       wheelResetTimer = window.setTimeout(() => {
         wheelAccumulator = 0;
         queueAutoRotate();
-      }, 220);
+      }, 260);
     },
     { passive: false }
   );
