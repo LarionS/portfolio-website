@@ -1,6 +1,5 @@
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-const animatedTextSelector =
-  ".entry-hero h1, .page-title, .hero-copy, .selector-copy, .section-copy, .section-heading h2, .lane-lead, .lane-card h3, .lane-card p, .lane-panel h3, .lane-panel li, .process-step h3, .process-step p, .timeline-item p, .work-card h3, .work-card p, .overview-card h3, .overview-card p, .skills-grid h3, .skills-grid p, .language-panel h3, .toolstack-title, .cta-panel h3, .cta-panel p, .contact-copy";
+const animatedTextSelector = ".no-text-animate";
 
 const revealItems = document.querySelectorAll(".reveal");
 
