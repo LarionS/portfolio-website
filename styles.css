@@ -551,6 +551,7 @@ main {
 .lane-meta {
   margin-top: 1.2rem;
   padding-top: 1.06rem;
+  padding-bottom: 0.72rem;
   border-top: 1px solid rgba(118, 159, 201, 0.18);
   display: grid;
   gap: 0.38rem;
@@ -567,7 +568,8 @@ main {
 .lane-link {
   width: 100%;
   margin-top: auto;
-  padding-top: 1.3rem;
+  padding-top: 0;
+  text-align: center;
 }
 
 .credibility-strip {
