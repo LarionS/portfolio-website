@@ -107,7 +107,7 @@ body {
 .site-nav a {
   text-decoration: none;
   color: var(--muted);
-  font-size: 0.84rem;
+  font-size: 0.88rem;
   font-weight: 700;
   white-space: nowrap;
   transition: color 180ms ease, transform 180ms ease;
@@ -145,7 +145,7 @@ body {
   border-radius: 999px;
   padding: 0.2rem 0.48rem;
   background: rgba(18, 32, 49, 0.7);
-  font-size: 0.74rem;
+  font-size: 0.77rem;
   font-weight: 700;
   line-height: 1.3;
   white-space: nowrap;
@@ -251,7 +251,7 @@ main {
 }
 
 .page-hero-panel {
-  max-width: 900px;
+  max-width: 980px;
   margin: 0 auto;
   text-align: center;
 }
@@ -280,9 +280,9 @@ main {
 .entry-hero h1,
 .page-title {
   margin: 0;
-  max-width: 13ch;
+  max-width: 16ch;
   margin-inline: auto;
-  font-size: clamp(2rem, 4.35vw, 3.55rem);
+  font-size: clamp(1.85rem, 3.45vw, 3.05rem);
 }
 
 .entry-hero h1 span {
@@ -308,10 +308,10 @@ main {
 .section-copy,
 .lane-lead,
 .contact-copy {
-  max-width: 58ch;
+  max-width: 62ch;
   margin: 1rem auto 0;
   color: var(--muted);
-  font-size: clamp(1rem, 1.7vw, 1.08rem);
+  font-size: clamp(1rem, 1.35vw, 1.06rem);
 }
 
 .hero-actions,
@@ -325,8 +325,8 @@ main {
 
 .entry-main-centered h1 {
   margin-inline: 0;
-  max-width: 15ch;
-  font-size: clamp(1.95rem, 3.8vw, 3.2rem);
+  max-width: 18ch;
+  font-size: clamp(1.8rem, 3.2vw, 2.9rem);
 }
 
 .entry-main-centered .hero-copy {
@@ -336,6 +336,15 @@ main {
 
 .entry-main-centered .hero-actions {
   justify-content: flex-start;
+}
+
+.page-hero-panel .page-title {
+  max-width: 18ch;
+  font-size: clamp(1.75rem, 3vw, 2.7rem);
+}
+
+.page-hero-panel .hero-copy {
+  max-width: 68ch;
 }
 
 .hero-inline-proof-item,
@@ -1069,16 +1078,14 @@ main {
 }
 
 .reveal {
-  opacity: 0;
-  transform: translateY(24px) scale(0.988);
-  filter: blur(4px);
-  transition: opacity 640ms ease, transform 640ms var(--ease-spring), filter 640ms ease;
+  opacity: 1;
+  transform: none;
+  transition: none;
 }
 
 .reveal.is-visible {
   opacity: 1;
-  transform: translateY(0) scale(1);
-  filter: blur(0);
+  transform: none;
 }
 
 .text-animate {
@@ -1087,21 +1094,18 @@ main {
 
 .text-animate .text-word {
   display: inline-block;
-  opacity: 0;
-  filter: blur(6px);
-  transform: translateY(0.82em) rotateX(-56deg);
+  opacity: 1;
+  filter: none;
+  transform: none;
   transform-origin: 50% 100%;
-  transition:
-    transform 560ms var(--ease-spring),
-    opacity 520ms ease,
-    filter 520ms ease;
-  transition-delay: calc(var(--word-index) * 22ms);
+  transition: none;
+  transition-delay: 0ms;
 }
 
 .text-animate.is-visible .text-word {
   opacity: 1;
-  filter: blur(0);
-  transform: translateY(0) rotateX(0);
+  filter: none;
+  transform: none;
 }
 
 .reveal .lane-card,
@@ -1114,11 +1118,9 @@ main {
 .reveal .tool-pill,
 .reveal .contact-grid a,
 .reveal .cta-panel {
-  opacity: 0;
-  transform: translateY(20px) scale(0.99);
+  opacity: 1;
+  transform: none;
   transition:
-    opacity 520ms ease,
-    transform 520ms var(--ease-spring),
     border-color 240ms ease,
     box-shadow 280ms ease;
 }
