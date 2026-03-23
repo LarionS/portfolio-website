@@ -244,8 +244,54 @@ const i18n = {
     interactive_cta_button: "Talk About an Interactive Prototype",
     gallery_eyebrow: "Project Gallery",
     gallery_title: "Frames from immersive production work",
+    gallery_scene_label: "Interactive project gallery",
+    gallery_caption_1:
+      "Military day mission map in Unreal Engine, where I tuned terrain composition, cover spacing, and long-range sightlines for VR training flow.",
+    gallery_caption_2:
+      "Bedside opening sequence for the Glenda scenario, where I aligned dialogue prompts, monitor placement, and camera framing for clear clinical communication.",
+    gallery_caption_3:
+      "Elevator handoff scenario for early check-in escalation practice, tuned around spoken response prompts and decision pacing in first-person VR.",
+    gallery_caption_4:
+      "Hashmal Motor digital twin showcase linking real manufacturing media with interactive 3D equipment exploration inside a VR presentation stage.",
+    gallery_caption_5:
+      "Atlantis Park VR hub scene combining underwater world-building and onboarding beats to establish atmosphere before gameplay objectives begin.",
+    gallery_caption_6:
+      "Playtika VR bingo prototype capture used for UI and interaction review, highlighting card readability and fast game-state feedback.",
+    gallery_caption_7:
+      "Glenda medical scenario with branching bedside dialogue and response choices, built to train communication decisions under time pressure.",
+    gallery_caption_8:
+      "Underwater gameplay zone from Atlantis Park, focused on visibility tuning, aquatic lighting, and interaction clarity in darker environments.",
+    gallery_caption_9:
+      "Hover The Edge gameplay capture focused on traversal readability and HUD balance during movement-heavy sections.",
+    carousel_prev: "Previous slide",
+    carousel_next: "Next slide",
+    carousel_pause: "Pause",
+    carousel_resume: "Resume",
+    carousel_pause_aria: "Pause automatic sliding",
+    carousel_resume_aria: "Resume automatic sliding",
     showreel_eyebrow: "Featured Video",
     showreel_title: "Showreel 2024",
+    showreel_iframe_title: "Larion Siments Showreel 2024",
+    founder_process_eyebrow: "Process",
+    founder_process_title: "Define the smallest useful thing, then make it real fast.",
+    founder_examples_eyebrow: "Examples",
+    founder_examples_title: "Typical founder-facing builds that make the next conversation easier.",
+    tools_examples_eyebrow: "Examples",
+    tools_examples_title: "Focused internal builds shaped around real team friction.",
+    tools_process_eyebrow: "Process",
+    tools_process_title: "Find the friction, build the useful surface, tighten with real usage.",
+    contact_widget_eyebrow: "Leave a Request",
+    contact_widget_title: "Send the rough idea here",
+    contact_widget_copy:
+      "Fill in a few details and your email app opens with the request prefilled. Bullet points are enough.",
+    contact_widget_name: "Name",
+    contact_widget_contact: "Email or WhatsApp",
+    contact_widget_message: "What do you want to build?",
+    contact_widget_name_placeholder: "Your name",
+    contact_widget_contact_placeholder: "Best way to reach you",
+    contact_widget_message_placeholder: "A few lines about the idea, goal, or timeline",
+    contact_widget_submit: "Send Request",
+    contact_widget_note: "This opens your email app with the request ready to send.",
     background_eyebrow: "Background",
     background_title: "A mix of delivery leadership, hands-on development, and product-minded execution.",
     background_role_1: "Lead Developer, ARVR Israel",
@@ -349,14 +395,17 @@ const i18n = {
     lane_founder_desc: "ליזמים שצריכים פרוטוטייפ אמיתי, דמו למשקיעים או MVP במהירות.",
     lane_founder_fit: "יזמים שמאמתים קונספט לפני הקמת צוות מלא.",
     lane_founder_cta: "למסלול ה-MVP",
+    lane_founder_title: "MVP ליזמים",
     lane_tools_kicker: "מסלול תפעולי",
     lane_tools_desc: "לצוותים שצריכים דשבורדים, כלים תהליכיים, מערכות אדמין או אפליקציות פנימיות עם עזרת AI.",
     lane_tools_fit: "צוותים שרוצים להחליף כאוס של גיליונות ותהליכים ידניים.",
     lane_tools_cta: "למסלול הכלים",
+    lane_tools_title: "כלים פנימיים / אוטומציה",
     lane_interactive_kicker: "מסלול Real-Time",
     lane_interactive_desc: "ללקוחות שצריכים דמואים אינטראקטיביים, פרוטוטייפים ב-Unreal, קונספטים ל-VR או חוויות אימון אימרסיביות.",
     lane_interactive_fit: "צוותים שצריכים אינטראקציה בזמן אמת, חשיבת סימולציה או UX מרחבי.",
     lane_interactive_cta: "לעבודות האינטראקטיביות",
+    lane_interactive_title: "פרוטוטייפים אינטראקטיביים / אימרסיביים",
     cred_1: "Unreal Engine / VR",
     cred_2: "פיתוח מואץ AI",
     cred_3: "פרוטוטייפינג מהיר",
@@ -379,18 +428,154 @@ const i18n = {
     founder_title: "MVP ליזמים שהופך רעיון גולמי לדמו עובד במהירות.",
     founder_lead:
       "מתאים ליזמים שצריכים גרסה ראשונה פרקטית שאפשר להציג, לבדוק עם משתמשים ולשפר מהר.",
+    founder_eyebrow: "MVP ליזמים",
+    founder_for_title: "למי זה מתאים",
+    founder_for_1: "יזמים עם רעיון אבל בלי מוצר עדיין",
+    founder_for_2: "סטארטאפים שצריכים דמו למשקיעים או הוכחת היתכנות מול לקוחות",
+    founder_for_3: "צוותים שבודקים קונספט לפני גיוס של משרה מלאה",
+    founder_build_title: "מה אני יכול לבנות",
+    founder_build_1: "פרוטוטייפים מוצריים וזרימות ליבה לחיצות",
+    founder_build_2: "דמואים למשקיעים ואפליקציות הוכחת קונספט",
+    founder_build_3: "MVP ראשוני ומהיר שמתמקד בוולידציה",
+    founder_build_4: "דמואים אינטראקטיביים שמסבירים את המוצר בקלות",
+    founder_step_1_title: "להגדיר את הגרסה הכי קטנה ושימושית",
+    founder_step_1_body: "מורידים את הרעיון לגרעין שצריך להיבדק או להיות מוצג.",
+    founder_step_2_title: "לבנות פרוטוטייפ עובד מהר",
+    founder_step_2_body: "מתמקדים באינטראקציה, בלוגיקה ובהצגה שבאמת חשובים.",
+    founder_step_3_title: "לשמור על לולאת משוב צמודה",
+    founder_step_3_body: "בודקים מוקדם, משנים היקף מהר ונמנעים מבזבוז זמן על השכבה הלא נכונה.",
+    founder_step_4_title: "לחדד את חוויית הליבה",
+    founder_step_4_body: "מלוטשים את מה שמשתמש או משקיע באמת צריך להבין במפגש אחד.",
+    founder_step_5_title: "למסור משהו שאפשר לבדוק",
+    founder_step_5_body: "התוצאה צריכה להיות ניתנת להצגה, לבדיקה ולשימוש בהחלטה הבאה.",
+    founder_example_chip_1: "דמו למשקיעים",
+    founder_example_title_1: "סיפור מוצר שאפשר להבין בתוך דקות",
+    founder_example_body_1: "טוב לפגישות משקיעים, שיחות מכירה, או יצירת buy-in מוקדם כשדק כבר לא מספיק.",
+    founder_example_chip_2: "MVP לוולידציה",
+    founder_example_title_2: "גרסה ראשונה ממוקדת סביב תהליך ליבה אחד",
+    founder_example_body_2: "שימושי כשהמטרה היא לבדוק את הקונספט עם משתמשים אמיתיים לפני בנייה כבדה יותר.",
+    founder_example_chip_3: "דמו אינטראקטיבי",
+    founder_example_title_3: "חוויה לחיצה שממחישה את המוצר בצורה מוחשית",
+    founder_example_body_3: "חזק במיוחד כשהרעיון קשה להסביר בלי להראות את הזרימה, הממשק והאינטראקציה.",
+    founder_cta_title: "צריך MVP עובד מהר?",
+    founder_cta_body: "שלחו את הרעיון הגולמי, לא את המפרט המלוטש. אני יכול לעזור להגדיר את הבנייה הקטנה והשימושית ביותר ולהפוך אותה למשהו אמיתי.",
+    founder_cta_button: "דברו איתי על MVP",
     tools_title: "כלים פנימיים שמפחיתים חיכוך תפעולי וחוסכים זמן לצוות.",
     tools_lead:
       "לצוותים שצריכים מערכות שימושיות במהירות: דשבורדים, זרימות אדמין וכלים בעזרת AI סביב עבודה אמיתית.",
+    tools_eyebrow: "כלים פנימיים / אוטומציה",
+    tools_build_title: "מה אני יכול לבנות",
+    tools_build_1: "דשבורדים ופאנלים לניהול",
+    tools_build_2: "מערכות workflow ופורטלים פנימיים",
+    tools_build_3: "כלים עם AI למשימות צוות חוזרות",
+    tools_build_4: "אפליקציות עסקיות קלות ומותאמות אישית",
+    tools_outcomes_title: "למה צוותים מביאים אותי",
+    tools_outcomes_1: "להפחית עבודה חוזרת וחיכוך בין שלבים",
+    tools_outcomes_2: "לרכז תהליכים מבולגנים לממשק אחד שימושי",
+    tools_outcomes_3: "להחליף פיזור אקסלים בממשקים ייעודיים",
+    tools_outcomes_4: "לשחרר משהו שימושי מהר ולשפר לפי שימוש אמיתי",
+    tools_example_chip_1: "לוח תפעול",
+    tools_example_title_1: "דשבורד שמציג את המספרים והפעולות שבאמת חשובים",
+    tools_example_body_1: "טוב לנראות תפעולית, אישורים, תורים ומעקב סטטוס בלי לסבך את המערכת.",
+    tools_example_chip_2: "פורטל עבודה",
+    tools_example_title_2: "כלי פנימי שנבנה סביב נקודות המסירה האמיתיות של הצוות",
+    tools_example_body_2: "שימושי כשמוצרים גנריים יוצרים מעקפים במקום לפתור את התהליך.",
+    tools_example_chip_3: "כלי AI",
+    tools_example_title_3: "עוזר ממוקד מבוסס AI לקליטה, סקירה או משימות אדמין",
+    tools_example_body_3: "הכי טוב כשהמטרה היא לחסוך זמן לצוות עם תהליך צר ומוגדר היטב, לא לבנות פלטפורמה ענקית.",
+    tools_step_1_title: "למפות את ה-workflow",
+    tools_step_1_body: "מאפיינים את צוואר הבקבוק, את העבודה הכפולה ואת ההחלטות שצריכות ממשק ברור יותר.",
+    tools_step_2_title: "לבנות קודם את המשטח השימושי",
+    tools_step_2_body: "מתחילים מהדשבורד, הפאנל או הזרימה שמורידים את הכי הרבה חיכוך.",
+    tools_step_3_title: "לחדד את הלולאה",
+    tools_step_3_body: "נותנים לצוות להשתמש מהר, מזהים מקרי קצה ופשוטים על סמך שימוש אמיתי.",
+    tools_step_4_title: "להוסיף אוטומציה היכן שזה מועיל",
+    tools_step_4_body: "מכניסים AI או אוטומציית workflow למשימות הצרות שבהן זה חוסך זמן בצורה אמינה.",
+    tools_cta_title: "צריך כלי פנימי שבאמת מתאים ל-workflow?",
+    tools_cta_body:
+      "אם התהליך הנוכחי מפוזר בין אקסלים, שיחות צ'אט ומעקבים ידניים, אני יכול לעזור להפוך אותו למערכת אחת שימושית.",
+    tools_cta_button: "דברו איתי על כלי",
     interactive_title: "פרוטוטייפים ב-Unreal וב-VR שנבנים לאינטראקציה משכנעת בזמן אמת.",
     interactive_lead:
       "המסלול הזה מתמקד בהדרכות אימרסיביות, דמואים אינטראקטיביים וקונספטים מבוססי סימולציה כש-UX מרחבי וריאליזם חשובים.",
+    interactive_eyebrow: "פרוטוטייפים אינטראקטיביים / אימרסיביים",
+    interactive_build_title: "מה אני יכול לבנות",
+    interactive_build_1: "פרוטוטייפים ב-Unreal ודמואים תלת-ממדיים אינטראקטיביים",
+    interactive_build_2: "סימולציות אימון ב-VR וחוויות מבוססות תרחישים",
+    interactive_build_3: "קונספטים ל-AR/VR ודמואי מוצר חווייתיים",
+    interactive_build_4: "פרוטוטייפים עם דגש חזק על קריאות UX בסימולציה",
+    interactive_for_title: "למי זה מתאים",
+    interactive_for_1: "צוותים שמציגים או מאמתים מוצרים מרחביים או בזמן אמת",
+    interactive_for_2: "ארגוני הדרכה שצריכים אינטראקציה ריאליסטית ולוגיקת סימולציה",
+    interactive_for_3: "סטודיואים או צוותי מוצר שצריכים פרוטוטייפ לפני הפקה מלאה",
+    interactive_for_4: "חברות שצריכות דמו חווייתי במקום מוקאפ שטוח",
     immersive_work_eyebrow: "עבודות אינטראקטיביות נבחרות",
     immersive_work_title: "עבודות פרודקשן מעולמות הדרכה, משחקים ודמואים בזמן אמת",
+    immersive_chip_1: "סימולציית הדרכה",
+    immersive_title_1: "תוכניות סימולציה רפואיות וחירום",
+    immersive_body_1: "הובלתי מסירה של סביבות AR/VR ממוקדות סימולציה עבור שירותי חירום, בתי חולים והדרכות ארגוניות.",
+    immersive_chip_2: "כותרת VR שיצאה לשוק",
+    immersive_title_2: "Hover The Edge",
+    immersive_body_2: "בניתי ושחררתי כותרת VR ב-Steam תוך ניהול תהליכי Unreal מהקונספט ועד ההשקה.",
+    immersive_chip_3: "מסירה בזמן אמת",
+    immersive_title_3: "פרוטוטייפים ב-Unreal למספר פלטפורמות",
+    immersive_body_3:
+      "סיפקתי עבודות Unreal Engine 4/5 ל-PC, מובייל, iOS, VR וצינורות קולנועיים, עם איזון בין ביצועים, אינטראקציה ופריסה.",
+    immersive_link: "צפה ב-Steam",
+    interactive_cta_title: "צריך פרוטוטייפ Unreal / VR או דמו אימרסיבי?",
+    interactive_cta_body:
+      "אם הבנייה צריכה אינטראקציה אמינה, לוגיקת סימולציה או איכות הצגה בזמן אמת - שם אני מביא את העומק הכי גדול.",
+    interactive_cta_button: "דברו איתי על פרוטוטייפ אינטראקטיבי",
     gallery_eyebrow: "גלריית פרויקטים",
     gallery_title: "פריימים מעבודת פרודקשן אימרסיבית",
+    gallery_scene_label: "גלריית פרויקטים אינטראקטיבית",
+    gallery_caption_1:
+      "מפת משימה יומית צבאית ב-Unreal Engine, שבה כוונתי קומפוזיציית שטח, מרחקי מחסה וקווי ראייה לטווח ארוך לזרימת אימון VR.",
+    gallery_caption_2:
+      "פתיחת bedside לתרחיש Glenda, שבה יישרתי פרומפטים לדיאלוג, מיקום מוניטורים וקומפוזיציית מצלמה לתקשורת קלינית ברורה.",
+    gallery_caption_3:
+      "תרחיש מעלית לאימון מסירה סביב check-in מוקדם, מכוון סביב תגובות מדוברות וקצב החלטה בגוף ראשון ב-VR.",
+    gallery_caption_4:
+      "הדגמת digital twin ל-Hashmal Motor שמחברת חומרים תעשייתיים אמיתיים עם חקר תלת-ממד אינטראקטיבי בתוך במה מצגות ב-VR.",
+    gallery_caption_5:
+      "סצנת hub של Atlantis Park ב-VR, שמשלבת בניית עולם תת-ימית ושלבי onboarding כדי ליצור אווירה לפני תחילת היעדים.",
+    gallery_caption_6:
+      "לכידת אב-טיפוס Playtika VR bingo לשם סקירת UI ואינטראקציה, עם דגש על קריאות קלפים ומשוב מהיר על מצב המשחק.",
+    gallery_caption_7:
+      "תרחיש הרפואי Glenda עם ענפי דיאלוג ליד המיטה ובחירות תגובה, שנבנה לאימון החלטות תקשורת תחת לחץ זמן.",
+    gallery_caption_8:
+      "אזור המשחק התת-ימי של Atlantis Park, עם כוונון נראות, תאורה ימית ובהירות אינטראקציה בסביבות חשוכות יותר.",
+    gallery_caption_9:
+      "לכידת משחק של Hover The Edge עם דגש על קריאות תנועה ואיזון HUD במהלך מקטעים עתירי תזוזה.",
+    carousel_prev: "שקופית קודמת",
+    carousel_next: "שקופית הבאה",
+    carousel_pause: "השהיה",
+    carousel_resume: "המשך",
+    carousel_pause_aria: "השהיית מעבר אוטומטי",
+    carousel_resume_aria: "המשך מעבר אוטומטי",
     showreel_eyebrow: "וידאו מוביל",
     showreel_title: "שואוריל 2024",
+    showreel_iframe_title: "שואוריל 2024 של לריון סימנטס",
+    founder_process_eyebrow: "תהליך",
+    founder_process_title: "מגדירים את הגרסה הכי קטנה ששווה לבנות, ואז הופכים אותה למהירה ועובדת.",
+    founder_examples_eyebrow: "דוגמאות",
+    founder_examples_title: "בניות אופייניות ליזמים שמקלות על השיחה הבאה.",
+    tools_examples_eyebrow: "דוגמאות",
+    tools_examples_title: "כלים פנימיים ממוקדים סביב חיכוך אמיתי בצוות.",
+    tools_process_eyebrow: "תהליך",
+    tools_process_title: "מאתרים את החיכוך, בונים את הממשק השימושי, ומחדדים לפי שימוש אמיתי.",
+    contact_widget_eyebrow: "השאירו בקשה",
+    contact_widget_title: "שלחו כאן את הרעיון הגולמי",
+    contact_widget_copy:
+      "ממלאים כמה פרטים וקופצת אפליקציית המייל עם הבקשה מוכנה. גם נקודות קצרות מספיקות.",
+    contact_widget_name: "שם",
+    contact_widget_contact: "אימייל או וואטסאפ",
+    contact_widget_message: "מה רוצים לבנות?",
+    contact_widget_name_placeholder: "השם שלך",
+    contact_widget_contact_placeholder: "איך הכי נוח לחזור אליך",
+    contact_widget_message_placeholder: "כמה שורות על הרעיון, המטרה או הלוח זמנים",
+    contact_widget_submit: "שליחת בקשה",
+    contact_widget_note: "זה פותח את אפליקציית המייל שלך עם בקשה מוכנה לשליחה.",
     background_eyebrow: "רקע",
     background_title: "שילוב של הובלת מסירה, פיתוח hands-on וחשיבה מוצרית בביצוע.",
     skills_eyebrow: "יכולות",
@@ -412,6 +597,8 @@ const i18nNodes = Array.from(document.querySelectorAll("[data-i18n]"));
 const langToggle = document.querySelector("[data-lang-toggle]");
 const langLabel = document.querySelector("[data-lang-label]");
 let activeLanguage = "en";
+
+const getTranslation = (key) => i18n[activeLanguage][key] ?? i18n.en[key] ?? "";
 
 const unwrapAnimatedWords = (element) => {
   const words = Array.from(element.querySelectorAll(".text-word"));
@@ -463,6 +650,16 @@ const applyLanguage = (lang, options = {}) => {
       node.textContent = translated;
     }
 
+    if (node.dataset.i18nAttrs) {
+      node.dataset.i18nAttrs
+        .split(",")
+        .map((attr) => attr.trim())
+        .filter(Boolean)
+        .forEach((attr) => {
+          node.setAttribute(attr, translated);
+        });
+    }
+
     if (refreshAnimated) {
       refreshAnimatedElement(node);
     }
@@ -473,6 +670,7 @@ const applyLanguage = (lang, options = {}) => {
   document.body.classList.toggle("lang-he", activeLanguage === "he");
   updateLanguageToggleUi();
   window.localStorage.setItem("portfolio_lang", activeLanguage);
+  window.dispatchEvent(new CustomEvent("portfolio-language-change", { detail: { lang: activeLanguage } }));
 };
 
 const savedLanguage = window.localStorage.getItem("portfolio_lang");
@@ -677,10 +875,13 @@ if (carouselRoot) {
   const updateToggleUi = () => {
     const isPaused = !autoBehaviorEnabled;
     toggleButton?.setAttribute("aria-pressed", isPaused ? "true" : "false");
-    toggleButton?.setAttribute("aria-label", isPaused ? "Resume auto slide" : "Pause auto slide");
+    toggleButton?.setAttribute(
+      "aria-label",
+      isPaused ? getTranslation("carousel_resume_aria") : getTranslation("carousel_pause_aria")
+    );
 
     if (toggleLabel) {
-      toggleLabel.textContent = isPaused ? "Resume" : "Pause";
+      toggleLabel.textContent = isPaused ? getTranslation("carousel_resume") : getTranslation("carousel_pause");
     }
     if (toggleIconPath) {
       toggleIconPath.setAttribute("d", isPaused ? "M8 6l10 6-10 6z" : "M9 6v12M15 6v12");
@@ -861,8 +1062,38 @@ if (carouselRoot) {
   });
 
   window.addEventListener("resize", renderCarousel);
+  window.addEventListener("portfolio-language-change", updateToggleUi);
 
   updateToggleUi();
   renderCarousel();
   startAutoRotate();
 }
+
+const contactForms = document.querySelectorAll("[data-contact-form]");
+contactForms.forEach((form) => {
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const recipient = "Larion1@gmail.com";
+    const subject = form.dataset.requestSubject || "Website request from portfolio";
+    const formData = new FormData(form);
+    const name = String(formData.get("name") || "").trim();
+    const contact = String(formData.get("contact") || "").trim();
+    const message = String(formData.get("message") || "").trim();
+
+    const bodyLines = [
+      "Hi Larion,",
+      "",
+      `Name: ${name || "Not provided"}`,
+      `Contact: ${contact || "Not provided"}`,
+      `Page: ${document.title}`,
+      `URL: ${window.location.href}`,
+      "",
+      "Request:",
+      message || "Not provided",
+    ];
+
+    const mailtoHref = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyLines.join("\n"))}`;
+    window.location.href = mailtoHref;
+  });
+});

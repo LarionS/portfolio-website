@@ -86,8 +86,8 @@
 
       <section class="section reveal">
         <div class="section-heading compact-heading">
-          <p class="eyebrow">Process</p>
-          <h2>Define the smallest useful thing, then make it real fast.</h2>
+          <p class="eyebrow" data-i18n="founder_process_eyebrow">Process</p>
+          <h2 data-i18n="founder_process_title">Define the smallest useful thing, then make it real fast.</h2>
         </div>
         <div class="process-grid">
           <article class="process-step">
@@ -120,8 +120,8 @@
 
       <section class="section reveal">
         <div class="section-heading compact-heading">
-          <p class="eyebrow">Examples</p>
-          <h2>Typical founder-facing builds that make the next conversation easier.</h2>
+          <p class="eyebrow" data-i18n="founder_examples_eyebrow">Examples</p>
+          <h2 data-i18n="founder_examples_title">Typical founder-facing builds that make the next conversation easier.</h2>
         </div>
         <div class="work-grid concept-grid">
           <article class="work-card">
@@ -166,11 +166,49 @@
           </p>
         </div>
 
-        <div class="contact-grid">
-          <a href="mailto:Larion1@gmail.com">Larion1@gmail.com</a>
-          <a href="https://wa.me/972504931021" target="_blank" rel="noreferrer">+972 50 493 1021</a>
-          <a href="https://wa.me/66922470654" target="_blank" rel="noreferrer">+66 92 247 0654</a>
-          <a href="https://www.linkedin.com/in/larion-siments-b5bb82238/" target="_blank" rel="noreferrer" data-i18n="contact_linkedin">LinkedIn Profile</a>
+        <div class="contact-layout">
+          <div class="contact-panel">
+            <div class="contact-grid">
+              <a href="mailto:Larion1@gmail.com">Larion1@gmail.com</a>
+              <a href="https://wa.me/972504931021" target="_blank" rel="noreferrer">+972 50 493 1021</a>
+              <a href="https://wa.me/66922470654" target="_blank" rel="noreferrer">+66 92 247 0654</a>
+              <a href="https://www.linkedin.com/in/larion-siments-b5bb82238/" target="_blank" rel="noreferrer" data-i18n="contact_linkedin">LinkedIn Profile</a>
+            </div>
+          </div>
+
+          <form class="contact-request" data-contact-form data-request-subject="Founder MVP inquiry from website">
+            <p class="eyebrow" data-i18n="contact_widget_eyebrow">Leave a Request</p>
+            <h3 data-i18n="contact_widget_title">Send the rough idea here</h3>
+            <p class="contact-request-copy" data-i18n="contact_widget_copy">
+              Fill in a few details and your email app opens with the request prefilled. Bullet points are enough.
+            </p>
+
+            <div class="contact-form-grid">
+              <label class="contact-field">
+                <span data-i18n="contact_widget_name">Name</span>
+                <input type="text" name="name" required placeholder="Your name" data-i18n="contact_widget_name_placeholder" data-i18n-attrs="placeholder" />
+              </label>
+              <label class="contact-field">
+                <span data-i18n="contact_widget_contact">Email or WhatsApp</span>
+                <input type="text" name="contact" required placeholder="Best way to reach you" data-i18n="contact_widget_contact_placeholder" data-i18n-attrs="placeholder" />
+              </label>
+            </div>
+
+            <label class="contact-field contact-field-full">
+              <span data-i18n="contact_widget_message">What do you want to build?</span>
+              <textarea
+                name="message"
+                rows="5"
+                required
+                placeholder="A few lines about the idea, goal, or timeline"
+                data-i18n="contact_widget_message_placeholder"
+                data-i18n-attrs="placeholder"
+              ></textarea>
+            </label>
+
+            <button class="btn btn-primary contact-submit" type="submit" data-i18n="contact_widget_submit">Send Request</button>
+            <p class="contact-request-note" data-i18n="contact_widget_note">This opens your email app with the request ready to send.</p>
+          </form>
         </div>
       </section>
     </main>
