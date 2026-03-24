@@ -225,407 +225,124 @@ body.home-gate .site-header {
 .gate-main {
   min-height: calc(100svh - 78px);
   display: grid;
-  align-items: center;
-  padding: clamp(1rem, 2.3vw, 1.9rem) 0;
+  align-items: start;
+  padding: clamp(0.9rem, 2.2vw, 1.7rem) 0;
 }
 
 .gate-section {
-  position: relative;
-  overflow: hidden;
   border-radius: var(--radius-panel);
-  border: 1px solid rgba(129, 171, 218, 0.2);
+  border: 1px solid rgba(129, 171, 218, 0.24);
   background:
-    radial-gradient(circle at 7% 12%, rgba(95, 167, 255, 0.16), transparent 34%),
-    radial-gradient(circle at 92% 18%, rgba(104, 231, 201, 0.12), transparent 34%),
-    linear-gradient(164deg, rgba(13, 27, 44, 0.9), rgba(7, 17, 28, 0.98));
+    radial-gradient(circle at 8% 14%, rgba(96, 170, 255, 0.14), transparent 34%),
+    radial-gradient(circle at 88% 18%, rgba(104, 231, 201, 0.12), transparent 34%),
+    linear-gradient(163deg, rgba(14, 29, 47, 0.88), rgba(8, 18, 30, 0.96));
   box-shadow: var(--shadow-strong);
-  padding: clamp(1.4rem, 2.8vw, 2.4rem);
-}
-
-.gate-section::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(90deg, rgba(116, 175, 255, 0.08), transparent 18%, transparent 82%, rgba(102, 231, 199, 0.06)),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 12%);
-  pointer-events: none;
-}
-
-.gate-intro {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(260px, 0.58fr);
-  align-items: center;
-  gap: clamp(1rem, 2.4vw, 2rem);
-  margin-bottom: clamp(1.25rem, 2.3vw, 1.9rem);
-}
-
-.gate-heading {
-  max-width: 48rem;
+  padding: clamp(1.2rem, 2.2vw, 1.9rem);
 }
 
 .gate-section h1 {
-  margin: 0.12rem 0 0;
+  margin: 0.2rem 0 0;
   font-family: "Syne", "Trebuchet MS", sans-serif;
-  font-size: clamp(2.65rem, 5.2vw, 5rem);
-  line-height: 0.9;
-  letter-spacing: -0.04em;
-  max-width: 9ch;
+  font-size: clamp(2rem, 4.1vw, 3.6rem);
+  line-height: 0.97;
+  letter-spacing: -0.02em;
+  max-width: 16ch;
 }
 
 .gate-copy {
-  margin: 0;
+  margin: 0.95rem 0 0;
   color: var(--muted);
-  max-width: 30ch;
-  font-size: clamp(1rem, 1.45vw, 1.08rem);
-  line-height: 1.52;
-  padding-bottom: 0.36rem;
+  max-width: 48ch;
+  font-size: clamp(1rem, 1.8vw, 1.12rem);
 }
 
 .door-grid {
-  position: relative;
-  z-index: 1;
+  margin-top: clamp(1.2rem, 2.5vw, 1.8rem);
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
-  align-items: stretch;
+  gap: 0.82rem;
 }
 
 .door-card {
-  position: relative;
-  overflow: hidden;
-  min-height: clamp(430px, 34vw, 520px);
-  display: grid;
-  grid-template-rows: minmax(184px, 1.05fr) auto;
-  gap: 1rem;
+  min-height: clamp(250px, 26vw, 330px);
+  display: flex;
+  flex-direction: column;
+  gap: 0.62rem;
   text-decoration: none;
   color: var(--ink);
-  border-radius: 1.22rem;
-  padding: clamp(1rem, 2vw, 1.2rem);
-  border: 1px solid rgba(121, 165, 210, 0.22);
+  border-radius: 1.08rem;
+  padding: clamp(1rem, 2vw, 1.25rem);
+  border: 1px solid rgba(121, 165, 210, 0.24);
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 20%),
-    linear-gradient(164deg, rgba(11, 23, 38, 0.92), rgba(8, 18, 30, 0.98));
-  transition:
-    transform 320ms var(--ease-spring),
-    border-color 220ms ease,
-    box-shadow 280ms ease,
-    background-color 220ms ease;
-}
-
-.door-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(116, 175, 255, 0.08), transparent 18%, transparent 82%, rgba(101, 231, 192, 0.08));
-  opacity: 0;
-  transition: opacity 260ms ease;
-  pointer-events: none;
+    radial-gradient(circle at 83% 18%, rgba(100, 193, 255, 0.13), transparent 38%),
+    linear-gradient(163deg, rgba(12, 24, 39, 0.9), rgba(9, 18, 30, 0.95));
+  transition: transform 280ms var(--ease-spring), border-color 200ms ease, box-shadow 260ms ease;
 }
 
 .door-card:hover,
 .door-card:focus-visible {
-  transform: translateY(-8px);
-  border-color: rgba(123, 193, 255, 0.48);
-  box-shadow: 0 28px 54px rgba(0, 0, 0, 0.36);
-}
-
-.door-card:hover::before,
-.door-card:focus-visible::before {
-  opacity: 1;
+  transform: translateY(-4px);
+  border-color: rgba(123, 193, 255, 0.52);
+  box-shadow: 0 24px 44px rgba(0, 0, 0, 0.3);
 }
 
 .door-kicker {
   margin: 0;
-  color: #c5d6ee;
+  color: #b8cae4;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   font-size: 0.76rem;
   font-weight: 800;
 }
 
-.door-body {
-  display: flex;
-  flex-direction: column;
-  gap: 0.72rem;
-  min-height: 0;
-}
-
 .door-card h2 {
   margin: 0;
   font-family: "Syne", "Trebuchet MS", sans-serif;
-  font-size: clamp(1.55rem, 2.25vw, 2.2rem);
-  line-height: 0.92;
-  max-width: 10ch;
+  font-size: clamp(1.4rem, 2.2vw, 1.9rem);
+  line-height: 0.95;
 }
 
-.door-body > p {
+.door-card p {
   margin: 0;
   color: var(--muted);
-  line-height: 1.48;
+  line-height: 1.5;
   font-size: 0.95rem;
-  max-width: 26ch;
+  max-width: 28ch;
 }
 
-.door-scene {
-  position: relative;
+.door-visual {
+  margin: 0.08rem 0 0.18rem;
+  border-radius: 0.78rem;
   overflow: hidden;
-  min-height: 12rem;
-  border-radius: 1rem;
-  border: 1px solid rgba(121, 167, 217, 0.24);
-  background: rgba(7, 17, 28, 0.84);
-  box-shadow: inset 0 0 0 1px rgba(21, 38, 57, 0.45);
+  border: 1px solid rgba(123, 173, 227, 0.32);
+  background: rgba(9, 20, 34, 0.9);
+  aspect-ratio: 16 / 8.6;
+  box-shadow: inset 0 0 0 1px rgba(21, 38, 57, 0.55);
 }
 
-.door-scene > span {
-  position: absolute;
+.door-visual img {
+  width: 100%;
+  height: 100%;
   display: block;
+  object-fit: cover;
+  transform: scale(1.01);
+  transition: transform 260ms ease, filter 260ms ease;
 }
 
-.door-scene-glow {
-  inset: auto auto -18% -10%;
-  width: 72%;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(104, 231, 201, 0.28), transparent 68%);
-  filter: blur(8px);
-  opacity: 0.64;
+.door-card-founder .door-visual img {
+  object-position: center 34%;
 }
 
-.door-scene-founder {
-  background:
-    radial-gradient(circle at 76% 18%, rgba(103, 230, 199, 0.18), transparent 38%),
-    linear-gradient(160deg, rgba(8, 18, 30, 0.95), rgba(13, 26, 39, 0.98));
+.door-card-tools .door-visual img {
+  object-position: center 22%;
 }
 
-.founder-layer {
-  border-radius: 1rem;
-  border: 1px solid rgba(136, 182, 227, 0.28);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015)),
-    rgba(13, 27, 42, 0.9);
-  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.26);
-}
-
-.founder-layer-back {
-  inset: 20% 22% 17% 8%;
-  transform: rotate(-10deg);
-  opacity: 0.42;
-}
-
-.founder-layer-mid {
-  inset: 12% 10% 23% 24%;
-  transform: rotate(8deg);
-  opacity: 0.62;
-}
-
-.founder-layer-front {
-  inset: 16% 14% 10% 10%;
-  transform: rotate(-2deg);
-}
-
-.founder-layer-front::before,
-.founder-layer-front::after,
-.founder-layer-mid::before {
-  content: "";
-  position: absolute;
-  inset: auto 10% 16% 10%;
-  height: 0.72rem;
-  border-radius: 999px;
-  background: linear-gradient(90deg, rgba(102, 231, 193, 0.9), rgba(93, 175, 255, 0.42));
-}
-
-.founder-layer-front::after {
-  inset: 18% 12% auto 12%;
-  height: 22%;
-  border-radius: 0.78rem;
-  background: linear-gradient(140deg, rgba(255, 244, 228, 0.18), rgba(255, 255, 255, 0.03));
-}
-
-.founder-layer-mid::before {
-  inset: 22% 18% auto 18%;
-  height: 0.56rem;
-  opacity: 0.7;
-}
-
-.founder-chip {
-  height: 0.5rem;
-  border-radius: 999px;
-  background: linear-gradient(90deg, rgba(255, 224, 165, 0.9), rgba(255, 255, 255, 0.2));
-  box-shadow: 0 0 0 4px rgba(255, 220, 164, 0.06);
-}
-
-.founder-chip-a {
-  width: 20%;
-  left: 14%;
-  top: 24%;
-}
-
-.founder-chip-b {
-  width: 14%;
-  right: 19%;
-  top: 33%;
-}
-
-.founder-chip-c {
-  width: 18%;
-  right: 15%;
-  bottom: 20%;
-}
-
-.door-scene-tools {
-  background:
-    radial-gradient(circle at 78% 16%, rgba(93, 175, 255, 0.2), transparent 38%),
-    linear-gradient(165deg, rgba(8, 18, 30, 0.98), rgba(12, 24, 38, 0.96));
-}
-
-.tools-shell {
-  inset: 10% 7% 12%;
-  border-radius: 1rem;
-  border: 1px solid rgba(129, 171, 218, 0.2);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0)),
-    rgba(12, 24, 39, 0.86);
-}
-
-.tools-rail {
-  left: 11%;
-  top: 22%;
-  bottom: 18%;
-  width: 16%;
-  border-radius: 0.78rem;
-  background: rgba(16, 31, 49, 0.92);
-  border: 1px solid rgba(126, 169, 215, 0.16);
-}
-
-.tools-topbar {
-  left: 31%;
-  right: 12%;
-  top: 18%;
-  height: 11%;
-  border-radius: 0.72rem;
-  background: rgba(18, 34, 54, 0.9);
-  border: 1px solid rgba(126, 169, 215, 0.16);
-}
-
-.tools-panel {
-  border-radius: 0.78rem;
-  background: rgba(17, 32, 51, 0.94);
-  border: 1px solid rgba(126, 169, 215, 0.16);
-}
-
-.tools-panel-a {
-  left: 31%;
-  top: 35%;
-  width: 28%;
-  bottom: 18%;
-}
-
-.tools-panel-b {
-  right: 12%;
-  top: 35%;
-  width: 23%;
-  bottom: 18%;
-}
-
-.tools-row {
-  height: 0.44rem;
-  border-radius: 999px;
-  background: linear-gradient(90deg, rgba(94, 176, 255, 0.86), rgba(94, 176, 255, 0.18));
-}
-
-.tools-row-a {
-  left: 35%;
-  top: 44%;
-  width: 18%;
-}
-
-.tools-row-b {
-  left: 35%;
-  top: 53%;
-  width: 14%;
-}
-
-.tools-row-c {
-  right: 17%;
-  top: 47%;
-  width: 12%;
-}
-
-.door-scene-immersive {
-  background:
-    radial-gradient(circle at 50% 18%, rgba(118, 186, 255, 0.18), transparent 36%),
-    linear-gradient(180deg, rgba(8, 18, 30, 0.98) 0%, rgba(11, 24, 37, 0.98) 55%, rgba(8, 16, 27, 1) 100%);
-}
-
-.immersive-sky {
-  inset: 0 0 42%;
-  background:
-    radial-gradient(circle at 50% 24%, rgba(130, 197, 255, 0.14), transparent 30%),
-    linear-gradient(180deg, rgba(141, 195, 255, 0.12), transparent 72%);
-}
-
-.immersive-horizon {
-  left: 8%;
-  right: 8%;
-  top: 52%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(134, 190, 255, 0.46), transparent);
-}
-
-.immersive-plane {
-  left: -8%;
-  right: -8%;
-  bottom: -4%;
-  height: 44%;
-  background:
-    linear-gradient(rgba(134, 190, 255, 0.12) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(134, 190, 255, 0.12) 1px, transparent 1px),
-    linear-gradient(180deg, rgba(16, 31, 49, 0.22), rgba(9, 18, 30, 0.05));
-  background-size: 100% 24px, 24px 100%, 100% 100%;
-  clip-path: polygon(13% 0, 87% 0, 100% 100%, 0 100%);
-}
-
-.immersive-path {
-  left: 40%;
-  right: 28%;
-  bottom: 8%;
-  top: 56%;
-  clip-path: polygon(44% 0, 56% 0, 100% 100%, 0 100%);
-  background: linear-gradient(180deg, rgba(102, 231, 193, 0.4), rgba(93, 175, 255, 0.12));
-  filter: blur(0.4px);
-}
-
-.immersive-ring {
-  width: 1.1rem;
-  height: 1.1rem;
-  border-radius: 50%;
-  border: 1px solid rgba(107, 235, 202, 0.8);
-  box-shadow: 0 0 0 6px rgba(103, 230, 199, 0.08);
-}
-
-.immersive-ring-a {
-  left: 33%;
-  bottom: 18%;
-}
-
-.immersive-ring-b {
-  right: 18%;
-  bottom: 24%;
-}
-
-.immersive-beacon {
-  left: 56%;
-  bottom: 19%;
-  width: 2px;
-  height: 22%;
-  background: linear-gradient(180deg, rgba(102, 231, 193, 0), rgba(102, 231, 193, 0.92));
-  box-shadow: 0 0 18px rgba(102, 231, 193, 0.34);
+.door-card-immersive .door-visual img {
+  object-position: center 52%;
 }
 
 .door-link {
+  justify-self: start;
   display: inline-flex;
   align-items: center;
   gap: 0.38rem;
@@ -633,7 +350,6 @@ body.home-gate .site-header {
   font-size: 0.92rem;
   font-weight: 700;
   margin-top: auto;
-  padding-top: 0.18rem;
 }
 
 .door-link::after {
@@ -648,70 +364,28 @@ body.home-gate .site-header {
   transform: translateX(4px);
 }
 
-.door-card:hover .door-scene-glow,
-.door-card:focus-visible .door-scene-glow {
-  transform: scale(1.06);
-  opacity: 0.88;
-}
-
-.door-card:hover .founder-layer-back,
-.door-card:focus-visible .founder-layer-back {
-  transform: rotate(-12deg) translate(-2px, -2px);
-}
-
-.door-card:hover .founder-layer-mid,
-.door-card:focus-visible .founder-layer-mid {
-  transform: rotate(10deg) translate(3px, -3px);
-}
-
-.door-card:hover .founder-layer-front,
-.door-card:focus-visible .founder-layer-front {
-  transform: rotate(-3deg) translateY(-4px);
-}
-
-.door-card:hover .tools-row-a,
-.door-card:hover .tools-row-b,
-.door-card:hover .tools-row-c,
-.door-card:focus-visible .tools-row-a,
-.door-card:focus-visible .tools-row-b,
-.door-card:focus-visible .tools-row-c {
-  transform: translateX(6px);
-}
-
-.door-card:hover .immersive-beacon,
-.door-card:focus-visible .immersive-beacon {
-  transform: scaleY(1.06);
-}
-
-.door-card:hover .immersive-ring,
-.door-card:focus-visible .immersive-ring {
-  box-shadow: 0 0 0 9px rgba(103, 230, 199, 0.1);
-}
-
-.door-scene-glow,
-.founder-layer,
-.tools-row,
-.immersive-beacon,
-.immersive-ring {
-  transition: transform 320ms var(--ease-spring), opacity 260ms ease, box-shadow 320ms ease;
+.door-card:hover .door-visual img,
+.door-card:focus-visible .door-visual img {
+  transform: scale(1.04);
+  filter: saturate(1.06);
 }
 
 .door-card-founder {
   background:
-    radial-gradient(circle at 84% 14%, rgba(104, 231, 201, 0.12), transparent 40%),
-    linear-gradient(164deg, rgba(12, 24, 39, 0.92), rgba(8, 18, 30, 0.98));
+    radial-gradient(circle at 80% 17%, rgba(104, 231, 201, 0.14), transparent 40%),
+    linear-gradient(163deg, rgba(12, 24, 39, 0.9), rgba(9, 18, 30, 0.95));
 }
 
 .door-card-tools {
   background:
-    radial-gradient(circle at 84% 14%, rgba(76, 160, 255, 0.14), transparent 42%),
-    linear-gradient(164deg, rgba(12, 24, 39, 0.92), rgba(8, 18, 30, 0.98));
+    radial-gradient(circle at 84% 14%, rgba(76, 160, 255, 0.16), transparent 42%),
+    linear-gradient(163deg, rgba(12, 24, 39, 0.9), rgba(9, 18, 30, 0.95));
 }
 
 .door-card-immersive {
   background:
-    radial-gradient(circle at 84% 14%, rgba(158, 216, 255, 0.12), transparent 42%),
-    linear-gradient(164deg, rgba(12, 24, 39, 0.92), rgba(8, 18, 30, 0.98));
+    radial-gradient(circle at 86% 18%, rgba(158, 216, 255, 0.16), transparent 42%),
+    linear-gradient(163deg, rgba(12, 24, 39, 0.9), rgba(9, 18, 30, 0.95));
 }
 
 .section {
@@ -2045,10 +1719,6 @@ body.lang-he.home-gate .door-card {
   text-align: right;
 }
 
-body.lang-he.home-gate .gate-intro {
-  grid-template-columns: minmax(260px, 0.58fr) minmax(0, 1.15fr);
-}
-
 body.lang-he.home-gate .door-grid {
   direction: rtl;
 }
@@ -2228,18 +1898,8 @@ body.lang-he .media-carousel-controls {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .gate-intro {
-    grid-template-columns: 1fr;
-    gap: 0.7rem;
-  }
-
-  .gate-copy {
-    max-width: 38ch;
-    padding-bottom: 0;
-  }
-
   .door-card {
-    min-height: 390px;
+    min-height: 220px;
   }
 
   .site-nav a {
@@ -2345,20 +2005,12 @@ body.lang-he .media-carousel-controls {
     padding: 1rem;
   }
 
-  .gate-intro {
-    grid-template-columns: 1fr;
-    gap: 0.7rem;
-    margin-bottom: 1rem;
-  }
-
   .gate-section h1 {
-    font-size: clamp(2.05rem, 11vw, 2.9rem);
-    max-width: 8ch;
+    font-size: clamp(1.8rem, 11vw, 2.5rem);
   }
 
   .gate-copy {
-    max-width: 32ch;
-    font-size: 0.98rem;
+    max-width: 48ch;
   }
 
   .door-grid {
@@ -2368,17 +2020,7 @@ body.lang-he .media-carousel-controls {
 
   .door-card {
     min-height: 0;
-    grid-template-rows: minmax(148px, 176px) auto;
-    gap: 0.85rem;
     padding: 0.95rem;
-  }
-
-  .door-scene {
-    min-height: 9.4rem;
-  }
-
-  .door-body {
-    gap: 0.55rem;
   }
 
   .entry-main,
