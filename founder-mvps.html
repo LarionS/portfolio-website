@@ -3,277 +3,383 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Founder MVPs | Larion Siments</title>
+    <meta name="theme-color" content="#c8ff45" />
+    <title>Product Development — Larion Siments</title>
     <meta
       name="description"
-      content="Founder MVPs by Larion Siments: product prototypes, investor demos, and first-version MVPs built quickly and practically."
+      content="Product development by Larion Siments: focused first releases for founders and product teams."
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23c8ff45%22/><text x=%2250%22 y=%2264%22 font-size=%2248%22 font-family=%22Arial%22 font-weight=%22900%22 text-anchor=%22middle%22 fill=%22%230a0a09%22>LS</text></svg>"
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Syne:wght@500;700&amp;display=swap"
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&amp;family=Inter+Tight:wght@500;600;700;800;900&amp;display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./styles.css?v=20260710-3" />
   </head>
-  <body>
-    <div class="page-bg" aria-hidden="true"></div>
+  <body class="case-page founder-page">
+    <a class="skip-link" href="#main">Skip to content</a>
 
-    <header class="site-header">
-      <div class="site-shell">
-        <div class="header-top">
-          <a class="brand" href="./index.html">Larion Siments</a>
-
-          <div class="header-tools">
-            <div class="header-contact">
-              <a class="nav-contact" href="mailto:Larion1@gmail.com">Larion1@gmail.com</a>
-              <a class="nav-contact" href="https://wa.me/972504931021" target="_blank" rel="noreferrer">+972 50 493 1021</a>
-              <a class="nav-contact" href="https://wa.me/66922470654" target="_blank" rel="noreferrer">+66 92 247 0654</a>
-            </div>
-            <a class="btn btn-primary nav-cta" href="#contact" data-i18n="header_cta">Contact</a>
-            <button class="lang-toggle" type="button" data-lang-toggle aria-label="Switch language to Hebrew">
-              <span class="lang-toggle-dot" aria-hidden="true"></span>
-              <span data-lang-label>HE</span>
-            </button>
-          </div>
-        </div>
-
-        <nav class="site-nav" aria-label="Main navigation">
-          <a href="./index.html" data-i18n="nav_home">Home</a>
-          <a class="is-active" href="./founder-mvps.html" data-i18n="nav_founder">Founder MVPs</a>
-          <a href="./internal-tools.html" data-i18n="nav_tools">Internal Tools</a>
-          <a href="./interactive-prototypes.html" data-i18n="nav_interactive">Interactive / Immersive</a>
-          <a href="./index.html#about" data-i18n="nav_about">About</a>
-          <a href="#contact" data-i18n="nav_contact">Contact</a>
-        </nav>
+    <header class="site-header site-header-light" data-header>
+      <a
+        class="brand-lockup"
+        href="./index.html"
+        aria-label="LS — Larion Siments, home"
+      >
+        <span class="brand-mark" aria-hidden="true">LS</span>
+        <span class="brand-name">Larion Siments</span>
+      </a>
+      <button
+        class="menu-toggle"
+        type="button"
+        data-menu-toggle
+        aria-expanded="false"
+        aria-controls="site-menu"
+      >
+        <span></span><span></span><span class="sr-only">Open navigation</span>
+      </button>
+      <nav
+        class="site-nav"
+        id="site-menu"
+        data-menu
+        aria-label="Main navigation"
+      >
+        <a href="./index.html" data-i18n="nav_home">Home</a>
+        <a class="is-active" href="./founder-mvps.html" data-i18n="nav_founder"
+          >Product Development</a
+        >
+        <a href="./internal-tools.html" data-i18n="nav_tools">Internal Tools</a>
+        <a href="./unreal-vr.html" data-i18n="nav_interactive">Unreal / VR</a>
+      </nav>
+      <div class="header-actions">
+        <button
+          class="lang-toggle"
+          type="button"
+          data-lang-toggle
+          aria-label="Switch language to Hebrew"
+        >
+          <span class="lang-code" data-lang-label>HE</span>
+        </button>
+        <a class="header-cta" href="#contact" data-i18n="header_cta">Contact</a>
       </div>
+      <span
+        class="scroll-progress"
+        data-scroll-progress
+        aria-hidden="true"
+      ></span>
     </header>
 
-    <main>
-      <section class="section reveal page-hero">
-        <div class="entry-main page-hero-panel">
-          <p class="eyebrow" data-i18n="founder_eyebrow">Founder MVPs</p>
-          <h1 class="page-title" data-i18n="founder_title">Founder MVPs that turn rough ideas into real demos fast.</h1>
-          <p class="hero-copy" data-i18n="founder_lead">
-            Built for founders who need a practical first version they can show, test, and iterate quickly with real feedback.
+    <main id="main">
+      <section class="case-hero case-hero-founder" aria-labelledby="case-title">
+        <div class="case-hero-copy">
+          <div class="case-number hero-enter">01 / 03</div>
+          <p class="case-kicker hero-enter" data-i18n="founder_eyebrow">
+            Product Development
           </p>
-          <div class="hero-actions">
-            <a class="btn btn-primary" href="#contact" data-i18n="founder_cta_button">Talk About an MVP</a>
-            <a class="btn btn-ghost" href="./index.html" data-i18n="hero_choose">Choose a Lane</a>
+          <h1 id="case-title" class="case-title">
+            <span class="case-title-line"><span>Product</span></span>
+            <span class="case-title-line"
+              ><span>delivery<i>.</i></span></span
+            >
+          </h1>
+          <p class="case-lead hero-enter" data-i18n="founder_lead">
+            For founders who need a dependable first product release they can
+            put in front of users, investors, and partners.
+          </p>
+          <div class="hero-actions hero-enter">
+            <a
+              class="button button-dark"
+              href="#contact"
+              data-i18n="founder_cta_button"
+              >Discuss Product Development</a
+            >
+            <a class="text-link" href="#examples"
+              ><span>See Lighthouse</span><span aria-hidden="true">↓</span></a
+            >
+          </div>
+        </div>
+
+        <div class="case-hero-art founder-hero-art" aria-hidden="true">
+          <img
+            class="founder-phone founder-phone-a"
+            src="./assets/media/non-unreal/lighthouse-people-map.jpg"
+            alt=""
+            fetchpriority="high"
+          />
+          <img
+            class="founder-phone founder-phone-b"
+            src="./assets/media/non-unreal/lighthouse-feed-stories.jpg"
+            alt=""
+            fetchpriority="high"
+          />
+          <img
+            class="founder-phone founder-phone-c"
+            src="./assets/media/non-unreal/lighthouse-nearby-feed.jpg"
+            alt=""
+            fetchpriority="high"
+          />
+        </div>
+
+        <div class="case-hero-rail" role="group" aria-label="Project focus">
+          <span>Product strategy</span><span>Core flows</span
+          ><span>Release delivery</span>
+        </div>
+      </section>
+
+      <section class="case-overview reveal">
+        <div class="section-shell case-overview-grid">
+          <div>
+            <p class="section-label" data-i18n="founder_for_title">
+              Who this is for
+            </p>
+            <ul class="editorial-list">
+              <li data-i18n="founder_for_1">
+                Founders moving from product strategy to a first release
+              </li>
+              <li data-i18n="founder_for_2">
+                Startups that need an investor- and customer-ready product
+              </li>
+              <li data-i18n="founder_for_3">
+                Teams that need experienced delivery before hiring full-time
+              </li>
+            </ul>
+          </div>
+          <div>
+            <p class="section-label" data-i18n="founder_build_title">
+              What I deliver
+            </p>
+            <ul class="editorial-list">
+              <li data-i18n="founder_build_1">
+                Web and mobile product foundations with complete core flows
+              </li>
+              <li data-i18n="founder_build_2">
+                Investor- and customer-ready first releases
+              </li>
+              <li data-i18n="founder_build_3">
+                Social, discovery, and engagement systems
+              </li>
+              <li data-i18n="founder_build_4">
+                Product foundations with privacy and trust controls
+              </li>
+            </ul>
           </div>
         </div>
       </section>
 
-      <section class="section reveal lane-section lane-page-first">
-        <div class="lane-panels two-up">
-          <article class="lane-panel">
-            <h3 data-i18n="founder_for_title">Who this is for</h3>
-            <ul class="service-list">
-              <li data-i18n="founder_for_1">Founders with an idea but no product yet</li>
-              <li data-i18n="founder_for_2">Startups that need an investor demo or customer-facing proof point</li>
-              <li data-i18n="founder_for_3">Teams validating a concept before hiring full-time</li>
-            </ul>
-          </article>
-          <article class="lane-panel">
-            <h3 data-i18n="founder_build_title">What I can build</h3>
-            <ul class="service-list">
-              <li data-i18n="founder_build_1">Product prototypes and clickable core flows</li>
-              <li data-i18n="founder_build_2">Investor demos and proof-of-concept apps</li>
-              <li data-i18n="founder_build_3">Fast first-version MVPs focused on validation</li>
-              <li data-i18n="founder_build_4">Interactive demos that make the product easy to explain</li>
-            </ul>
-          </article>
+      <section class="case-work" id="examples" aria-labelledby="examples-title">
+        <div class="section-shell case-work-heading reveal">
+          <p class="section-label">Selected product slices</p>
+          <h2 id="examples-title">
+            Lighthouse turned location-aware social discovery into a coherent
+            product experience.
+          </h2>
         </div>
-      </section>
 
-      <section class="section reveal">
-        <div class="section-heading compact-heading">
-          <p class="eyebrow" data-i18n="founder_process_eyebrow">Process</p>
-          <h2 data-i18n="founder_process_title">Define the smallest useful thing, then make it real fast.</h2>
-        </div>
-        <div class="process-grid">
-          <article class="process-step">
-            <span>01</span>
-            <h3 data-i18n="founder_step_1_title">Define the smallest useful version</h3>
-            <p data-i18n="founder_step_1_body">Strip the idea down to the core flow that needs to be tested or shown.</p>
-          </article>
-          <article class="process-step">
-            <span>02</span>
-            <h3 data-i18n="founder_step_2_title">Build a working prototype fast</h3>
-            <p data-i18n="founder_step_2_body">Focus on the interaction, logic, and presentation that matter most.</p>
-          </article>
-          <article class="process-step">
-            <span>03</span>
-            <h3 data-i18n="founder_step_3_title">Keep a tight feedback loop</h3>
-            <p data-i18n="founder_step_3_body">Review early, adjust scope quickly, and avoid spending time on the wrong layer.</p>
-          </article>
-          <article class="process-step">
-            <span>04</span>
-            <h3 data-i18n="founder_step_4_title">Refine the core experience</h3>
-            <p data-i18n="founder_step_4_body">Polish what a user or investor actually needs to understand in one session.</p>
-          </article>
-          <article class="process-step">
-            <span>05</span>
-            <h3 data-i18n="founder_step_5_title">Deliver something testable</h3>
-            <p data-i18n="founder_step_5_body">The result should be presentable, reviewable, and useful for the next decision.</p>
-          </article>
-        </div>
-      </section>
-
-      <section class="section reveal">
-        <div class="section-heading compact-heading">
-          <p class="eyebrow" data-i18n="founder_examples_eyebrow">Examples</p>
-          <h2 data-i18n="founder_examples_title">Lighthouse product slices used to validate adoption, trust, and daily engagement quickly.</h2>
-        </div>
-        <div class="work-grid project-grid founder-project-grid">
-          <article class="work-card project-card">
-            <figure class="project-shot project-shot-mobile">
-              <img src="./assets/media/non-unreal/lighthouse-feed-stories.jpg" alt="Lighthouse mobile feed and stories screen" loading="lazy" />
-            </figure>
-            <p class="work-chip" data-i18n="founder_example_chip_1">Investor Demo</p>
-            <h3 data-i18n="founder_example_title_1">A product story someone can understand in minutes</h3>
+        <article class="case-work-row reveal">
+          <figure class="case-shot case-shot-phone case-shot-lime">
+            <img
+              src="./assets/media/non-unreal/lighthouse-feed-stories.jpg"
+              alt="Lighthouse mobile feed and stories screen"
+              loading="lazy"
+            />
+          </figure>
+          <div class="case-work-copy">
+            <span>01 / Feed + Stories</span>
+            <h3 data-i18n="founder_example_title_1">
+              Core social surface shipped early for investor and user
+              walkthroughs
+            </h3>
             <p data-i18n="founder_example_body_1">
-              Good for investor meetings, sales conversations, or early partner buy-in when a deck is no longer enough.
+              Implemented feed, story rail, and quick post composer so the
+              product was usable from the first investor and user walkthroughs.
             </p>
-          </article>
-          <article class="work-card project-card">
-            <figure class="project-shot project-shot-mobile">
-              <img src="./assets/media/non-unreal/lighthouse-nearby-feed.jpg" alt="Lighthouse nearby discovery and social feed screen" loading="lazy" />
-            </figure>
-            <p class="work-chip" data-i18n="founder_example_chip_2">Validation MVP</p>
-            <h3 data-i18n="founder_example_title_2">A focused first version around one core workflow</h3>
-            <p data-i18n="founder_example_body_2">
-              Useful when the goal is to test the concept with real users before committing to a heavier build.
-            </p>
-          </article>
-          <article class="work-card project-card">
-            <figure class="project-shot project-shot-mobile">
-              <img src="./assets/media/non-unreal/lighthouse-people-map.jpg" alt="Lighthouse people map and discovery screen" loading="lazy" />
-            </figure>
-            <p class="work-chip" data-i18n="founder_example_chip_3">Interactive Demo</p>
-            <h3 data-i18n="founder_example_title_3">A clickable experience that makes the product tangible</h3>
-            <p data-i18n="founder_example_body_3">
-              Especially strong when the idea is hard to explain without showing the flow, interface, and interaction.
-            </p>
-          </article>
-          <article class="work-card project-card">
-            <figure class="project-shot project-shot-mobile">
-              <img src="./assets/media/non-unreal/lighthouse-post-engagement.jpg" alt="Lighthouse post engagement screen with social interactions" loading="lazy" />
-            </figure>
-            <p class="work-chip" data-i18n="founder_example_chip_4">Retention Loop</p>
-            <h3 data-i18n="founder_example_title_4">Posting and engagement flows that keep the product useful after onboarding</h3>
-            <p data-i18n="founder_example_body_4">
-              Designed so the first cohort has enough social momentum to return, interact, and validate real usage behavior.
-            </p>
-          </article>
-        </div>
+          </div>
+        </article>
 
-        <div class="cta-panel">
-          <h3 data-i18n="founder_cta_title">Need a working MVP fast?</h3>
-          <p data-i18n="founder_cta_body">
-            Send the rough idea, not the polished spec. I can help define the smallest useful build and turn it into something real.
-          </p>
-          <a class="btn btn-primary" href="#contact" data-i18n="founder_cta_button">Talk About an MVP</a>
+        <article class="case-work-row case-work-row-reverse reveal">
+          <figure class="case-shot case-shot-phone case-shot-ink">
+            <img
+              src="./assets/media/non-unreal/lighthouse-nearby-feed.jpg"
+              alt="Lighthouse nearby discovery and social feed"
+              loading="lazy"
+            />
+          </figure>
+          <div class="case-work-copy">
+            <span>02 / Nearby discovery</span>
+            <h3 data-i18n="founder_example_title_2">
+              People-nearby cards that turn discovery into immediate actions
+            </h3>
+            <p data-i18n="founder_example_body_2">
+              Built nearby suggestions with quick friend actions to test
+              conversion from browsing to actual connection behavior.
+            </p>
+          </div>
+        </article>
+
+        <article class="case-work-row reveal">
+          <figure class="case-shot case-shot-phone case-shot-paper">
+            <img
+              src="./assets/media/non-unreal/lighthouse-people-map.jpg"
+              alt="Lighthouse people map and discovery screen"
+              loading="lazy"
+            />
+          </figure>
+          <div class="case-work-copy">
+            <span>03 / People map</span>
+            <h3 data-i18n="founder_example_title_3">
+              Map-backed people view for location-aware social context
+            </h3>
+            <p data-i18n="founder_example_body_3">
+              The working flow linked presence visibility and people search so
+              users could discover contacts without exposing precise location
+              data.
+            </p>
+          </div>
+        </article>
+
+        <article class="case-work-row case-work-row-reverse reveal">
+          <figure class="case-shot case-shot-phone case-shot-blue">
+            <img
+              src="./assets/media/non-unreal/lighthouse-post-engagement.jpg"
+              alt="Lighthouse post engagement screen"
+              loading="lazy"
+            />
+          </figure>
+          <div class="case-work-copy">
+            <span>04 / Engagement loop</span>
+            <h3 data-i18n="founder_example_title_4">
+              Post interaction flow designed for repeat usage signals
+            </h3>
+            <p data-i18n="founder_example_body_4">
+              Structured post cards with reactions and save actions to support
+              repeat use and continued engagement.
+            </p>
+          </div>
+        </article>
+      </section>
+
+      <section class="process-section reveal" aria-labelledby="process-title">
+        <div class="section-shell">
+          <div class="process-heading">
+            <p class="section-label">Process</p>
+            <h2 id="process-title">
+              Define the right release, then build it with discipline.
+            </h2>
+          </div>
+          <ol class="process-list">
+            <li>
+              <span>01</span>
+              <div>
+                <h3 data-i18n="founder_step_1_title">
+                  Define the right first release
+                </h3>
+                <p data-i18n="founder_step_1_body">
+                  Turn the product goal into a clear scope, user journey, and
+                  delivery target.
+                </p>
+              </div>
+            </li>
+            <li>
+              <span>02</span>
+              <div>
+                <h3 data-i18n="founder_step_2_title">Build the core product</h3>
+                <p data-i18n="founder_step_2_body">
+                  Develop the interaction, logic, data, and interface needed for
+                  a coherent release.
+                </p>
+              </div>
+            </li>
+            <li>
+              <span>03</span>
+              <div>
+                <h3 data-i18n="founder_step_3_title">
+                  Keep a tight feedback loop
+                </h3>
+                <p data-i18n="founder_step_3_body">
+                  Review working software early, adjust scope intelligently, and
+                  keep delivery moving.
+                </p>
+              </div>
+            </li>
+            <li>
+              <span>04</span>
+              <div>
+                <h3 data-i18n="founder_step_4_title">Harden the experience</h3>
+                <p data-i18n="founder_step_4_body">
+                  Refine the UX, edge cases, and presentation quality that users
+                  will encounter.
+                </p>
+              </div>
+            </li>
+            <li>
+              <span>05</span>
+              <div>
+                <h3 data-i18n="founder_step_5_title">Prepare the release</h3>
+                <p data-i18n="founder_step_5_body">
+                  Hand over a release-ready product with a clear path for
+                  continued development.
+                </p>
+              </div>
+            </li>
+          </ol>
         </div>
       </section>
 
-      <section id="contact" class="section reveal contact-section">
-        <div class="section-heading">
-          <p class="eyebrow" data-i18n="contact_eyebrow">Contact</p>
-          <h2 data-i18n="contact_title">Let's scope your build.</h2>
-          <p class="contact-copy" data-i18n="contact_copy">
-            Send a short brief and I will reply with next steps.
-          </p>
-        </div>
-
-        <div class="contact-layout">
-          <div class="contact-panel">
-            <div class="contact-panel-intro">
-              <p class="eyebrow" data-i18n="contact_panel_eyebrow">Direct contact</p>
-              <h3 data-i18n="contact_panel_title">Choose your preferred channel.</h3>
-              <p class="contact-panel-copy" data-i18n="contact_panel_copy">
-                Email for detailed briefs. WhatsApp for faster coordination.
-              </p>
-            </div>
-
-            <div class="contact-channel-grid">
-              <a class="contact-channel contact-channel-email" href="mailto:Larion1@gmail.com">
-                <span class="contact-channel-label" data-i18n="contact_channel_email_label">Email</span>
-                <strong>Larion1@gmail.com</strong>
-                <span class="contact-channel-note" data-i18n="contact_channel_email_note">Detailed briefs</span>
-              </a>
-              <a class="contact-channel contact-channel-whatsapp" href="https://wa.me/972504931021" target="_blank" rel="noreferrer">
-                <span class="contact-channel-label" data-i18n="contact_channel_whatsapp_label">WhatsApp Israel</span>
-                <strong>+972 50 493 1021</strong>
-                <span class="contact-channel-note" data-i18n="contact_channel_whatsapp_note">Quick coordination</span>
-              </a>
-              <a class="contact-channel contact-channel-whatsapp" href="https://wa.me/66922470654" target="_blank" rel="noreferrer">
-                <span class="contact-channel-label" data-i18n="contact_channel_thailand_label">WhatsApp Thailand</span>
-                <strong>+66 92 247 0654</strong>
-                <span class="contact-channel-note" data-i18n="contact_channel_thailand_note">Bangkok timezone</span>
-              </a>
-              <a
-                class="contact-channel contact-channel-linkedin"
-                href="https://www.linkedin.com/in/larion-siments-b5bb82238/"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <span class="contact-channel-label" data-i18n="contact_channel_linkedin_label">LinkedIn</span>
-                <strong data-i18n="contact_linkedin">LinkedIn Profile</strong>
-                <span class="contact-channel-note" data-i18n="contact_channel_linkedin_note">Background</span>
-              </a>
-            </div>
-
-          </div>
-
-          <form
-            class="contact-request"
-            data-contact-form
-            data-request-subject="Founder MVP inquiry from website"
-            action="https://formsubmit.co/Larion1@gmail.com"
-            method="POST"
-            enctype="multipart/form-data"
+      <section class="next-project reveal" aria-label="Next project lane">
+        <a href="./internal-tools.html">
+          <span>Next lane · 02</span>
+          <strong data-i18n="lane_tools_title"
+            >Internal Tools / Automation</strong
           >
-            <p class="eyebrow" data-i18n="contact_widget_eyebrow">Project Request</p>
-            <h3 data-i18n="contact_widget_title">Tell me what you need</h3>
-            <p class="contact-request-copy" data-i18n="contact_widget_copy">
-              Share the goal, users, and timeline.
+          <span aria-hidden="true">→</span>
+        </a>
+      </section>
+
+      <section class="case-contact" id="contact">
+        <div class="section-shell case-contact-grid reveal">
+          <div>
+            <p class="section-label" data-i18n="contact_eyebrow">Contact</p>
+            <h2 data-i18n="founder_cta_title">
+              Need a first product version that can actually ship?
+            </h2>
+            <p data-i18n="founder_cta_body">
+              Send the product goal, core users, and delivery target. I can
+              shape the scope and build the first release.
             </p>
-
-            <div class="contact-form-grid">
-              <label class="contact-field">
-                <span data-i18n="contact_widget_name">Name</span>
-                <input type="text" name="name" required placeholder="Your name" data-i18n="contact_widget_name_placeholder" data-i18n-attrs="placeholder" />
-              </label>
-              <label class="contact-field">
-                <span data-i18n="contact_widget_contact">Email or WhatsApp</span>
-                <input type="text" name="contact" required placeholder="Best way to reach you" data-i18n="contact_widget_contact_placeholder" data-i18n-attrs="placeholder" />
-              </label>
-            </div>
-
-            <label class="contact-field contact-field-full">
-              <span data-i18n="contact_widget_message_label">Build request</span>
-              <textarea
-                name="message"
-                rows="5"
-                required
-                placeholder="Goal, users, timeline, and must-have flow"
-                data-i18n="contact_widget_message_placeholder"
-                data-i18n-attrs="placeholder"
-              ></textarea>
-            </label>
-
-            <button class="btn btn-primary contact-submit" type="submit" data-i18n="contact_widget_submit">Send Request</button>
-            <p class="contact-request-note" data-i18n="contact_widget_note"></p>
-          </form>
+          </div>
+          <div class="case-contact-actions">
+            <a
+              class="button button-accent"
+              href="mailto:Larion1@gmail.com?subject=Product%20development%20inquiry"
+              data-i18n="founder_cta_button"
+              >Discuss Product Development</a
+            >
+            <a
+              class="text-link text-link-light"
+              href="https://wa.me/66922470654"
+              target="_blank"
+              rel="noreferrer"
+              ><span>WhatsApp</span><span aria-hidden="true">↗</span></a
+            >
+          </div>
         </div>
       </section>
     </main>
 
     <footer class="site-footer">
-      <p data-i18n="footer_text">Larion Siments | MVPs, Internal Tools, Interactive Prototypes</p>
+      <a class="footer-brand" href="./index.html"
+        >Larion Siments<span>.</span></a
+      >
+      <p data-i18n="footer_text">
+        Larion Siments | Unreal Engine, VR, Real-Time Production
+      </p>
+      <a href="mailto:Larion1@gmail.com">Bangkok / Available worldwide</a>
     </footer>
 
-    <script src="./script.js"></script>
+    <script src="./script.js?v=20260710-3"></script>
   </body>
 </html>

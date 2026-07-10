@@ -3,262 +3,352 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Internal Tools / Automation | Larion Siments</title>
+    <meta name="theme-color" content="#0a0a09" />
+    <title>Internal Tools &amp; Automation — Larion Siments</title>
     <meta
       name="description"
-      content="Internal tools and automation by Larion Siments: dashboards, workflow systems, admin tools, and AI-assisted utilities for fast-moving teams."
+      content="Internal tools and automation by Larion Siments: dashboards, workflows, admin systems, and AI-assisted utilities shaped around real operations."
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23c8ff45%22/><text x=%2250%22 y=%2264%22 font-size=%2248%22 font-family=%22Arial%22 font-weight=%22900%22 text-anchor=%22middle%22 fill=%22%230a0a09%22>LS</text></svg>"
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Syne:wght@500;700&amp;display=swap"
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&amp;family=Inter+Tight:wght@500;600;700;800;900&amp;display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./styles.css?v=20260710-3" />
   </head>
-  <body>
-    <div class="page-bg" aria-hidden="true"></div>
+  <body class="case-page tools-page">
+    <a class="skip-link" href="#main">Skip to content</a>
 
-    <header class="site-header">
-      <div class="site-shell">
-        <div class="header-top">
-          <a class="brand" href="./index.html">Larion Siments</a>
-          <div class="header-tools">
-            <div class="header-contact">
-              <a class="nav-contact" href="mailto:Larion1@gmail.com">Larion1@gmail.com</a>
-              <a class="nav-contact" href="https://wa.me/972504931021" target="_blank" rel="noreferrer">+972 50 493 1021</a>
-              <a class="nav-contact" href="https://wa.me/66922470654" target="_blank" rel="noreferrer">+66 92 247 0654</a>
-            </div>
-            <a class="btn btn-primary nav-cta" href="#contact" data-i18n="header_cta">Contact</a>
-            <button class="lang-toggle" type="button" data-lang-toggle aria-label="Switch language to Hebrew">
-              <span class="lang-toggle-dot" aria-hidden="true"></span>
-              <span data-lang-label>HE</span>
-            </button>
-          </div>
-        </div>
-
-        <nav class="site-nav" aria-label="Main navigation">
-          <a href="./index.html" data-i18n="nav_home">Home</a>
-          <a href="./founder-mvps.html" data-i18n="nav_founder">Founder MVPs</a>
-          <a class="is-active" href="./internal-tools.html" data-i18n="nav_tools">Internal Tools</a>
-          <a href="./interactive-prototypes.html" data-i18n="nav_interactive">Interactive / Immersive</a>
-          <a href="./index.html#about" data-i18n="nav_about">About</a>
-          <a href="#contact" data-i18n="nav_contact">Contact</a>
-        </nav>
+    <header class="site-header" data-header>
+      <a
+        class="brand-lockup"
+        href="./index.html"
+        aria-label="LS — Larion Siments, home"
+      >
+        <span class="brand-mark" aria-hidden="true">LS</span>
+        <span class="brand-name">Larion Siments</span>
+      </a>
+      <button
+        class="menu-toggle"
+        type="button"
+        data-menu-toggle
+        aria-expanded="false"
+        aria-controls="site-menu"
+      >
+        <span></span><span></span><span class="sr-only">Open navigation</span>
+      </button>
+      <nav
+        class="site-nav"
+        id="site-menu"
+        data-menu
+        aria-label="Main navigation"
+      >
+        <a href="./index.html" data-i18n="nav_home">Home</a>
+        <a href="./founder-mvps.html" data-i18n="nav_founder"
+          >Product Development</a
+        >
+        <a class="is-active" href="./internal-tools.html" data-i18n="nav_tools"
+          >Internal Tools</a
+        >
+        <a href="./unreal-vr.html" data-i18n="nav_interactive">Unreal / VR</a>
+      </nav>
+      <div class="header-actions">
+        <button
+          class="lang-toggle"
+          type="button"
+          data-lang-toggle
+          aria-label="Switch language to Hebrew"
+        >
+          <span class="lang-code" data-lang-label>HE</span>
+        </button>
+        <a class="header-cta" href="#contact" data-i18n="header_cta">Contact</a>
       </div>
+      <span
+        class="scroll-progress"
+        data-scroll-progress
+        aria-hidden="true"
+      ></span>
     </header>
 
-    <main>
-      <section class="section reveal page-hero">
-        <div class="entry-main page-hero-panel">
-          <p class="eyebrow" data-i18n="tools_eyebrow">Internal Tools / Automation</p>
-          <h1 class="page-title" data-i18n="tools_title">Internal tools that reduce workflow friction and save team time.</h1>
-          <p class="hero-copy" data-i18n="tools_lead">
-            For teams that need useful systems fast: dashboards, admin workflows, and AI-assisted utilities shaped around real operations.
+    <main id="main">
+      <section class="case-hero case-hero-tools" aria-labelledby="case-title">
+        <figure class="case-hero-bg" aria-hidden="true">
+          <img
+            src="./assets/media/non-unreal/age-creator-console.jpg"
+            alt=""
+            fetchpriority="high"
+          />
+        </figure>
+        <div class="case-hero-bg-shade" aria-hidden="true"></div>
+
+        <div class="case-hero-copy">
+          <div class="case-number hero-enter">02 / 03</div>
+          <p class="case-kicker hero-enter" data-i18n="tools_eyebrow">
+            Internal Tools / Automation
           </p>
-          <div class="hero-actions">
-            <a class="btn btn-primary" href="#contact" data-i18n="tools_cta_button">Talk About a Tool Build</a>
-            <a class="btn btn-ghost" href="./index.html" data-i18n="hero_choose">Choose a Lane</a>
+          <h1 id="case-title" class="case-title">
+            <span class="case-title-line"><span>Internal</span></span>
+            <span class="case-title-line"
+              ><span>systems<i>.</i></span></span
+            >
+          </h1>
+          <p class="case-lead hero-enter" data-i18n="tools_lead">
+            For teams that need useful systems fast: dashboards, admin
+            workflows, and AI-assisted utilities shaped around real operations.
+          </p>
+          <div class="hero-actions hero-enter">
+            <a
+              class="button button-accent"
+              href="#contact"
+              data-i18n="tools_cta_button"
+              >Talk About a Tool Build</a
+            >
+            <a class="text-link text-link-light" href="#examples"
+              ><span>See AGE</span><span aria-hidden="true">↓</span></a
+            >
+          </div>
+        </div>
+
+        <div class="case-hero-rail" role="group" aria-label="Project focus">
+          <span>Workflow mapping</span><span>Operational UI</span
+          ><span>Automation</span>
+        </div>
+      </section>
+
+      <section class="case-overview reveal">
+        <div class="section-shell case-overview-grid">
+          <div>
+            <p class="section-label" data-i18n="tools_build_title">
+              What I deliver
+            </p>
+            <ul class="editorial-list">
+              <li data-i18n="tools_build_1">Dashboards and admin panels</li>
+              <li data-i18n="tools_build_2">
+                Workflow systems and internal portals
+              </li>
+              <li data-i18n="tools_build_3">
+                Shared UI contracts across teams and platforms
+              </li>
+              <li data-i18n="tools_build_4">
+                AI-assisted utilities for repetitive team tasks
+              </li>
+            </ul>
+          </div>
+          <div>
+            <p class="section-label" data-i18n="tools_outcomes_title">
+              Why teams bring me in
+            </p>
+            <ul class="editorial-list">
+              <li data-i18n="tools_outcomes_1">
+                Reduce repetitive work and handoff friction
+              </li>
+              <li data-i18n="tools_outcomes_2">
+                Centralize messy processes into one useful surface
+              </li>
+              <li data-i18n="tools_outcomes_3">
+                Replace spreadsheet sprawl with purpose-built interfaces
+              </li>
+              <li data-i18n="tools_outcomes_4">
+                Ship something useful quickly and improve it with real usage
+              </li>
+            </ul>
           </div>
         </div>
       </section>
 
-      <section class="section reveal lane-section lane-page-first">
-        <div class="lane-panels two-up">
-          <article class="lane-panel">
-            <h3 data-i18n="tools_build_title">What I can build</h3>
-            <ul class="service-list">
-              <li data-i18n="tools_build_1">Dashboards and admin panels</li>
-              <li data-i18n="tools_build_2">Workflow systems and internal portals</li>
-              <li data-i18n="tools_build_3">AI-assisted utilities for repetitive team tasks</li>
-              <li data-i18n="tools_build_4">Custom lightweight business apps</li>
-            </ul>
-          </article>
-          <article class="lane-panel">
-            <h3 data-i18n="tools_outcomes_title">Why teams bring me in</h3>
-            <ul class="service-list">
-              <li data-i18n="tools_outcomes_1">Reduce repetitive work and handoff friction</li>
-              <li data-i18n="tools_outcomes_2">Centralize messy processes into one useful surface</li>
-              <li data-i18n="tools_outcomes_3">Replace spreadsheet sprawl with purpose-built interfaces</li>
-              <li data-i18n="tools_outcomes_4">Ship something useful quickly and improve it with real usage</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section class="section reveal">
-        <div class="section-heading compact-heading">
-          <p class="eyebrow" data-i18n="tools_examples_eyebrow">Examples</p>
-          <h2 data-i18n="tools_examples_title">AGE Creator Console work focused on internal speed, consistency, and QA visibility.</h2>
-        </div>
-        <div class="work-grid project-grid tools-project-grid">
-          <article class="work-card project-card">
-            <figure class="project-shot project-shot-wide">
-              <img src="./assets/media/non-unreal/age-creator-console.jpg" alt="AGE creator console with inventory browser and runtime viewport" loading="lazy" />
-            </figure>
-            <p class="work-chip" data-i18n="tools_example_chip_1">Ops Dashboard</p>
-            <h3 data-i18n="tools_example_title_1">A dashboard that surfaces the few numbers and actions that matter</h3>
-            <p data-i18n="tools_example_body_1">
-              Good for operational visibility, approvals, queues, and status tracking without overcomplicating the system.
-            </p>
-          </article>
-          <article class="work-card project-card">
-            <figure class="project-shot project-shot-wide">
-              <img src="./assets/media/non-unreal/age-liveui-editor.jpg" alt="AGE live UI editor with widget tree and chat-assisted iteration" loading="lazy" />
-            </figure>
-            <p class="work-chip" data-i18n="tools_example_chip_2">Workflow Portal</p>
-            <h3 data-i18n="tools_example_title_2">An internal tool shaped around the team's real handoffs</h3>
-            <p data-i18n="tools_example_body_2">
-              Useful when generic software creates workarounds instead of solving the process.
-            </p>
-          </article>
-          <article class="work-card project-card">
-            <figure class="project-shot project-shot-wide">
-              <img src="./assets/media/non-unreal/age-viewport-controls.jpg" alt="AGE viewport controls for drag rotate and scale in creator workflow" loading="lazy" />
-            </figure>
-            <p class="work-chip" data-i18n="tools_example_chip_3">AI Utility</p>
-            <h3 data-i18n="tools_example_title_3">A focused AI-assisted helper for intake, review, or admin tasks</h3>
-            <p data-i18n="tools_example_body_3">
-              Best when the goal is saving team time with a narrow, clearly defined workflow rather than a massive platform.
-            </p>
-          </article>
-        </div>
-      </section>
-
-      <section class="section reveal">
-        <div class="section-heading compact-heading">
-          <p class="eyebrow" data-i18n="tools_process_eyebrow">Process</p>
-          <h2 data-i18n="tools_process_title">Find the friction, build the useful surface, tighten with real usage.</h2>
-        </div>
-        <div class="process-grid tools-process-grid">
-          <article class="process-step">
-            <span>01</span>
-            <h3 data-i18n="tools_step_1_title">Map the workflow</h3>
-            <p data-i18n="tools_step_1_body">Find the bottleneck, the duplicate effort, and the decisions that need a clearer interface.</p>
-          </article>
-          <article class="process-step">
-            <span>02</span>
-            <h3 data-i18n="tools_step_2_title">Build the useful surface first</h3>
-            <p data-i18n="tools_step_2_body">Start with the dashboard, panel, or flow that removes the most friction.</p>
-          </article>
-          <article class="process-step">
-            <span>03</span>
-            <h3 data-i18n="tools_step_3_title">Tighten the loop</h3>
-            <p data-i18n="tools_step_3_body">Use the team quickly, spot edge cases, and simplify based on actual usage.</p>
-          </article>
-          <article class="process-step">
-            <span>04</span>
-            <h3 data-i18n="tools_step_4_title">Layer in automation where it helps</h3>
-            <p data-i18n="tools_step_4_body">Bring AI or workflow automation into the narrow tasks where it saves time reliably.</p>
-          </article>
+      <section
+        class="tools-showcase"
+        id="examples"
+        aria-labelledby="examples-title"
+      >
+        <div class="section-shell case-work-heading reveal">
+          <p class="section-label">Selected system</p>
+          <h2 id="examples-title">
+            AGE puts content, simulation, and AI-assisted iteration in one
+            operating surface.
+          </h2>
         </div>
 
-        <div class="cta-panel">
-          <h3 data-i18n="tools_cta_title">Need an internal tool that actually fits the workflow?</h3>
-          <p data-i18n="tools_cta_body">
-            If the current process is spread across spreadsheets, chat threads, and manual follow-ups, I can help turn it into one usable system.
-          </p>
-          <a class="btn btn-primary" href="#contact" data-i18n="tools_cta_button">Talk About a Tool Build</a>
-        </div>
-      </section>
-
-      <section id="contact" class="section reveal contact-section">
-        <div class="section-heading">
-          <p class="eyebrow" data-i18n="contact_eyebrow">Contact</p>
-          <h2 data-i18n="contact_title">Let's scope your build.</h2>
-          <p class="contact-copy" data-i18n="contact_copy">
-            Send a short brief and I will reply with next steps.
-          </p>
-        </div>
-
-        <div class="contact-layout">
-          <div class="contact-panel">
-            <div class="contact-panel-intro">
-              <p class="eyebrow" data-i18n="contact_panel_eyebrow">Direct contact</p>
-              <h3 data-i18n="contact_panel_title">Choose your preferred channel.</h3>
-              <p class="contact-panel-copy" data-i18n="contact_panel_copy">
-                Email for detailed briefs. WhatsApp for faster coordination.
+        <article class="tools-frame reveal">
+          <figure>
+            <img
+              src="./assets/media/non-unreal/age-creator-console.jpg"
+              alt="AGE creator console with content browser, simulation viewport, and runtime chat"
+              loading="lazy"
+            />
+          </figure>
+          <div class="tools-frame-caption">
+            <span>01 / Creator Console</span>
+            <div>
+              <h3 data-i18n="tools_example_title_1">
+                Inventory, viewport, and runtime chat in one operational surface
+              </h3>
+              <p data-i18n="tools_example_body_1">
+                In AGE, the creator console combined content browser, simulation
+                viewport, and agent chat so iteration could happen without
+                constant context switching.
               </p>
             </div>
-
-            <div class="contact-channel-grid">
-              <a class="contact-channel contact-channel-email" href="mailto:Larion1@gmail.com">
-                <span class="contact-channel-label" data-i18n="contact_channel_email_label">Email</span>
-                <strong>Larion1@gmail.com</strong>
-                <span class="contact-channel-note" data-i18n="contact_channel_email_note">Detailed briefs</span>
-              </a>
-              <a class="contact-channel contact-channel-whatsapp" href="https://wa.me/972504931021" target="_blank" rel="noreferrer">
-                <span class="contact-channel-label" data-i18n="contact_channel_whatsapp_label">WhatsApp Israel</span>
-                <strong>+972 50 493 1021</strong>
-                <span class="contact-channel-note" data-i18n="contact_channel_whatsapp_note">Quick coordination</span>
-              </a>
-              <a class="contact-channel contact-channel-whatsapp" href="https://wa.me/66922470654" target="_blank" rel="noreferrer">
-                <span class="contact-channel-label" data-i18n="contact_channel_thailand_label">WhatsApp Thailand</span>
-                <strong>+66 92 247 0654</strong>
-                <span class="contact-channel-note" data-i18n="contact_channel_thailand_note">Bangkok timezone</span>
-              </a>
-              <a
-                class="contact-channel contact-channel-linkedin"
-                href="https://www.linkedin.com/in/larion-siments-b5bb82238/"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <span class="contact-channel-label" data-i18n="contact_channel_linkedin_label">LinkedIn</span>
-                <strong data-i18n="contact_linkedin">LinkedIn Profile</strong>
-                <span class="contact-channel-note" data-i18n="contact_channel_linkedin_note">Background</span>
-              </a>
-            </div>
-
           </div>
+        </article>
 
-          <form
-            class="contact-request"
-            data-contact-form
-            data-request-subject="Internal tools inquiry from website"
-            action="https://formsubmit.co/Larion1@gmail.com"
-            method="POST"
-            enctype="multipart/form-data"
-          >
-            <p class="eyebrow" data-i18n="contact_widget_eyebrow">Project Request</p>
-            <h3 data-i18n="contact_widget_title">Tell me what you need</h3>
-            <p class="contact-request-copy" data-i18n="contact_widget_copy">
-              Share the goal, users, and timeline.
-            </p>
-
-            <div class="contact-form-grid">
-              <label class="contact-field">
-                <span data-i18n="contact_widget_name">Name</span>
-                <input type="text" name="name" required placeholder="Your name" data-i18n="contact_widget_name_placeholder" data-i18n-attrs="placeholder" />
-              </label>
-              <label class="contact-field">
-                <span data-i18n="contact_widget_contact">Email or WhatsApp</span>
-                <input type="text" name="contact" required placeholder="Best way to reach you" data-i18n="contact_widget_contact_placeholder" data-i18n-attrs="placeholder" />
-              </label>
+        <div class="tools-detail-grid">
+          <article class="tools-detail reveal">
+            <figure>
+              <img
+                src="./assets/media/non-unreal/age-liveui-editor.jpg"
+                alt="AGE LiveUI component editor and preview"
+                loading="lazy"
+              />
+            </figure>
+            <div>
+              <span>02 / LiveUI</span>
+              <h3 data-i18n="tools_example_title_2">
+                Widget editing workflow with immediate visual verification
+              </h3>
+              <p data-i18n="tools_example_body_2">
+                LiveUI flow supports editing UI components, previewing changes,
+                and keeping implementation aligned with shared state contracts.
+              </p>
             </div>
+          </article>
 
-            <label class="contact-field contact-field-full">
-              <span data-i18n="contact_widget_message_label">Build request</span>
-              <textarea
-                name="message"
-                rows="5"
-                required
-                placeholder="Goal, users, timeline, and must-have flow"
-                data-i18n="contact_widget_message_placeholder"
-                data-i18n-attrs="placeholder"
-              ></textarea>
-            </label>
+          <article class="tools-detail reveal">
+            <figure>
+              <img
+                src="./assets/media/non-unreal/age-viewport-controls.jpg"
+                alt="AGE simulation viewport controls"
+                loading="lazy"
+              />
+            </figure>
+            <div>
+              <span>03 / Viewport controls</span>
+              <h3 data-i18n="tools_example_title_3">
+                Operator-friendly controls for fast simulation adjustments
+              </h3>
+              <p data-i18n="tools_example_body_3">
+                Drag, rotate, scale, and quality controls were exposed for
+                keyboard- and QA-friendly iteration during internal testing.
+              </p>
+            </div>
+          </article>
+        </div>
+      </section>
 
-            <button class="btn btn-primary contact-submit" type="submit" data-i18n="contact_widget_submit">Send Request</button>
-            <p class="contact-request-note" data-i18n="contact_widget_note"></p>
-          </form>
+      <section class="process-section reveal" aria-labelledby="process-title">
+        <div class="section-shell">
+          <div class="process-heading">
+            <p class="section-label">Process</p>
+            <h2 id="process-title">
+              Start with the friction. Build the useful surface first.
+            </h2>
+          </div>
+          <ol class="process-list process-list-four">
+            <li>
+              <span>01</span>
+              <div>
+                <h3 data-i18n="tools_step_1_title">Map the workflow</h3>
+                <p data-i18n="tools_step_1_body">
+                  Find the bottleneck, the duplicate effort, and the decisions
+                  that need a clearer interface.
+                </p>
+              </div>
+            </li>
+            <li>
+              <span>02</span>
+              <div>
+                <h3 data-i18n="tools_step_2_title">
+                  Build the useful surface first
+                </h3>
+                <p data-i18n="tools_step_2_body">
+                  Start with the dashboard, panel, or flow that removes the most
+                  friction.
+                </p>
+              </div>
+            </li>
+            <li>
+              <span>03</span>
+              <div>
+                <h3 data-i18n="tools_step_3_title">Tighten the loop</h3>
+                <p data-i18n="tools_step_3_body">
+                  Use the team quickly, spot edge cases, and simplify based on
+                  actual usage.
+                </p>
+              </div>
+            </li>
+            <li>
+              <span>04</span>
+              <div>
+                <h3 data-i18n="tools_step_4_title">
+                  Layer in automation where it helps
+                </h3>
+                <p data-i18n="tools_step_4_body">
+                  Bring AI or workflow automation into the narrow tasks where it
+                  saves time reliably.
+                </p>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="next-project reveal" aria-label="Next project lane">
+        <a href="./unreal-vr.html">
+          <span>Next lane · 03</span>
+          <strong data-i18n="lane_interactive_title"
+            >Unreal / VR Production</strong
+          >
+          <span aria-hidden="true">→</span>
+        </a>
+      </section>
+
+      <section class="case-contact" id="contact">
+        <div class="section-shell case-contact-grid reveal">
+          <div>
+            <p class="section-label" data-i18n="contact_eyebrow">Contact</p>
+            <h2 data-i18n="tools_cta_title">
+              Need an internal tool that actually fits the workflow?
+            </h2>
+            <p data-i18n="tools_cta_body">
+              If the current process is spread across spreadsheets, chat
+              threads, and manual follow-ups, I can help turn it into one usable
+              system.
+            </p>
+          </div>
+          <div class="case-contact-actions">
+            <a
+              class="button button-accent"
+              href="mailto:Larion1@gmail.com?subject=Internal%20tool%20inquiry"
+              data-i18n="tools_cta_button"
+              >Talk About a Tool Build</a
+            >
+            <a
+              class="text-link text-link-light"
+              href="https://wa.me/66922470654"
+              target="_blank"
+              rel="noreferrer"
+              ><span>WhatsApp</span><span aria-hidden="true">↗</span></a
+            >
+          </div>
         </div>
       </section>
     </main>
 
     <footer class="site-footer">
-      <p data-i18n="footer_text">Larion Siments | MVPs, Internal Tools, Interactive Prototypes</p>
+      <a class="footer-brand" href="./index.html"
+        >Larion Siments<span>.</span></a
+      >
+      <p data-i18n="footer_text">
+        Larion Siments | Unreal Engine, VR, Real-Time Production
+      </p>
+      <a href="mailto:Larion1@gmail.com">Bangkok / Available worldwide</a>
     </footer>
 
-    <script src="./script.js"></script>
+    <script src="./script.js?v=20260710-3"></script>
   </body>
 </html>
