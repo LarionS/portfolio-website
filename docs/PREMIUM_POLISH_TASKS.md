@@ -73,4 +73,5 @@ This checklist translates the findings in [PREMIUM_POLISH_AUDIT.md](./PREMIUM_PO
 - [x] Test reduced-motion behavior and stable video fallback.
 - [x] Inspect console errors/warnings and loaded asset sizes.
 - [x] Verify email, WhatsApp, chapter navigation, and scene-action controls.
-- [ ] Commit intentionally, push, and verify the production URL with a cache-busting query.
+- [x] Commit intentionally, publish `main`, and verify the production URL with a cache-busting query.
+  - Verified on 26 July 2026 at `https://playframe.qd.je/?v=0feeb45277d440a57cac7ad55a2d1f8322b8c4cb`.
