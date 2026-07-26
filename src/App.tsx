@@ -2,12 +2,12 @@ import {
   Component,
   lazy,
   Suspense,
+  useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from "react";
-import type { CSSProperties, ErrorInfo, ReactNode } from "react";
+import type { ErrorInfo, MouseEvent as ReactMouseEvent, ReactNode } from "react";
 import { chapters, contact, mobileProducts } from "./content";
 import type { Chapter } from "./content";
 
@@ -52,8 +52,15 @@ function useMediaQuery(query: string) {
 }
 
 function useJourneyProgress() {
-  const progress = useRef(0);
-  const [activeStage, setActiveStage] = useState(0);
+  const initialStage = useRef((() => {
+    if (typeof window === "undefined") return 0;
+    const hash = window.location.hash.slice(1);
+    const chapterIndex = chapters.findIndex((chapter) => chapter.id === hash);
+    if (chapterIndex >= 0) return chapterIndex + 1;
+    return hash === "contact" ? 7 : 0;
+  })()).current;
+  const progress = useRef(initialStage);
+  const [activeStage, setActiveStage] = useState(initialStage);
 
   useEffect(() => {
     let frame = 0;
@@ -87,10 +94,7 @@ function useJourneyProgress() {
       }
 
       progress.current = nextProgress;
-      const nextActive = Math.max(
-        0,
-        Math.min(metrics.length - 1, Math.round(nextProgress)),
-      );
+      const nextActive = Math.max(0, Math.min(7, Math.round(nextProgress)));
       setActiveStage((current) => (current === nextActive ? current : nextActive));
     };
 
@@ -105,6 +109,16 @@ function useJourneyProgress() {
     sections.forEach((section) => resizeObserver.observe(section));
 
     measure();
+    if (initialStage > 0) {
+      const target = document.querySelector<HTMLElement>(window.location.hash);
+      if (target) {
+        const root = document.documentElement;
+        const previousBehavior = root.style.scrollBehavior;
+        root.style.scrollBehavior = "auto";
+        target.scrollIntoView({ block: "start" });
+        root.style.scrollBehavior = previousBehavior;
+      }
+    }
     update();
     window.addEventListener("scroll", requestUpdate, { passive: true });
     window.addEventListener("resize", requestUpdate, { passive: true });
@@ -115,103 +129,125 @@ function useJourneyProgress() {
       window.removeEventListener("scroll", requestUpdate);
       window.removeEventListener("resize", requestUpdate);
     };
-  }, []);
+  }, [initialStage]);
 
   return { progress, activeStage };
 }
 
-function ProjectFilm({
-  chapter,
-  reducedMotion,
-  motionPaused,
-}: {
-  chapter: Chapter;
-  reducedMotion: boolean;
-  motionPaused: boolean;
-}) {
-  const videoRef = useRef<HTMLVideoElement>(null);
+type JumpHandler = (
+  event: ReactMouseEvent<HTMLAnchorElement>,
+  id: string,
+  stage: number,
+) => void;
 
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-    if (reducedMotion || motionPaused) {
-      video.pause();
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && document.visibilityState === "visible") {
-          void video.play().catch(() => undefined);
-        } else {
-          video.pause();
-        }
-      },
-      { threshold: 0.42 },
-    );
-
-    const handleVisibility = () => {
-      if (document.hidden) video.pause();
-    };
-
-    observer.observe(video);
-    document.addEventListener("visibilitychange", handleVisibility);
-    return () => {
-      observer.disconnect();
-      document.removeEventListener("visibilitychange", handleVisibility);
-    };
-  }, [motionPaused, reducedMotion]);
-
+function Header({ activeStage, onJump }: { activeStage: number; onJump: JumpHandler }) {
+  const chapterNumber = activeStage > 0 && activeStage < 7 ? activeStage : 0;
   return (
-    <figure className={`project-film project-film--${chapter.alignment}`}>
-      <div className="project-film__frame">
-        <video
-          ref={videoRef}
-          src={chapter.video}
-          poster={chapter.poster}
-          muted
-          loop
-          playsInline
-          preload="metadata"
-          aria-label={`${chapter.eyebrow} project footage`}
-        />
-        <span className="project-film__live" aria-hidden="true">
-          <i /> Live artifact
+    <header className="site-header">
+      <a className="wordmark" href="#top" aria-label="Larion Siments, home" onClick={(event) => onJump(event, "top", 0)}>
+        <span className="wordmark__mark">LS</span>
+        <span className="wordmark__text">
+          <b>Larion Siments</b>
+          <small>Unreal / VR systems</small>
         </span>
-        <span className="project-film__corner project-film__corner--a" />
-        <span className="project-film__corner project-film__corner--b" />
+      </a>
+
+      <div className="header-status" aria-live="polite">
+        <span>{chapterNumber ? String(chapterNumber).padStart(2, "0") : "00"}</span>
+        <i />
+        <span>06</span>
       </div>
-      <figcaption>
-        <span>{chapter.number}</span>
-        {chapter.note}
-      </figcaption>
-    </figure>
+
+      <div className="header-actions">
+        <a className="skip-experience" href="#contact" onClick={(event) => onJump(event, "contact", 7)}>
+          Skip journey
+        </a>
+        <a className="header-cta" href={contact.emailHref}>
+          Start a project <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </header>
   );
 }
 
-function MobileProductList() {
+function JourneyRail({ activeStage, onJump }: { activeStage: number; onJump: JumpHandler }) {
   return (
-    <div className="mobile-product-list" aria-label="Selected mobile products">
-      {mobileProducts.map((product) => (
-        <article className="mobile-product" key={product.name}>
-          <img src={product.icon} alt="" width="48" height="48" loading="lazy" />
-          <div>
-            <h3>{product.name}</h3>
-            <p>{product.line}</p>
-          </div>
-        </article>
-      ))}
+    <nav className="journey-rail" aria-label="Project journey" id="project-index">
+      <span className="journey-rail__track" aria-hidden="true">
+        <i style={{ transform: `scaleY(${Math.max(0, Math.min(1, activeStage / 6))})` }} />
+      </span>
+      {chapters.map((chapter, index) => {
+        const stage = index + 1;
+        return (
+          <a
+            key={chapter.id}
+            href={`#${chapter.id}`}
+            onClick={(event) => onJump(event, chapter.id, stage)}
+            className={activeStage === stage ? "is-active" : ""}
+            aria-current={activeStage === stage ? "step" : undefined}
+            aria-label={`${chapter.nav}, chapter ${chapter.number}`}
+          >
+            <b>{chapter.nav}</b>
+            <span>{chapter.number}</span>
+          </a>
+        );
+      })}
+    </nav>
+  );
+}
+
+function WorldFallback({ world }: { world: Chapter["world"] }) {
+  return (
+    <div className={`world-fallback world-fallback--${world}`} aria-hidden="true">
+      <i />
+      <i />
+      <i />
+      <span />
     </div>
   );
 }
 
-function MobileFallback() {
+function Hero() {
   return (
-    <div className="mobile-fallback" aria-hidden="true">
-      {mobileProducts.map((product, index) => (
-        <div className={`fallback-phone fallback-phone--${index + 1}`} key={product.name}>
-          <img src={product.screen} alt="" loading="lazy" />
+    <section className="hero" id="top" data-stage="0" aria-labelledby="hero-title">
+      <WorldFallback world="clinical" />
+      <article className="hero__content">
+        <p className="hero__eyebrow">Larion Siments · Unreal Engine + VR systems</p>
+        <h1 id="hero-title">
+          Real-time worlds.
+          <span>Real-world impact.</span>
+        </h1>
+        <p className="hero__lede">
+          End-to-end Unreal Engine and VR systems—multiplayer simulation, instructor
+          control, wearables, tracked hardware and production deployment.
+        </p>
+        <div className="hero__actions">
+          <a className="primary-button" href="#clinical">
+            Enter the journey <span aria-hidden="true">↓</span>
+          </a>
+          <a className="quiet-link" href={contact.emailHref}>
+            Discuss a project <span aria-hidden="true">↗</span>
+          </a>
         </div>
+      </article>
+      <div className="hero__system-note" aria-hidden="true">
+        <span>Scroll to move through the worlds</span>
+        <i />
+        <span>Move the cursor to wake the system</span>
+      </div>
+    </section>
+  );
+}
+
+function ProductNames() {
+  return (
+    <div className="product-names" aria-label="Selected mobile products">
+      {mobileProducts.map((product, index) => (
+        <span key={product.name}>
+          <i>{String(index + 1).padStart(2, "0")}</i>
+          <b>{product.name}</b>
+          <small>{product.line}</small>
+        </span>
       ))}
     </div>
   );
@@ -220,181 +256,66 @@ function MobileFallback() {
 function ChapterSection({
   chapter,
   index,
-  reducedMotion,
-  motionPaused,
+  interactive,
 }: {
   chapter: Chapter;
   index: number;
-  reducedMotion: boolean;
-  motionPaused: boolean;
+  interactive: boolean;
 }) {
-  const nextId = chapters[index + 1]?.id ?? "contact";
-  const fallback = chapter.image ?? chapter.poster;
-  const style = {
-    "--chapter-accent": chapter.accent,
-    "--chapter-rgb": chapter.accentRgb,
-    "--fallback-image": fallback ? `url(${fallback})` : "none",
-  } as CSSProperties;
-
   return (
     <section
-      className={`chapter chapter--${chapter.alignment}${chapter.video ? " chapter--film" : ""}`}
+      className={`chapter chapter--${chapter.world}`}
       id={chapter.id}
       data-stage={index + 1}
-      style={style}
       aria-labelledby={`${chapter.id}-title`}
     >
-      <div className="chapter__fallback" aria-hidden="true" />
-      <div className="chapter__wash" aria-hidden="true" />
-      <article className="chapter__copy">
-        <p className="chapter__kicker">
+      <WorldFallback world={chapter.world} />
+      <article className="scene-caption">
+        <p className="scene-caption__kicker">
           <span>{chapter.number}</span>
           {chapter.eyebrow}
         </p>
         <h2 id={`${chapter.id}-title`}>{chapter.title}</h2>
-        <p className="chapter__body">{chapter.body}</p>
-        <ul className="proof-list" aria-label={`${chapter.eyebrow} capabilities`}>
-          {chapter.tags.map((tag) => (
-            <li key={tag}>{tag}</li>
-          ))}
-        </ul>
+        <p className="scene-caption__body">{chapter.body}</p>
+        <p className="scene-caption__proof">{chapter.tags.join("  /  ")}</p>
 
-        {chapter.world === "mobile" ? <MobileProductList /> : null}
+        {chapter.world === "mobile" ? <ProductNames /> : null}
 
-        {chapter.note ? (
-          chapter.noteDetail ? (
-            <details className="media-note">
-              <summary>{chapter.note}</summary>
+        <div className="scene-caption__meta">
+          <button
+            className="scene-interaction"
+            type="button"
+            disabled={!interactive}
+            onClick={() => window.dispatchEvent(new CustomEvent("larion:scene-action", { detail: chapter.world }))}
+          >
+            <i aria-hidden="true" /> {chapter.interaction}
+          </button>
+          {chapter.noteDetail ? (
+            <details className="scene-detail">
+              <summary>Project context +</summary>
               <p>{chapter.noteDetail}</p>
             </details>
-          ) : (
-            <p className="media-note media-note--plain">{chapter.note}</p>
-          )
-        ) : null}
-
-        <div className="chapter__actions">
-          <a className="journey-next" href={`#${nextId}`}>
-            <span>Next</span>
-            {chapter.nextLabel}
-            <i aria-hidden="true">↓</i>
-          </a>
+          ) : null}
           {chapter.projectLink ? (
             <a
-              className="artifact-link"
+              className="project-link"
               href={chapter.projectLink.href}
               target="_blank"
               rel="noreferrer"
             >
-              {chapter.projectLink.label} <span aria-hidden="true">↗</span>
+              {chapter.projectLink.label} ↗
             </a>
           ) : null}
         </div>
       </article>
 
-      {chapter.video ? (
-        <ProjectFilm
-          chapter={chapter}
-          reducedMotion={reducedMotion}
-          motionPaused={motionPaused}
-        />
-      ) : null}
-      {chapter.world === "mobile" ? <MobileFallback /> : null}
-    </section>
-  );
-}
-
-function JourneyRail({ activeStage }: { activeStage: number }) {
-  return (
-    <nav
-      className={`journey-rail${activeStage === 7 ? " journey-rail--complete" : ""}`}
-      aria-label="Project journey"
-    >
-      <span className="journey-rail__line" aria-hidden="true">
-        <i style={{ transform: `scaleY(${Math.max(0, Math.min(1, (activeStage - 0.5) / 6))})` }} />
-      </span>
-      {chapters.map((chapter, index) => {
-        const stage = index + 1;
-        return (
-          <a
-            key={chapter.id}
-            href={`#${chapter.id}`}
-            className={activeStage === stage ? "is-active" : ""}
-            aria-current={activeStage === stage ? "step" : undefined}
-          >
-            <span>{chapter.number}</span>
-            <b>{chapter.nav}</b>
-          </a>
-        );
-      })}
-    </nav>
-  );
-}
-
-function Header({ activeStage }: { activeStage: number }) {
-  return (
-    <header className="site-header">
-      <a className="wordmark" href="#top" aria-label="Larion, home">
-        <span className="wordmark__mark">L</span>
-        <span className="wordmark__text">
-          <b>Larion</b>
-          <small>Immersive systems</small>
-        </span>
-      </a>
-
-      <nav className="header-nav" aria-label="Primary navigation">
-        <a href="#clinical" className={activeStage > 0 && activeStage < 7 ? "is-active" : ""}>
-          Journey
-        </a>
-        <a href="#mobile-products">Products</a>
-      </nav>
-
-      <a className="header-cta" href="#contact">
-        Start a project
-        <span aria-hidden="true">↗</span>
-      </a>
-    </header>
-  );
-}
-
-function Hero() {
-  return (
-    <section className="hero" id="top" data-stage="0" aria-labelledby="hero-title">
-      <div className="hero__glow" aria-hidden="true" />
-      <div className="hero__content">
-        <p className="hero__eyebrow">Larion · Unreal Engine · VR · Interactive systems</p>
-        <h1 id="hero-title">
-          <span>Unreal Engine + VR</span>
-          <span>for the real world.</span>
-        </h1>
-        <p className="hero__lede">
-          I design and build immersive training, connected simulations and interactive
-          experiences—bringing headsets, wearables, haptics and live controls into one
-          working system.
-        </p>
-        <div className="hero__actions">
-          <a className="primary-button" href="#clinical">
-            Begin the journey <span aria-hidden="true">↓</span>
-          </a>
-          <a className="quiet-link" href="#contact">
-            Start a project <span aria-hidden="true">↗</span>
-          </a>
-        </div>
-        <ul className="hero__proof" aria-label="Core capabilities">
-          <li>Immersive training</li>
-          <li>Multi-user systems</li>
-          <li>Hardware integration</li>
-          <li>Shipped VR</li>
-        </ul>
-      </div>
-
-      <div className="hero__journey-label" aria-hidden="true">
-        <span>Selected work</span>
-        <strong>01—06</strong>
-        <small>Scroll-led case journey</small>
-      </div>
-      <a className="scroll-cue" href="#clinical" aria-label="Enter the first chapter">
-        <span>Scroll to enter</span>
-        <i aria-hidden="true" />
+      <a
+        className="chapter-next"
+        href={`#${chapters[index + 1]?.id ?? "contact"}`}
+        aria-label={`Continue to ${chapters[index + 1]?.nav ?? "contact"}`}
+      >
+        <span>{chapter.nextLabel}</span>
+        <i aria-hidden="true">↓</i>
       </a>
     </section>
   );
@@ -403,49 +324,36 @@ function Hero() {
 function ContactSection() {
   return (
     <section className="contact" id="contact" data-stage="7" aria-labelledby="contact-title">
-      <div className="contact__content">
-        <p className="contact__eyebrow">The next chapter</p>
-        <h2 id="contact-title">Let’s build the next world.</h2>
+      <article className="contact__content">
+        <p className="contact__eyebrow">Your world is next</p>
+        <h2 id="contact-title">Build the world people remember.</h2>
         <p>
-          Planning an Unreal Engine training system, a VR experience or a connected
-          interactive product? Tell me the problem, the audience and what the experience
-          needs to achieve. A few sentences is enough.
+          If it needs to train, connect, react or feel physically real, tell me what
+          the experience has to achieve. I’ll reply personally.
         </p>
-        <div className="contact__links">
-          <a className="contact-card contact-card--primary" href={contact.emailHref}>
-            <span>Email Larion</span>
-            <strong>{contact.email}</strong>
-            <i aria-hidden="true">↗</i>
-          </a>
-          <a
-            className="contact-card"
-            href={contact.whatsapp}
-            target="_blank"
-            rel="noreferrer"
-          >
-            <span>Start a conversation</span>
-            <strong>WhatsApp</strong>
-            <i aria-hidden="true">↗</i>
-          </a>
-        </div>
-        <p className="availability">
-          <i aria-hidden="true" /> Bangkok · Available worldwide
-        </p>
-      </div>
+        <a className="contact__primary" href={contact.emailHref}>
+          <span>Start a project</span>
+          <strong>{contact.email}</strong>
+          <i aria-hidden="true">↗</i>
+        </a>
+        <a className="contact__secondary" href={contact.whatsapp} target="_blank" rel="noreferrer">
+          WhatsApp <span aria-hidden="true">↗</span>
+        </a>
+        <p className="availability"><i /> Bangkok · Available worldwide</p>
+      </article>
     </section>
   );
 }
 
-function Footer() {
+function Footer({ onJump }: { onJump: JumpHandler }) {
   return (
     <footer className="site-footer">
       <p>© {new Date().getFullYear()} Larion Siments</p>
       <p>
-        Selected healthcare, defense and emergency-services work is confidential.
-        Recreated visuals contain no client data, interfaces, personnel or operational
-        material.
+        Healthcare, defense and emergency-service scenes are original reconstructions.
+        No client interfaces, data, personnel or operational material are shown.
       </p>
-      <a href="#top">Back to top ↑</a>
+      <a href="#top" onClick={(event) => onJump(event, "top", 0)}>Back to entry ↑</a>
     </footer>
   );
 }
@@ -468,7 +376,18 @@ export default function App() {
   const [webglFailed, setWebglFailed] = useState(false);
   const [pageVisible, setPageVisible] = useState(true);
   const [motionPaused, setMotionPaused] = useState(false);
+  const [canvasRequested, setCanvasRequested] = useState(false);
   const [webglSupported] = useState(supportsWebGL);
+
+  useEffect(() => {
+    const reveal = () => setCanvasRequested(true);
+    if ("requestIdleCallback" in window) {
+      const idleId = window.requestIdleCallback(reveal, { timeout: 700 });
+      return () => window.cancelIdleCallback(idleId);
+    }
+    const timeoutId = setTimeout(reveal, 120);
+    return () => clearTimeout(timeoutId);
+  }, []);
 
   useEffect(() => {
     const handlePointer = (event: PointerEvent) => {
@@ -478,6 +397,7 @@ export default function App() {
     const resetPointer = () => {
       pointer.current.x = 0;
       pointer.current.y = 0;
+      document.body.style.cursor = "";
     };
     const handleVisibility = () => setPageVisible(!document.hidden);
 
@@ -491,32 +411,37 @@ export default function App() {
     };
   }, []);
 
-  const activeChapter = activeStage > 0 && activeStage < 7 ? chapters[activeStage - 1] : null;
-  const accent = activeChapter?.accent ?? (activeStage === 7 ? "#d7ff4f" : "#74ecff");
-  const accentRgb = activeChapter?.accentRgb ?? (activeStage === 7 ? "215, 255, 79" : "116, 236, 255");
-  const shouldRenderCanvas = webglSupported && !reducedMotion && !webglFailed;
-  const pageClass = useMemo(
-    () =>
-      [
-        "experience",
-        webglReady ? "webgl-ready" : "",
-        shouldRenderCanvas ? "" : "no-webgl",
-      ]
-        .filter(Boolean)
-        .join(" "),
-    [shouldRenderCanvas, webglReady],
-  );
-  const style = {
-    "--accent": accent,
-    "--accent-rgb": accentRgb,
-  } as CSSProperties;
+  const canvasCapable = webglSupported && !reducedMotion && !webglFailed;
+  const shouldRenderCanvas = canvasRequested && canvasCapable;
+  const sceneInteractive = shouldRenderCanvas && webglReady && !motionPaused;
+  const handleJump = useCallback<JumpHandler>((event, id, stage) => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    const target = document.getElementById(id);
+    if (!target) return;
+    event.preventDefault();
+    progress.current = stage;
+    const root = document.documentElement;
+    const previousBehavior = root.style.scrollBehavior;
+    root.style.scrollBehavior = "auto";
+    target.scrollIntoView({ block: "start" });
+    window.history.replaceState(null, "", `#${id}`);
+    window.requestAnimationFrame(() => {
+      root.style.scrollBehavior = previousBehavior;
+    });
+  }, [progress]);
+  const pageClass = [
+    "experience",
+    webglReady ? "webgl-ready" : "",
+    webglReady && canvasCapable ? "" : "no-webgl",
+    motionPaused ? "motion-paused" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
-    <div className={pageClass} style={style} data-active-stage={activeStage}>
-      <a className="skip-link" href="#main">
-        Skip to work
-      </a>
-      <Header activeStage={activeStage} />
+    <div className={pageClass} data-active-stage={activeStage}>
+      <a className="skip-link" href="#main">Skip to selected work</a>
+      <Header activeStage={activeStage} onJump={handleJump} />
 
       {shouldRenderCanvas ? (
         <CanvasBoundary onError={() => setWebglFailed(true)}>
@@ -532,8 +457,8 @@ export default function App() {
         </CanvasBoundary>
       ) : null}
 
-      <JourneyRail activeStage={activeStage} />
-      {!reducedMotion ? (
+      <JourneyRail activeStage={activeStage} onJump={handleJump} />
+      {shouldRenderCanvas ? (
         <button
           className="motion-toggle"
           type="button"
@@ -541,24 +466,18 @@ export default function App() {
           aria-pressed={motionPaused}
         >
           <span aria-hidden="true">{motionPaused ? "▶" : "Ⅱ"}</span>
-          {motionPaused ? "Play motion" : "Pause motion"}
+          {motionPaused ? "Resume world" : "Pause world"}
         </button>
       ) : null}
 
       <main id="main">
         <Hero />
         {chapters.map((chapter, index) => (
-          <ChapterSection
-            key={chapter.id}
-            chapter={chapter}
-            index={index}
-            reducedMotion={reducedMotion}
-            motionPaused={motionPaused}
-          />
+          <ChapterSection key={chapter.id} chapter={chapter} index={index} interactive={sceneInteractive} />
         ))}
         <ContactSection />
       </main>
-      <Footer />
+      <Footer onJump={handleJump} />
     </div>
   );
 }

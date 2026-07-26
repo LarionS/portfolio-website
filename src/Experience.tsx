@@ -1,12 +1,24 @@
-import { Suspense, useEffect, useMemo, useRef } from "react";
-import type { MutableRefObject } from "react";
+import { Suspense, useMemo, useRef, useState } from "react";
+import type { MutableRefObject, ReactNode } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Line, RoundedBox, Sparkles, useTexture } from "@react-three/drei";
+import {
+  Environment,
+  Float,
+  Line,
+  RoundedBox,
+  Sparkles,
+} from "@react-three/drei";
+import { Bloom, EffectComposer, Noise, Vignette } from "@react-three/postprocessing";
+import { BlendFunction } from "postprocessing";
 import * as THREE from "three";
 import { chapters, mobileProducts } from "./content";
-import type { WorldKind } from "./content";
-
-const STAGE_GAP = 15;
+import {
+  ClinicalWorld,
+  DefenseWorld,
+  EmergencyWorld,
+} from "./three/TrainingWorlds";
+import { FlyboxWorld, HoverWorld, MobileWorld } from "./three/ProductWorlds";
+import { SimulationAtmosphere } from "./three/Atmosphere";
 
 type ExperienceProps = {
   progress: MutableRefObject<number>;
@@ -16,506 +28,467 @@ type ExperienceProps = {
   onReady: () => void;
 };
 
-type StageProps = {
-  index: number;
-  progress: MutableRefObject<number>;
-  image: string;
-  accent: string;
-  alignment: "left" | "right";
-  kind: WorldKind;
-};
+const WORLD_POSITIONS: [number, number, number][] = [
+  [6.2, -0.45, 0],
+  [1.5, -1.1, -28],
+  [-1.2, -1.1, -60],
+  [1.4, -1.15, -93],
+  [-0.5, -0.7, -127],
+  [1.2, -0.75, -161],
+  [-1.8, -0.6, -196],
+  [0.5, -0.5, -228],
+];
 
-function setTextureColor(texture: THREE.Texture) {
-  texture.colorSpace = THREE.SRGBColorSpace;
-  texture.anisotropy = 4;
-  texture.needsUpdate = true;
+const CAMERA_POINTS = [
+  new THREE.Vector3(-0.8, 1.1, 13),
+  new THREE.Vector3(0.1, 2.05, -16),
+  new THREE.Vector3(4.8, 2.65, -48),
+  new THREE.Vector3(0.6, 1.8, -81),
+  new THREE.Vector3(-0.4, 1.1, -115),
+  new THREE.Vector3(5.3, 2.2, -149),
+  new THREE.Vector3(-5.2, 1.8, -184),
+  new THREE.Vector3(-0.8, 1.2, -216),
+];
+
+const MOBILE_CAMERA_POINTS = [
+  new THREE.Vector3(2.8, 1.5, 20),
+  new THREE.Vector3(1.5, 2.15, -4),
+  new THREE.Vector3(-1.2, 2.35, -36),
+  new THREE.Vector3(1.4, 2.15, -69),
+  new THREE.Vector3(-0.5, 1.65, -103),
+  new THREE.Vector3(1.2, 1.85, -137),
+  new THREE.Vector3(-1.8, 1.8, -172),
+  new THREE.Vector3(0.5, 1.55, -204),
+];
+
+const LOOK_POINTS = [
+  new THREE.Vector3(1.1, 0.52, -0.5),
+  new THREE.Vector3(-0.8, 0.48, -28),
+  new THREE.Vector3(-1.2, 0.12, -60),
+  new THREE.Vector3(-1.6, -0.2, -93),
+  new THREE.Vector3(-0.5, -0.02, -127),
+  new THREE.Vector3(1.2, 0.08, -161),
+  new THREE.Vector3(-1.8, 0.06, -196),
+  new THREE.Vector3(0.5, 0.42, -228),
+];
+
+const MOBILE_LOOK_POINTS = WORLD_POSITIONS.map(
+  ([x, y, z], index) =>
+    new THREE.Vector3(x, y + (index === 0 || index === 7 ? 0.72 : 0.86), z),
+);
+
+function segmentEase(value: number) {
+  const clamped = THREE.MathUtils.clamp(value, 0, 7);
+  const index = Math.min(6, Math.floor(clamped));
+  const fraction = clamped - index;
+  const held = THREE.MathUtils.smoothstep(fraction, 0.1, 0.9);
+  return index + held;
 }
 
-function CameraRig({
+function glowColor(color: string, intensity = 4) {
+  return new THREE.Color(color).multiplyScalar(intensity);
+}
+
+function CameraDirector({
   progress,
   pointer,
-}: Pick<ExperienceProps, "progress" | "pointer">) {
+  mobile,
+}: Pick<ExperienceProps, "progress" | "pointer" | "mobile">) {
+  const positionCurve = useMemo(
+    () => new THREE.CatmullRomCurve3(mobile ? MOBILE_CAMERA_POINTS : CAMERA_POINTS, false, "centripetal", 0.3),
+    [mobile],
+  );
+  const lookCurve = useMemo(
+    () => new THREE.CatmullRomCurve3(mobile ? MOBILE_LOOK_POINTS : LOOK_POINTS, false, "centripetal", 0.3),
+    [mobile],
+  );
   const targetPosition = useRef(new THREE.Vector3());
-  const targetLook = useRef(new THREE.Vector3(0, 0, 0));
+  const targetLook = useRef(new THREE.Vector3());
+  const targetQuaternion = useRef(new THREE.Quaternion());
+  const director = useRef(new THREE.PerspectiveCamera());
+  const initialized = useRef(false);
+  const lastProgress = useRef(progress.current);
+  const jumpEnergy = useRef(0);
 
   useFrame(({ camera }, delta) => {
-    const value = progress.current;
-    const z = 10 - value * STAGE_GAP;
-    const driftX = Math.sin(value * 1.17) * 0.2 + pointer.current.x * 0.18;
-    const driftY = Math.cos(value * 0.84) * 0.08 + pointer.current.y * 0.1;
-    const damping = 1 - Math.exp(-6.5 * Math.min(delta, 0.05));
+    const value = segmentEase(progress.current);
+    const t = THREE.MathUtils.clamp(value / 7, 0, 1);
+    positionCurve.getPoint(t, targetPosition.current);
+    lookCurve.getPoint(t, targetLook.current);
 
-    targetPosition.current.set(driftX, driftY, z);
-    camera.position.lerp(targetPosition.current, damping);
+    const pointerScale = mobile ? 0.28 : 1;
+    targetPosition.current.x += pointer.current.x * 0.22 * pointerScale;
+    targetPosition.current.y += pointer.current.y * 0.13 * pointerScale;
+    targetLook.current.x += pointer.current.x * 0.14 * pointerScale;
+    targetLook.current.y += pointer.current.y * 0.08 * pointerScale;
 
-    targetLook.current.lerp(
-      new THREE.Vector3(pointer.current.x * 0.08, pointer.current.y * 0.04, z - 10),
-      damping,
+    if (Math.abs(progress.current - lastProgress.current) > 0.34) {
+      jumpEnergy.current = 1;
+    }
+    lastProgress.current = progress.current;
+    jumpEnergy.current = THREE.MathUtils.damp(jumpEnergy.current, 0, 4.5, delta);
+
+    const damping = 1 - Math.exp(-(5.2 + jumpEnergy.current * 18) * Math.min(delta, 0.05));
+    if (!initialized.current) {
+      camera.position.copy(targetPosition.current);
+    } else {
+      camera.position.lerp(targetPosition.current, damping);
+    }
+
+    director.current.position.copy(camera.position);
+    director.current.lookAt(targetLook.current);
+    director.current.rotateZ(
+      Math.sin(value * Math.PI) * 0.012 + pointer.current.x * 0.004,
     );
-    camera.lookAt(targetLook.current);
+    targetQuaternion.current.copy(director.current.quaternion);
+    if (!initialized.current) {
+      camera.quaternion.copy(targetQuaternion.current);
+      initialized.current = true;
+    } else {
+      camera.quaternion.slerp(targetQuaternion.current, damping);
+    }
+
+    const baseFov = mobile ? 56 : 41;
+    const targetFov = baseFov + (mobile ? 0 : Math.sin(THREE.MathUtils.clamp(value - 3.2, 0, 2.2) * Math.PI) * 3);
+    const perspective = camera as THREE.PerspectiveCamera;
+    perspective.fov = THREE.MathUtils.damp(perspective.fov, targetFov, 5, delta);
+    if (Math.abs(perspective.fov - targetFov) > 0.01) {
+      perspective.updateProjectionMatrix();
+    }
   });
 
   return null;
 }
 
-function FrameCorners({ color }: { color: string }) {
-  const w = 5.15;
-  const h = 2.9;
-  const l = 0.48;
-  const corners = [
-    [
-      [-w + l, h, 0.03],
-      [-w, h, 0.03],
-      [-w, h - l, 0.03],
-    ],
-    [
-      [w - l, h, 0.03],
-      [w, h, 0.03],
-      [w, h - l, 0.03],
-    ],
-    [
-      [-w + l, -h, 0.03],
-      [-w, -h, 0.03],
-      [-w, -h + l, 0.03],
-    ],
-    [
-      [w - l, -h, 0.03],
-      [w, -h, 0.03],
-      [w, -h + l, 0.03],
-    ],
-  ] as [number, number, number][][];
-
-  return (
-    <>
-      {corners.map((points, index) => (
-        <Line
-          key={index}
-          points={points}
-          color={color}
-          lineWidth={1.4}
-          transparent
-          opacity={0.75}
-        />
-      ))}
-    </>
-  );
-}
-
-function ClinicalMotif({ accent }: { accent: string }) {
-  const signal = useMemo(
-    () =>
-      [
-        [-4.4, 1.72, 0.2],
-        [-3.3, 1.72, 0.2],
-        [-2.85, 1.48, 0.2],
-        [-2.45, 2.1, 0.2],
-        [-1.95, 1.1, 0.2],
-        [-1.45, 1.72, 0.2],
-        [0.2, 1.72, 0.2],
-      ] as [number, number, number][],
-    [],
-  );
-
-  return (
-    <group>
-      <Line points={signal} color={accent} lineWidth={1.8} transparent opacity={0.8} />
-      <mesh position={[3.6, 1.65, 0.2]}>
-        <torusGeometry args={[0.55, 0.018, 8, 96]} />
-        <meshBasicMaterial color={accent} transparent opacity={0.7} />
-      </mesh>
-      <mesh position={[3.6, 1.65, 0.21]}>
-        <circleGeometry args={[0.035, 18]} />
-        <meshBasicMaterial color={accent} />
-      </mesh>
-    </group>
-  );
-}
-
-function TacticalMotif({ accent }: { accent: string }) {
-  const points = useMemo(
-    () =>
-      [
-        [-3.8, -1.75, 0.3],
-        [-2.25, 1.75, 0.3],
-        [-0.6, -1.35, 0.3],
-        [1.05, 1.5, 0.3],
-        [2.75, -1.4, 0.3],
-        [4.05, 1.55, 0.3],
-      ] as [number, number, number][],
-    [],
-  );
-
-  return (
-    <group>
-      <Line points={points} color={accent} lineWidth={1} transparent opacity={0.42} />
-      {points.map((point, index) => (
-        <group position={point} key={index}>
-          <mesh>
-            <ringGeometry args={[0.16, 0.23, 32]} />
-            <meshBasicMaterial color={accent} transparent opacity={0.9} side={THREE.DoubleSide} />
-          </mesh>
-          <mesh position={[0, 0, -0.04]}>
-            <circleGeometry args={[0.38, 32]} />
-            <meshBasicMaterial color={accent} transparent opacity={0.08} />
-          </mesh>
-        </group>
-      ))}
-    </group>
-  );
-}
-
-function EmergencyMotif({ accent }: { accent: string }) {
-  const route = useMemo(
-    () =>
-      [
-        [-4.6, -2.2, 0.28],
-        [-2.5, -2.2, 0.28],
-        [-1.3, -1.55, 0.28],
-        [0.4, -1.55, 0.28],
-        [1.6, -0.7, 0.28],
-        [4.25, -0.7, 0.28],
-      ] as [number, number, number][],
-    [],
-  );
-
-  return (
-    <group>
-      <Line points={route} color={accent} lineWidth={2.4} transparent opacity={0.9} />
-      {[[-1.3, -1.55], [1.6, -0.7], [4.25, -0.7]].map(([x, y], index) => (
-        <mesh position={[x, y, 0.3]} key={index}>
-          <ringGeometry args={[0.09, 0.15, 24]} />
-          <meshBasicMaterial color={accent} transparent opacity={0.9} />
-        </mesh>
-      ))}
-    </group>
-  );
-}
-
-function HoverMotif({ accent }: { accent: string }) {
-  return (
-    <group>
-      {[
-        [-3.8, 1.5, 0.3, 0.42],
-        [-1.2, 1.9, 0.32, 0.3],
-        [3.9, 1.35, 0.31, 0.5],
-      ].map(([x, y, z, size], index) => (
-        <mesh position={[x, y, z]} key={index} rotation={[0.25, 0.3, 0]}>
-          <torusGeometry args={[size, 0.035, 12, 48]} />
-          <meshBasicMaterial color={accent} transparent opacity={0.85} />
-        </mesh>
-      ))}
-      <Line
-        points={[
-          [-4.8, -2.1, 0.2],
-          [-2.5, -1.6, 0.2],
-          [-0.5, -1.85, 0.2],
-          [1.5, -1.1, 0.2],
-          [4.7, -1.4, 0.2],
-        ]}
-        color={accent}
-        lineWidth={1.2}
-        transparent
-        opacity={0.6}
-      />
-    </group>
-  );
-}
-
-function FlyboxMotif({ accent }: { accent: string }) {
-  return (
-    <group>
-      {[0.7, 1.25, 1.8].map((radius) => (
-        <mesh position={[2.8, 0.15, 0.28]} rotation={[0.08, 0.35, 0]} key={radius}>
-          <torusGeometry args={[radius, 0.018, 10, 80]} />
-          <meshBasicMaterial color={accent} transparent opacity={0.38} />
-        </mesh>
-      ))}
-      <Line
-        points={[
-          [-4.8, 0, 0.28],
-          [-1.5, 0, 0.28],
-          [0, -0.32, 0.28],
-          [1.5, 0, 0.28],
-          [4.8, 0, 0.28],
-        ]}
-        color={accent}
-        lineWidth={1.5}
-        transparent
-        opacity={0.6}
-      />
-    </group>
-  );
-}
-
-function StageMotif({ kind, accent }: { kind: WorldKind; accent: string }) {
-  if (kind === "clinical") return <ClinicalMotif accent={accent} />;
-  if (kind === "tactical") return <TacticalMotif accent={accent} />;
-  if (kind === "emergency") return <EmergencyMotif accent={accent} />;
-  if (kind === "hover") return <HoverMotif accent={accent} />;
-  if (kind === "flybox") return <FlyboxMotif accent={accent} />;
-  return null;
-}
-
-function ChapterBackdrop({
-  index,
+function SceneGate({
   progress,
-  image,
-  accent,
-  alignment,
-  kind,
-}: StageProps) {
-  const texture = useTexture(image);
-  const group = useRef<THREE.Group>(null);
-  const imageMaterial = useRef<THREE.MeshBasicMaterial>(null);
-  const glowMaterial = useRef<THREE.MeshBasicMaterial>(null);
-  const side = alignment === "left" ? 1 : -1;
-
-  useEffect(() => setTextureColor(texture), [texture]);
-
-  useFrame((_, delta) => {
-    const proximity = THREE.MathUtils.clamp(1 - Math.abs(progress.current - index) / 1.12, 0, 1);
-    if (!group.current || !imageMaterial.current || !glowMaterial.current) return;
-    group.current.visible = proximity > 0.008;
-    imageMaterial.current.opacity = THREE.MathUtils.damp(
-      imageMaterial.current.opacity,
-      proximity * 0.92,
-      7,
-      delta,
-    );
-    glowMaterial.current.opacity = THREE.MathUtils.damp(
-      glowMaterial.current.opacity,
-      proximity * 0.1,
-      7,
-      delta,
-    );
-    const scale = 0.9 + proximity * 0.1;
-    group.current.scale.setScalar(scale);
-    group.current.rotation.y = side * (0.045 - proximity * 0.035);
-  });
-
-  return (
-    <group ref={group} position={[side * 2.75, 0, -index * STAGE_GAP]}>
-      <mesh position={[0, 0, -0.08]} scale={[1.04, 1.08, 1]}>
-        <planeGeometry args={[10.4, 5.86]} />
-        <meshBasicMaterial
-          ref={glowMaterial}
-          color={accent}
-          transparent
-          opacity={0}
-          depthWrite={false}
-        />
-      </mesh>
-      <mesh>
-        <planeGeometry args={[10.4, 5.86]} />
-        <meshBasicMaterial
-          ref={imageMaterial}
-          map={texture}
-          transparent
-          opacity={0}
-          toneMapped={false}
-          depthWrite={false}
-        />
-      </mesh>
-      <FrameCorners color={accent} />
-      <StageMotif kind={kind} accent={accent} />
-    </group>
-  );
-}
-
-function Phone({
-  texture,
-  position,
-  rotation,
+  index,
+  children,
 }: {
-  texture: THREE.Texture;
-  position: [number, number, number];
-  rotation: [number, number, number];
+  progress: MutableRefObject<number>;
+  index: number;
+  children: ReactNode;
 }) {
+  const activeRef = useRef(Math.abs(progress.current - index) < 1.65);
+  const [active, setActive] = useState(activeRef.current);
+
+  useFrame(() => {
+    const next = Math.abs(progress.current - index) < 1.65;
+    if (next === activeRef.current) return;
+    activeRef.current = next;
+    setActive(next);
+  });
+
+  return active ? children : null;
+}
+
+function SignalThread() {
+  const pulseRefs = useRef<(THREE.Mesh | null)[]>([]);
+  const curve = useMemo(
+    () =>
+      new THREE.CatmullRomCurve3(
+        [
+          new THREE.Vector3(2.3, 0.25, 2),
+          new THREE.Vector3(1.2, -0.25, -28),
+          new THREE.Vector3(-1.1, 0.15, -60),
+          new THREE.Vector3(1.6, -0.2, -93),
+          new THREE.Vector3(-0.5, 0.15, -127),
+          new THREE.Vector3(1.2, 0.25, -161),
+          new THREE.Vector3(-1.8, 0.2, -196),
+          new THREE.Vector3(0.5, 0.3, -228),
+        ],
+        false,
+        "centripetal",
+        0.26,
+      ),
+    [],
+  );
+  const cyan = useMemo(() => glowColor("#72efff", 4.5), []);
+
+  useFrame(({ clock }) => {
+    pulseRefs.current.forEach((pulse, index) => {
+      if (!pulse) return;
+      const t = (clock.elapsedTime * 0.035 + index / pulseRefs.current.length) % 1;
+      curve.getPointAt(t, pulse.position);
+      const breathe = 0.75 + Math.sin(clock.elapsedTime * 3 + index) * 0.25;
+      pulse.scale.setScalar(breathe);
+    });
+  });
+
+  const geometry = useMemo(() => new THREE.TubeGeometry(curve, 320, 0.018, 6, false), [curve]);
+
   return (
-    <group position={position} rotation={rotation}>
-      <RoundedBox args={[2.18, 4.7, 0.18]} radius={0.24} smoothness={5}>
-        <meshStandardMaterial color="#07090d" metalness={0.5} roughness={0.28} />
-      </RoundedBox>
-      <mesh position={[0, 0, 0.101]}>
-        <planeGeometry args={[1.97, 4.35]} />
-        <meshBasicMaterial map={texture} toneMapped={false} />
+    <group>
+      <mesh geometry={geometry}>
+        <meshBasicMaterial color={cyan} transparent opacity={0.34} toneMapped={false} />
       </mesh>
-      <mesh position={[0, 2.2, 0.11]}>
-        <planeGeometry args={[0.62, 0.07]} />
-        <meshBasicMaterial color="#20242d" />
-      </mesh>
+      {Array.from({ length: 7 }, (_, index) => (
+        <mesh
+          key={index}
+          ref={(mesh) => {
+            pulseRefs.current[index] = mesh;
+          }}
+        >
+          <sphereGeometry args={[0.075, 12, 12]} />
+          <meshBasicMaterial color={cyan} toneMapped={false} />
+        </mesh>
+      ))}
     </group>
   );
 }
 
-function MobileWorld({ progress }: { progress: MutableRefObject<number> }) {
-  const textures = useTexture(mobileProducts.map((product) => product.screen));
-  const group = useRef<THREE.Group>(null);
+function PortalFrame({ position, accent }: { position: [number, number, number]; accent: string }) {
+  const glow = useMemo(() => glowColor(accent, 3.4), [accent]);
+  return (
+    <group position={position}>
+      <mesh position={[-4.35, 2.25, 0]}>
+        <boxGeometry args={[0.16, 7.3, 0.32]} />
+        <meshStandardMaterial color="#141b21" metalness={0.72} roughness={0.32} />
+      </mesh>
+      <mesh position={[4.35, 2.25, 0]}>
+        <boxGeometry args={[0.16, 7.3, 0.32]} />
+        <meshStandardMaterial color="#141b21" metalness={0.72} roughness={0.32} />
+      </mesh>
+      <mesh position={[0, 5.85, 0]}>
+        <boxGeometry args={[8.85, 0.16, 0.32]} />
+        <meshStandardMaterial color="#141b21" metalness={0.72} roughness={0.32} />
+      </mesh>
+      <mesh position={[0, -1.34, 0.03]}>
+        <boxGeometry args={[8.7, 0.035, 0.36]} />
+        <meshBasicMaterial color={glow} toneMapped={false} />
+      </mesh>
+      <pointLight position={[0, 2.4, 0.5]} intensity={5} distance={9} color={accent} />
+    </group>
+  );
+}
 
-  useEffect(() => {
-    textures.forEach(setTextureColor);
-  }, [textures]);
-
-  useFrame((state, delta) => {
-    const proximity = THREE.MathUtils.clamp(1 - Math.abs(progress.current - 6) / 1.15, 0, 1);
-    if (!group.current) return;
-    group.current.visible = proximity > 0.008;
-    const scale = THREE.MathUtils.damp(group.current.scale.x, 0.84 + proximity * 0.16, 7, delta);
-    group.current.scale.setScalar(scale);
-    group.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.18) * 0.025;
-  });
-
-  const phoneData = [
-    { position: [-2.5, 0.15, -0.25] as [number, number, number], rotation: [0, 0.23, -0.05] as [number, number, number] },
-    { position: [0, 0.4, 0.25] as [number, number, number], rotation: [0, 0, 0.02] as [number, number, number] },
-    { position: [2.5, 0.05, -0.2] as [number, number, number], rotation: [0, -0.23, 0.06] as [number, number, number] },
+function FacilitySpine() {
+  const portals = [
+    { z: -11, x: 0.7, color: "#72efff" },
+    { z: -43, x: 0.2, color: "#b9ff5d" },
+    { z: -76, x: 0.1, color: "#ff8458" },
+    { z: -110, x: 0.2, color: "#72fff0" },
+    { z: -144, x: 0.4, color: "#ffc85b" },
+    { z: -179, x: -0.3, color: "#b9a3ff" },
+    { z: -212, x: -0.4, color: "#72efff" },
   ];
 
   return (
-    <group ref={group} position={[2.5, 0, -6 * STAGE_GAP]}>
-      {textures.map((texture, index) => (
-        <Phone
-          key={mobileProducts[index].name}
-          texture={texture}
-          position={phoneData[index].position}
-          rotation={phoneData[index].rotation}
+    <group>
+      <mesh position={[0, -1.48, -111]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[24, 250]} />
+        <meshStandardMaterial color="#030609" metalness={0.04} roughness={0.98} />
+      </mesh>
+      <mesh position={[0, -1.455, -111]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[0.045, 250]} />
+        <meshBasicMaterial color={glowColor("#72efff", 3.5)} toneMapped={false} />
+      </mesh>
+      {portals.map((portal) => (
+        <PortalFrame
+          key={portal.z}
+          position={[portal.x, 0, portal.z]}
+          accent={portal.color}
         />
       ))}
-      <pointLight position={[0, 1, 3]} intensity={18} distance={12} color="#c8a7ff" />
     </group>
   );
 }
 
 function IntroWorld({ progress }: { progress: MutableRefObject<number> }) {
   const group = useRef<THREE.Group>(null);
+  const core = useRef<THREE.Group>(null);
+  const [energized, setEnergized] = useState(false);
+  const cyan = useMemo(() => glowColor("#72efff", energized ? 6 : 3.5), [energized]);
 
-  useFrame((state) => {
-    if (!group.current) return;
-    const proximity = THREE.MathUtils.clamp(1 - progress.current / 1.05, 0, 1);
-    group.current.visible = proximity > 0.008;
-    group.current.rotation.z = Math.sin(state.clock.elapsedTime * 0.22) * 0.03;
-    group.current.scale.setScalar(0.9 + proximity * 0.1);
+  useFrame(({ clock }, delta) => {
+    if (!group.current || !core.current) return;
+    const proximity = THREE.MathUtils.clamp(1 - progress.current / 0.92, 0, 1);
+    group.current.visible = proximity > 0.015;
+    core.current.rotation.y += delta * (energized ? 0.48 : 0.18);
+    core.current.rotation.z = Math.sin(clock.elapsedTime * 0.4) * 0.12;
   });
 
   return (
-    <group ref={group} position={[3.1, 0, 0]}>
-      {[1.35, 2.15, 3.05].map((radius, index) => (
-        <mesh key={radius} rotation={[0.04 * index, 0.12 * index, 0]}>
-          <torusGeometry args={[radius, index === 1 ? 0.025 : 0.012, 12, 128]} />
-          <meshBasicMaterial
-            color={index === 1 ? "#d7ff4f" : "#74ecff"}
-            transparent
-            opacity={index === 1 ? 0.72 : 0.3}
-          />
-        </mesh>
-      ))}
-      {chapters.map((chapter, index) => {
-        const angle = (index / chapters.length) * Math.PI * 2;
-        return (
-          <mesh
-            key={chapter.id}
-            position={[Math.cos(angle) * 2.55, Math.sin(angle) * 2.55, 0.12]}
-          >
-            <circleGeometry args={[0.08, 24]} />
-            <meshBasicMaterial color={chapter.accent} />
+    <group ref={group} position={WORLD_POSITIONS[0]}>
+      <group
+        ref={core}
+        position={[3.1, 0, 0]}
+        onPointerEnter={() => {
+          document.body.style.cursor = "pointer";
+        }}
+        onPointerLeave={() => {
+          document.body.style.cursor = "";
+        }}
+        onClick={() => setEnergized((current) => !current)}
+      >
+        <Float speed={1.2} rotationIntensity={0.1} floatIntensity={0.18}>
+          <mesh>
+            <icosahedronGeometry args={[1.2, 2]} />
+            <meshPhysicalMaterial
+              color="#63d8ea"
+              roughness={0.08}
+              metalness={0.12}
+              clearcoat={1}
+              clearcoatRoughness={0.08}
+              transparent
+              opacity={0.42}
+              emissive="#123f48"
+              emissiveIntensity={0.65}
+            />
           </mesh>
-        );
-      })}
-      <Line
-        points={chapters.map((_, index) => {
-          const angle = (index / chapters.length) * Math.PI * 2;
-          return [Math.cos(angle) * 2.55, Math.sin(angle) * 2.55, 0.08] as [number, number, number];
-        }).concat([[2.55, 0, 0.08]])}
-        color="#74ecff"
-        lineWidth={0.8}
-        transparent
-        opacity={0.32}
-      />
-    </group>
-  );
-}
-
-function PortalRail() {
-  const path = useMemo(
-    () =>
-      Array.from({ length: 22 }, (_, index) => {
-        const z = 4 - index * 5.4;
-        return [Math.sin(index * 0.7) * 0.34, Math.cos(index * 0.52) * 0.16, z] as [number, number, number];
-      }),
-    [],
-  );
-
-  return (
-    <group>
-      <Line points={path} color="#74ecff" lineWidth={0.65} transparent opacity={0.16} />
-      {Array.from({ length: 7 }, (_, index) => (
-        <mesh key={index} position={[0, 0, -(index + 1) * STAGE_GAP + 5]}>
-          <torusGeometry args={[5.15, 0.018, 8, 128]} />
-          <meshBasicMaterial color={chapters[index]?.accent ?? "#74ecff"} transparent opacity={0.12} />
+          <mesh scale={0.68}>
+            <icosahedronGeometry args={[1.2, 1]} />
+            <meshBasicMaterial color={cyan} wireframe toneMapped={false} />
+          </mesh>
+        </Float>
+        {[1.75, 2.35, 3.05].map((radius, index) => (
+          <mesh key={radius} rotation={[Math.PI / 2 + index * 0.23, index * 0.4, 0]}>
+            <torusGeometry args={[radius, index === 1 ? 0.035 : 0.018, 10, 100]} />
+            <meshBasicMaterial color={cyan} transparent opacity={0.26 + index * 0.08} toneMapped={false} />
+          </mesh>
+        ))}
+      </group>
+      <RoundedBox position={[0, -1.05, 0]} args={[8.7, 0.18, 8.7]} radius={0.08}>
+        <meshStandardMaterial color="#0b1116" metalness={0.6} roughness={0.38} />
+      </RoundedBox>
+      {[-3.8, 3.8].map((x) => (
+        <mesh key={x} position={[x, 2.1, -0.7]}>
+          <boxGeometry args={[0.14, 7, 0.14]} />
+          <meshStandardMaterial color="#1a242b" metalness={0.8} roughness={0.3} />
         </mesh>
       ))}
+      <pointLight position={[3.1, 0, 0]} color="#72efff" intensity={energized ? 28 : 14} distance={12} />
+      <Sparkles count={28} scale={[8, 6, 8]} size={1.4} speed={0.25} color="#72efff" />
     </group>
   );
 }
 
 function ContactWorld({ progress }: { progress: MutableRefObject<number> }) {
   const group = useRef<THREE.Group>(null);
+  const nodes = useRef<THREE.Group>(null);
+  const cyan = useMemo(() => glowColor("#72efff", 4.5), []);
 
-  useFrame((state) => {
-    if (!group.current) return;
-    const proximity = THREE.MathUtils.clamp(1 - Math.abs(progress.current - 7) / 1.2, 0, 1);
-    group.current.visible = proximity > 0.008;
-    group.current.rotation.z = state.clock.elapsedTime * 0.035;
-    group.current.scale.setScalar(0.85 + proximity * 0.15);
+  useFrame(({ clock }, delta) => {
+    if (!group.current || !nodes.current) return;
+    const proximity = THREE.MathUtils.clamp(1 - Math.abs(progress.current - 7) / 0.92, 0, 1);
+    group.current.visible = proximity > 0.015;
+    nodes.current.rotation.z += delta * 0.055;
+    nodes.current.rotation.y = Math.sin(clock.elapsedTime * 0.22) * 0.16;
+    const scale = 0.82 + proximity * 0.18;
+    group.current.scale.setScalar(scale);
+  });
+
+  const nodePositions = Array.from({ length: 6 }, (_, index) => {
+    const angle = (index / 6) * Math.PI * 2;
+    return [Math.cos(angle) * 3.2, Math.sin(angle) * 3.2, 0] as [number, number, number];
   });
 
   return (
-    <group ref={group} position={[2.7, 0, -7 * STAGE_GAP]}>
-      {[1.1, 2.1, 3.15].map((radius, index) => (
-        <mesh key={radius} rotation={[0.2 * index, 0.1 * index, 0]}>
-          <torusGeometry args={[radius, index === 1 ? 0.04 : 0.015, 12, 128]} />
-          <meshBasicMaterial
-            color={index === 1 ? "#d7ff4f" : "#74ecff"}
-            transparent
-            opacity={index === 1 ? 0.62 : 0.28}
-          />
-        </mesh>
-      ))}
-      <pointLight color="#74ecff" intensity={22} distance={9} />
+    <group ref={group} position={WORLD_POSITIONS[7]}>
+      <group ref={nodes}>
+        <Line
+          points={[...nodePositions, nodePositions[0]]}
+          color="#72efff"
+          lineWidth={1.2}
+          transparent
+          opacity={0.42}
+        />
+        {nodePositions.map((position, index) => (
+          <group key={index} position={position}>
+            <mesh>
+              <sphereGeometry args={[0.14, 18, 18]} />
+              <meshBasicMaterial color={cyan} toneMapped={false} />
+            </mesh>
+            <mesh>
+              <ringGeometry args={[0.28, 0.3, 48]} />
+              <meshBasicMaterial color={cyan} transparent opacity={0.5} toneMapped={false} side={THREE.DoubleSide} />
+            </mesh>
+          </group>
+        ))}
+      </group>
+      <mesh>
+        <sphereGeometry args={[1.15, 48, 48]} />
+        <meshPhysicalMaterial
+          color="#72efff"
+          roughness={0.03}
+          metalness={0.12}
+          clearcoat={1}
+          clearcoatRoughness={0.04}
+          transparent
+          opacity={0.38}
+          emissive="#123f48"
+          emissiveIntensity={0.7}
+        />
+      </mesh>
+      <mesh scale={0.72}>
+        <icosahedronGeometry args={[1, 2]} />
+        <meshBasicMaterial color={cyan} wireframe toneMapped={false} />
+      </mesh>
+      <pointLight color="#72efff" intensity={26} distance={13} />
     </group>
   );
 }
 
-function World({ progress, pointer, mobile }: Omit<ExperienceProps, "visible" | "onReady">) {
+function PostEffects({ mobile }: { mobile: boolean }) {
+  return (
+    <EffectComposer multisampling={0} enableNormalPass={false}>
+      <Bloom
+        intensity={mobile ? 0.3 : 0.54}
+        luminanceThreshold={1.05}
+        luminanceSmoothing={0.28}
+        mipmapBlur
+      />
+      <Noise
+        premultiply
+        opacity={mobile ? 0 : 0.026}
+        blendFunction={BlendFunction.SOFT_LIGHT}
+      />
+      <Vignette offset={0.14} darkness={mobile ? 0.42 : 0.56} eskil={false} />
+    </EffectComposer>
+  );
+}
+
+function World({
+  progress,
+  pointer,
+  mobile,
+}: Omit<ExperienceProps, "visible" | "onReady">) {
+  const hoverVideo = chapters.find((chapter) => chapter.world === "hover")?.video ?? "";
+  const hoverPoster = chapters.find((chapter) => chapter.world === "hover")?.poster ?? "";
+  const flyboxVideo = chapters.find((chapter) => chapter.world === "flybox")?.video ?? "";
+  const flyboxPoster = chapters.find((chapter) => chapter.world === "flybox")?.poster ?? "";
+
   return (
     <>
-      <CameraRig progress={progress} pointer={pointer} />
-      <ambientLight intensity={0.42} />
-      <fog attach="fog" args={["#05070b", 9, 28]} />
-      <Sparkles
-        count={mobile ? 34 : 76}
-        scale={[18, 10, 112]}
-        position={[0, 0, -48]}
-        size={mobile ? 0.7 : 1.05}
-        speed={0.12}
-        opacity={0.34}
-        color="#aeefff"
-      />
-      <PortalRail />
-      <IntroWorld progress={progress} />
-      {chapters.slice(0, 5).map((chapter, index) => (
-        <ChapterBackdrop
-          key={chapter.id}
-          index={index + 1}
-          progress={progress}
-          image={chapter.image!}
-          accent={chapter.accent}
-          alignment={chapter.alignment}
-          kind={chapter.world}
-        />
-      ))}
-      <MobileWorld progress={progress} />
-      <ContactWorld progress={progress} />
+      <CameraDirector progress={progress} pointer={pointer} mobile={mobile} />
+      <color attach="background" args={["#030609"]} />
+      <fog attach="fog" args={["#030609", 18, mobile ? 55 : 68]} />
+      <ambientLight intensity={mobile ? 0.62 : 0.24} color="#a9c8d5" />
+      <hemisphereLight intensity={mobile ? 0.74 : 0.38} color="#b6dcea" groundColor="#05080b" />
+      <directionalLight position={[6, 12, 8]} intensity={mobile ? 1.24 : 0.82} color="#dceeff" />
+      {!mobile ? (
+        <Suspense fallback={null}>
+          <Environment files="/assets/environment/empty-warehouse-01-1k.hdr" environmentIntensity={0.68} />
+        </Suspense>
+      ) : null}
+      <FacilitySpine />
+      <SignalThread />
+      <SimulationAtmosphere progress={progress} mobile={mobile} />
+      <SceneGate progress={progress} index={0}><IntroWorld progress={progress} /></SceneGate>
+      <SceneGate progress={progress} index={1}><ClinicalWorld progress={progress} index={1} position={WORLD_POSITIONS[1]} mobile={mobile} /></SceneGate>
+      <SceneGate progress={progress} index={2}><DefenseWorld progress={progress} index={2} position={WORLD_POSITIONS[2]} mobile={mobile} /></SceneGate>
+      <SceneGate progress={progress} index={3}><EmergencyWorld progress={progress} index={3} position={WORLD_POSITIONS[3]} mobile={mobile} /></SceneGate>
+      <SceneGate progress={progress} index={4}>
+        <Suspense fallback={null}><HoverWorld progress={progress} index={4} position={WORLD_POSITIONS[4]} mobile={mobile} videoUrl={hoverVideo} posterUrl={hoverPoster} /></Suspense>
+      </SceneGate>
+      <SceneGate progress={progress} index={5}>
+        <Suspense fallback={null}><FlyboxWorld progress={progress} index={5} position={WORLD_POSITIONS[5]} mobile={mobile} videoUrl={flyboxVideo} posterUrl={flyboxPoster} /></Suspense>
+      </SceneGate>
+      <SceneGate progress={progress} index={6}>
+        <Suspense fallback={null}><MobileWorld progress={progress} index={6} position={WORLD_POSITIONS[6]} mobile={mobile} screens={mobileProducts.map((product) => product.screen)} /></Suspense>
+      </SceneGate>
+      <SceneGate progress={progress} index={7}><ContactWorld progress={progress} /></SceneGate>
+      {!mobile ? <PostEffects mobile={false} /> : null}
     </>
   );
 }
@@ -527,28 +500,30 @@ export default function Experience({
   visible,
   onReady,
 }: ExperienceProps) {
+  const cameraPoints = mobile ? MOBILE_CAMERA_POINTS : CAMERA_POINTS;
+  const initialCamera = cameraPoints[Math.max(0, Math.min(7, Math.round(progress.current)))];
+
   return (
     <div className="canvas-stage" aria-hidden="true">
       <Canvas
-        dpr={[1, mobile ? 1.15 : 1.5]}
-        camera={{ position: [0, 0, 10], fov: mobile ? 49 : 40, near: 0.1, far: 42 }}
+        dpr={[1, mobile ? 1 : 1.35]}
+        camera={{ position: initialCamera.toArray(), fov: mobile ? 56 : 41, near: 0.08, far: 74 }}
         gl={{
           antialias: !mobile,
-          alpha: true,
+          alpha: false,
           powerPreference: "high-performance",
         }}
+        shadows={false}
         frameloop={visible ? "always" : "never"}
+        style={{ touchAction: "pan-y" }}
         onCreated={({ gl }) => {
           gl.toneMapping = THREE.ACESFilmicToneMapping;
-          gl.toneMappingExposure = 1;
+          gl.toneMappingExposure = mobile ? 1.08 : 0.88;
           gl.outputColorSpace = THREE.SRGBColorSpace;
           onReady();
         }}
       >
-        <color attach="background" args={["#05070b"]} />
-        <Suspense fallback={null}>
-          <World progress={progress} pointer={pointer} mobile={mobile} />
-        </Suspense>
+        <World progress={progress} pointer={pointer} mobile={mobile} />
       </Canvas>
     </div>
   );
