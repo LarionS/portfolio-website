@@ -3,528 +3,62 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0a0a09" />
-    <title>Larion Siments — Unreal Engine &amp; VR Developer</title>
+    <meta name="theme-color" content="#05070b" />
+    <meta name="color-scheme" content="dark" />
+
+    <title>Larion — Unreal Engine, VR &amp; Interactive Systems</title>
     <meta
       name="description"
-      content="Unreal Engine and VR production by Larion Siments: immersive training systems, interactive real-time experiences, games, and cross-platform delivery."
+      content="Unreal Engine and VR training systems, connected simulations, physical experiences and mobile products designed and built by Larion."
     />
+    <meta name="author" content="Larion Siments" />
     <meta
-      property="og:title"
-      content="Larion Siments — Unreal Engine & VR Developer"
+      name="keywords"
+      content="Unreal Engine developer, VR developer, immersive training, virtual reality simulation, multi-user VR, interactive systems"
     />
+    <link rel="canonical" href="https://playframe.qd.je/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://playframe.qd.je/" />
+    <meta property="og:title" content="Larion — Unreal Engine, VR &amp; Interactive Systems" />
     <meta
       property="og:description"
-      content="Unreal Engine production, VR training systems, and interactive real-time experiences—from systems development through release."
+      content="Immersive training, connected simulations, physical VR experiences and interactive products for the real world."
     />
-    <meta property="og:image" content="./assets/media/highres-03.jpg" />
+    <meta property="og:image" content="https://playframe.qd.je/og-image.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+
     <link
       rel="icon"
-      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23c8ff45%22/><text x=%2250%22 y=%2264%22 font-size=%2248%22 font-family=%22Arial%22 font-weight=%22900%22 text-anchor=%22middle%22 fill=%22%230a0a09%22>LS</text></svg>"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2250%22 fill=%22%2305070b%22/><circle cx=%2250%22 cy=%2250%22 r=%2243%22 fill=%22none%22 stroke=%22%2374ecff%22 stroke-width=%223%22/><text x=%2250%22 y=%2264%22 font-size=%2248%22 font-family=%22Arial%22 font-weight=%22700%22 text-anchor=%22middle%22 fill=%22%23f3f5ef%22>L</text></svg>"
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&amp;family=Inter+Tight:wght@500;600;700;800;900&amp;display=swap"
       rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&amp;family=Manrope:wght@400;500;600;700&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap"
     />
-    <link rel="stylesheet" href="./styles.css?v=20260710-3" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Larion Siments",
+        "url": "https://playframe.qd.je/",
+        "email": "mailto:Larion1@gmail.com",
+        "jobTitle": "Unreal Engine, VR & Interactive Systems Developer",
+        "knowsAbout": [
+          "Unreal Engine",
+          "Virtual reality",
+          "Immersive training",
+          "Multi-user simulation",
+          "Hardware integration",
+          "Mobile product development"
+        ]
+      }
+    </script>
   </head>
-  <body class="home-page">
-    <a class="skip-link" href="#main">Skip to content</a>
-
-    <header class="site-header" data-header>
-      <a
-        class="brand-lockup"
-        href="./index.html"
-        aria-label="LS — Larion Siments, home"
-      >
-        <span class="brand-mark" aria-hidden="true">LS</span>
-        <span class="brand-name">Larion Siments</span>
-      </a>
-
-      <button
-        class="menu-toggle"
-        type="button"
-        data-menu-toggle
-        aria-expanded="false"
-        aria-controls="site-menu"
-      >
-        <span></span><span></span>
-        <span class="sr-only">Open navigation</span>
-      </button>
-
-      <nav
-        class="site-nav"
-        id="site-menu"
-        data-menu
-        aria-label="Main navigation"
-      >
-        <a href="#work" data-i18n="nav_work">Unreal / VR Work</a>
-        <a href="#approach" data-i18n="nav_about">Capabilities</a>
-        <a href="./unreal-vr.html" data-i18n="nav_showreel">Showreel</a>
-        <a href="#contact" data-i18n="nav_contact">Contact</a>
-      </nav>
-
-      <div class="header-actions">
-        <button
-          class="lang-toggle"
-          type="button"
-          data-lang-toggle
-          aria-label="Switch language to Hebrew"
-        >
-          <span class="lang-code" data-lang-label>HE</span>
-        </button>
-        <a class="header-cta" href="#contact" data-i18n="header_cta">Contact</a>
-      </div>
-
-      <span
-        class="scroll-progress"
-        data-scroll-progress
-        aria-hidden="true"
-      ></span>
-    </header>
-
-    <main id="main">
-      <section class="home-hero" aria-labelledby="home-title">
-        <div class="home-hero-media" data-parallax-media aria-hidden="true">
-          <img src="./assets/larion-profile.jpg" alt="" fetchpriority="high" />
-        </div>
-        <div class="home-hero-shade" aria-hidden="true"></div>
-
-        <div class="home-hero-grid">
-          <p class="hero-kicker hero-enter" data-i18n="hero_eyebrow">
-            Unreal Engine / VR Developer
-          </p>
-
-          <div class="hero-intro hero-enter">
-            <p data-i18n="hero_copy">
-              I build and ship Unreal Engine experiences for training,
-              simulation, games, and interactive products.
-            </p>
-            <div class="hero-actions">
-              <a
-                class="button button-accent"
-                href="#work"
-                data-i18n="hero_choose"
-                >View Unreal Work</a
-              >
-              <a
-                class="text-link text-link-light"
-                href="./unreal-vr.html#showreel"
-              >
-                <span data-i18n="hero_contact">Watch Showreel</span
-                ><span aria-hidden="true">↗</span>
-              </a>
-            </div>
-          </div>
-
-          <div class="hero-title-wrap">
-            <h1 class="hero-name" id="home-title">
-              <span class="hero-name-line"><span>Larion</span></span>
-              <span class="hero-name-line"
-                ><span>Siments<i>.</i></span></span
-              >
-            </h1>
-          </div>
-
-          <div
-            class="hero-meta hero-enter"
-            role="group"
-            aria-label="Core disciplines"
-          >
-            <span>Unreal Engine</span>
-            <span>VR</span>
-            <span>Simulation</span>
-          </div>
-        </div>
-
-        <a
-          class="scroll-cue"
-          href="#statement"
-          aria-label="Scroll to selected work"
-        >
-          <span>Scroll</span>
-          <span class="scroll-cue-line" aria-hidden="true"></span>
-        </a>
-      </section>
-
-      <section class="statement-section reveal" id="statement">
-        <div class="section-shell statement-grid">
-          <p class="section-label" data-i18n="ue_statement_label">
-            What I deliver
-          </p>
-          <div>
-            <h2 class="statement-title" data-i18n="ue_statement_title">
-              Unreal Engine experiences built for real users, real hardware, and
-              real-world conditions.
-            </h2>
-            <div class="statement-support">
-              <p data-i18n="ue_statement_copy">
-                I lead VR and real-time projects through technical planning,
-                hands-on development, optimization, QA, and release.
-              </p>
-              <a
-                class="text-link"
-                href="./assets/Larion-Siments-Resume-2024.docx"
-                download
-              >
-                <span data-i18n="hero_resume">Download Resume</span
-                ><span aria-hidden="true">↓</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="work-section" id="work" aria-labelledby="work-title">
-        <div class="section-shell work-heading reveal">
-          <p class="section-label" data-i18n="ue_work_label">
-            Selected Production Work
-          </p>
-          <h2 id="work-title" data-i18n="ue_work_title">
-            Training, games, and immersive systems—delivered in Unreal.
-          </h2>
-          <p data-i18n="ue_work_copy">
-            A selection of shipped and client production work.
-          </p>
-        </div>
-
-        <article
-          class="project-feature project-feature-immersive project-feature-training reveal"
-          data-project
-        >
-          <a
-            class="project-feature-link"
-            href="./unreal-vr.html"
-            aria-label="Explore VR training and simulation work"
-          ></a>
-          <figure class="project-backdrop" aria-hidden="true">
-            <img
-              src="./assets/media/shot-glenda-bedside.jpg"
-              alt=""
-              loading="lazy"
-            />
-          </figure>
-          <div class="project-overlay" aria-hidden="true"></div>
-          <div class="project-copy">
-            <div class="project-index">
-              <span>01</span
-              ><span data-i18n="ue_case1_kicker">VR Training Systems</span>
-            </div>
-            <div>
-              <h3 data-i18n="ue_case1_title">Training under pressure</h3>
-              <p data-i18n="ue_case1_copy">
-                Scenario-driven VR for healthcare, emergency response,
-                hospitality, and enterprise teams.
-              </p>
-              <span class="project-cta">
-                <span data-i18n="ue_case1_cta">View training work</span
-                ><span aria-hidden="true">↗</span>
-              </span>
-            </div>
-          </div>
-        </article>
-
-        <article
-          class="project-feature project-feature-immersive project-feature-hover reveal"
-          data-project
-        >
-          <a
-            class="project-feature-link"
-            href="https://store.steampowered.com/app/1822130/Hover_The_Edge/"
-            target="_blank"
-            rel="noreferrer"
-            aria-label="View Hover The Edge on Steam"
-          ></a>
-          <figure class="project-backdrop" aria-hidden="true">
-            <img
-              src="./assets/media/frame-hover-the-edge.jpg"
-              alt=""
-              loading="lazy"
-            />
-          </figure>
-          <div class="project-overlay" aria-hidden="true"></div>
-          <div class="project-copy">
-            <div class="project-index">
-              <span>02</span
-              ><span data-i18n="ue_case2_kicker">Published VR Game</span>
-            </div>
-            <div>
-              <h3 data-i18n="ue_case2_title">Hover The Edge</h3>
-              <p data-i18n="ue_case2_copy">
-                A complete VR game released on Steam—gameplay, interaction, UI,
-                performance, and shipping.
-              </p>
-              <span class="project-cta">
-                <span data-i18n="ue_case2_cta">View on Steam</span
-                ><span aria-hidden="true">↗</span>
-              </span>
-            </div>
-          </div>
-        </article>
-
-        <article
-          class="project-feature project-feature-immersive project-feature-showcase reveal"
-          data-project
-        >
-          <a
-            class="project-feature-link"
-            href="./unreal-vr.html#gallery"
-            aria-label="Explore interactive Unreal Engine projects"
-          ></a>
-          <figure class="project-backdrop" aria-hidden="true">
-            <img
-              src="./assets/media/shot-hashmal-digital-twin.jpg"
-              alt=""
-              loading="lazy"
-            />
-          </figure>
-          <div class="project-overlay" aria-hidden="true"></div>
-          <div class="project-copy">
-            <div class="project-index">
-              <span>03</span
-              ><span data-i18n="ue_case3_kicker"
-                >Industrial / Experiential</span
-              >
-            </div>
-            <div>
-              <h3 data-i18n="ue_case3_title">Interactive Unreal systems</h3>
-              <p data-i18n="ue_case3_copy">
-                Digital twins, product showcases, and real-time applications for
-                complex products and environments.
-              </p>
-              <span class="project-cta">
-                <span data-i18n="ue_case3_cta">View interactive work</span
-                ><span aria-hidden="true">↗</span>
-              </span>
-            </div>
-          </div>
-        </article>
-      </section>
-
-      <section
-        class="approach-section reveal"
-        id="approach"
-        aria-labelledby="approach-title"
-      >
-        <div class="section-shell">
-          <div class="approach-heading">
-            <p class="section-label" data-i18n="ue_cap_label">
-              Production Capabilities
-            </p>
-            <h2 id="approach-title" data-i18n="ue_cap_title">
-              Hands-on Unreal development across the full production cycle.
-            </h2>
-          </div>
-
-          <div class="approach-list">
-            <article>
-              <span>01</span>
-              <h3 data-i18n="ue_cap1_title">VR training &amp; simulation</h3>
-              <p data-i18n="ue_cap1_copy">
-                Scenario logic, spatial interaction, feedback systems, AI
-                behavior, and training UX.
-              </p>
-            </article>
-            <article>
-              <span>02</span>
-              <h3 data-i18n="ue_cap2_title">
-                Gameplay &amp; systems development
-              </h3>
-              <p data-i18n="ue_cap2_copy">
-                C++ and Blueprint systems for gameplay, UI/UMG, state, tools,
-                and runtime behavior.
-              </p>
-            </article>
-            <article>
-              <span>03</span>
-              <h3 data-i18n="ue_cap3_title">Optimization &amp; deployment</h3>
-              <p data-i18n="ue_cap3_copy">
-                Profiling, QA, platform constraints, and delivery across PC,
-                mobile, iOS, and VR.
-              </p>
-            </article>
-          </div>
-
-          <div
-            class="capability-rail"
-            role="group"
-            aria-label="Core Unreal Engine capabilities"
-          >
-            <span>Unreal Engine 4 / 5</span>
-            <span>C++ / Blueprints</span>
-            <span>PC / Mobile / iOS / VR</span>
-            <span data-i18n="cred_2">AI-Accelerated Development</span>
-          </div>
-        </div>
-      </section>
-
-      <section class="beyond-section reveal" aria-labelledby="beyond-title">
-        <div class="section-shell beyond-heading">
-          <p class="section-label" data-i18n="ue_beyond_label">
-            Additional Engineering
-          </p>
-          <div>
-            <h2 id="beyond-title" data-i18n="ue_beyond_title">
-              When the work extends beyond Unreal.
-            </h2>
-            <p data-i18n="ue_beyond_copy">
-              I also deliver supporting web products, operational tools, and
-              internal systems around the real-time experience.
-            </p>
-          </div>
-        </div>
-        <div class="section-shell beyond-links">
-          <a href="./founder-mvps.html">
-            <span>01</span>
-            <strong data-i18n="ue_beyond_founder">Product development</strong>
-            <span data-i18n="ue_beyond_link">View work</span>
-            <span aria-hidden="true">↗</span>
-          </a>
-          <a href="./internal-tools.html">
-            <span>02</span>
-            <strong data-i18n="ue_beyond_tools"
-              >Internal tools / automation</strong
-            >
-            <span data-i18n="ue_beyond_link">View work</span>
-            <span aria-hidden="true">↗</span>
-          </a>
-        </div>
-      </section>
-
-      <section
-        class="contact-section"
-        id="contact"
-        aria-labelledby="contact-title"
-      >
-        <div class="section-shell contact-heading reveal">
-          <p class="section-label" data-i18n="contact_eyebrow">Contact</p>
-          <h2 id="contact-title" data-i18n="ue_contact_title">
-            Need senior Unreal Engine or VR production support?
-          </h2>
-          <p data-i18n="ue_contact_copy">
-            Send the platform, scope, timeline, and what needs to ship.
-          </p>
-        </div>
-
-        <div class="section-shell contact-grid reveal">
-          <div class="contact-direct">
-            <p class="contact-note" data-i18n="contact_panel_copy">
-              Email for detailed briefs. WhatsApp for faster coordination.
-            </p>
-            <div class="contact-links">
-              <a href="mailto:Larion1@gmail.com">
-                <span data-i18n="contact_channel_email_label">Email</span>
-                <strong>Larion1@gmail.com</strong>
-                <span aria-hidden="true">↗</span>
-              </a>
-              <a
-                href="https://wa.me/66922470654"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <span data-i18n="contact_channel_thailand_label"
-                  >WhatsApp Thailand</span
-                >
-                <strong>+66 92 247 0654</strong>
-                <span aria-hidden="true">↗</span>
-              </a>
-              <a
-                href="https://www.linkedin.com/in/larion-siments-b5bb82238/"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <span data-i18n="contact_channel_linkedin_label">LinkedIn</span>
-                <strong data-i18n="contact_linkedin">LinkedIn Profile</strong>
-                <span aria-hidden="true">↗</span>
-              </a>
-            </div>
-          </div>
-
-          <form
-            class="contact-request"
-            data-contact-form
-            data-request-subject="Portfolio request from website"
-            action="https://formsubmit.co/Larion1@gmail.com"
-            method="POST"
-            enctype="multipart/form-data"
-          >
-            <div class="contact-form-heading">
-              <p class="section-label" data-i18n="contact_widget_eyebrow">
-                Project Request
-              </p>
-              <h3 data-i18n="contact_widget_title">Tell me about the work</h3>
-            </div>
-
-            <div class="contact-form-row">
-              <label class="contact-field">
-                <span data-i18n="contact_widget_name">Name</span>
-                <input
-                  type="text"
-                  name="name"
-                  autocomplete="name"
-                  required
-                  placeholder="Your name"
-                  data-i18n="contact_widget_name_placeholder"
-                  data-i18n-attrs="placeholder"
-                />
-              </label>
-              <label class="contact-field">
-                <span data-i18n="contact_widget_contact"
-                  >Email or WhatsApp</span
-                >
-                <input
-                  type="text"
-                  name="contact"
-                  required
-                  placeholder="Best way to reach you"
-                  data-i18n="contact_widget_contact_placeholder"
-                  data-i18n-attrs="placeholder"
-                />
-              </label>
-            </div>
-
-            <label class="contact-field contact-field-full">
-              <span data-i18n="contact_widget_message_label"
-                >Build request</span
-              >
-              <textarea
-                name="message"
-                rows="4"
-                required
-                placeholder="Platform, scope, timeline, and delivery target"
-                data-i18n="contact_widget_message_placeholder"
-                data-i18n-attrs="placeholder"
-              ></textarea>
-            </label>
-
-            <div class="contact-form-footer">
-              <button
-                class="button button-dark contact-submit"
-                type="submit"
-                data-i18n="contact_widget_submit"
-              >
-                Send Request
-              </button>
-              <p
-                class="contact-request-note"
-                data-i18n="contact_widget_note"
-              ></p>
-            </div>
-          </form>
-        </div>
-      </section>
-    </main>
-
-    <footer class="site-footer">
-      <a class="footer-brand" href="#main">Larion Siments<span>.</span></a>
-      <p data-i18n="footer_text">
-        Larion Siments | Unreal Engine, VR, Real-Time Production
-      </p>
-      <a href="mailto:Larion1@gmail.com">Bangkok / Available worldwide</a>
-    </footer>
-
-    <script src="./script.js?v=20260710-3"></script>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

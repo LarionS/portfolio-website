@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://playframe.qd.je/sitemap.xml

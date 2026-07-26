@@ -1,24 +1,25 @@
-# Larion Siments Portfolio
+# Larion — Immersive Systems Portfolio
 
-Professional portfolio website built from Larion Siments' resume content and showreel.
+A guided, six-chapter portfolio journey for Larion's Unreal Engine, VR, connected-training, physical-experience, and mobile-product work.
 
 ## Tech
 
-- HTML
-- CSS
-- JavaScript
+- React + TypeScript
+- Three.js via React Three Fiber
+- Vite
 - GitHub Pages (via GitHub Actions)
 
 ## Local preview
 
-Open `index.html` directly in your browser, or run a quick local server:
-
 ```bash
-python3 -m http.server 8080
+npm install
+npm run dev
 ```
 
-Then visit `http://localhost:8080`.
+Create a production build with `npm run build`.
 
 ## Deploy
 
 Push to `main` and GitHub Actions will deploy to GitHub Pages automatically.
+
+Only optimized, public-safe assets are tracked. Private reference footage, legacy pages, the portrait, résumé, and source-quality media remain local and are excluded from the repository.
