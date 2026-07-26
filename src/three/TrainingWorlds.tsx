@@ -1,8 +1,16 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import type { MutableRefObject } from "react";
 import { Line, RoundedBox, useCursor } from "@react-three/drei";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useLoader } from "@react-three/fiber";
 import * as THREE from "three";
+import systemsInterface from "../../assets/journey/worlds/systems-interface-v1.webp";
+import tacticalBackdrop from "../../assets/journey/worlds/tactical-world.webp";
+import emergencyBackdrop from "../../assets/journey/worlds/emergency-world.webp";
+import {
+  SourcedFireExtinguisher,
+  SourcedSciFiHelmet,
+  SourcedWheelchair,
+} from "./SourcedAssets";
 
 type Vec3 = [number, number, number];
 
@@ -19,6 +27,72 @@ const EMERGENCY = "#ff713f";
 const GRAPHITE = "#080d12";
 const DARK_METAL = "#101820";
 const MID_METAL = "#26343d";
+
+function useInterfaceCrop(
+  repeatX: number,
+  repeatY: number,
+  offsetX: number,
+  offsetY: number,
+) {
+  const source = useLoader(THREE.TextureLoader, systemsInterface);
+  const texture = useMemo(() => {
+    const cropped = source.clone();
+    cropped.colorSpace = THREE.SRGBColorSpace;
+    cropped.wrapS = THREE.ClampToEdgeWrapping;
+    cropped.wrapT = THREE.ClampToEdgeWrapping;
+    cropped.repeat.set(repeatX, repeatY);
+    cropped.offset.set(offsetX, offsetY);
+    cropped.minFilter = THREE.LinearMipmapLinearFilter;
+    cropped.magFilter = THREE.LinearFilter;
+    cropped.generateMipmaps = true;
+    cropped.needsUpdate = true;
+    return cropped;
+  }, [offsetX, offsetY, repeatX, repeatY, source]);
+
+  useEffect(() => () => texture.dispose(), [texture]);
+  return texture;
+}
+
+function EvidenceBackdrop({
+  image,
+  position,
+  size,
+  accent,
+  tint = "#ffffff",
+}: {
+  image: string;
+  position: Vec3;
+  size: [number, number];
+  accent: string;
+  tint?: string;
+}) {
+  const texture = useLoader(THREE.TextureLoader, image);
+
+  useEffect(() => {
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.minFilter = THREE.LinearMipmapLinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    texture.generateMipmaps = true;
+    texture.anisotropy = 8;
+    texture.needsUpdate = true;
+  }, [texture]);
+
+  return (
+    <group position={position}>
+      <RoundedBox args={[size[0] + 0.34, size[1] + 0.34, 0.18]} radius={0.08} smoothness={3} position={[0, 0, -0.08]}>
+        <meshStandardMaterial color="#080d11" metalness={0.74} roughness={0.24} />
+      </RoundedBox>
+      <mesh position={[0, 0, 0.035]}>
+        <planeGeometry args={size} />
+        <meshBasicMaterial map={texture} color={tint} toneMapped={false} fog={false} />
+      </mesh>
+      <mesh position={[0, -size[1] / 2 - 0.12, 0.06]}>
+        <boxGeometry args={[size[0] + 0.18, 0.045, 0.04]} />
+        <meshStandardMaterial color={accent} emissive={accent} emissiveIntensity={1.15} />
+      </mesh>
+    </group>
+  );
+}
 
 function useWorldPresence(
   progress: MutableRefObject<number>,
@@ -44,10 +118,10 @@ function useWorldPresence(
     const group = root.current;
     if (!group) return;
     group.visible = presence.current > 0.006;
-    const scale = 0.9 + presence.current * 0.1;
+    const scale = 0.985 + presence.current * 0.015;
     group.scale.setScalar(scale);
-    group.position.y = -0.34 * (1 - presence.current);
-    group.rotation.y = 0.045 * (1 - presence.current);
+    group.position.y = -0.12 * (1 - presence.current);
+    group.rotation.y = 0.015 * (1 - presence.current);
   });
 
   return presence;
@@ -196,6 +270,7 @@ function ClinicalMonitor({ mobile }: { mobile: boolean }) {
   const [hovered, setHovered] = useState(false);
   const [alert, setAlert] = useState(false);
   const screenMaterial = useRef<THREE.MeshStandardMaterial>(null);
+  const interfaceTexture = useInterfaceCrop(0.315, 0.455, 0.008, 0.54);
   useCursor(hovered);
 
   useEffect(() => {
@@ -215,7 +290,7 @@ function ClinicalMonitor({ mobile }: { mobile: boolean }) {
     return values.map((value, valueIndex) => [
       -0.63 + valueIndex * (1.26 / (values.length - 1)),
       value,
-      0.176,
+      0.278,
     ]);
   }, [alert]);
 
@@ -251,6 +326,15 @@ function ClinicalMonitor({ mobile }: { mobile: boolean }) {
           emissiveIntensity={0.8}
         />
       </RoundedBox>
+      <mesh position={[0, 0.05, 0.248]}>
+        <planeGeometry args={[1.34, 0.88]} />
+        <meshBasicMaterial
+          map={interfaceTexture}
+          color={alert ? "#ff9e8e" : "#ffffff"}
+          toneMapped={false}
+          fog={false}
+        />
+      </mesh>
       <Line
         points={signal}
         color={alert ? "#ff6b48" : CLINICAL}
@@ -325,7 +409,7 @@ function SurgicalLight({ mobile }: { mobile: boolean }) {
   });
 
   return (
-    <group position={[0.45, 3.05, -0.45]}>
+    <group position={[1.15, 2.65, -0.6]} scale={0.86}>
       <Beam start={[0, 1.0, 0]} end={[0, 0.28, 0]} radius={0.06} color="#71838b" />
       <Beam start={[0, 0.35, 0]} end={[0.68, 0.02, 0.15]} radius={0.055} color="#71838b" />
       <group ref={lamp} position={[0.82, -0.02, 0.2]} rotation={[0.18, -0.1, 0]}>
@@ -338,13 +422,13 @@ function SurgicalLight({ mobile }: { mobile: boolean }) {
           return (
             <mesh position={[Math.cos(angle) * 0.62, Math.sin(angle) * 0.62, 0.04]} key={bulbIndex}>
               <circleGeometry args={[0.12, mobile ? 10 : 18]} />
-              <meshStandardMaterial color="#eaffff" emissive={CLINICAL} emissiveIntensity={1.7} />
+              <meshStandardMaterial color="#eaffff" emissive={CLINICAL} emissiveIntensity={0.72} />
             </mesh>
           );
         })}
         <mesh position={[0, 0, 0.03]}>
           <circleGeometry args={[0.27, mobile ? 12 : 24]} />
-          <meshStandardMaterial color="#e9ffff" emissive={CLINICAL} emissiveIntensity={1.35} />
+          <meshStandardMaterial color="#e9ffff" emissive={CLINICAL} emissiveIntensity={0.62} />
         </mesh>
       </group>
     </group>
@@ -413,6 +497,14 @@ export function ClinicalWorld({ progress, index, position, mobile }: TrainingWor
         <ClinicalMonitor mobile={mobile} />
         <IVStand mobile={mobile} />
         <SurgicalLight mobile={mobile} />
+        <Suspense fallback={null}>
+          <SourcedWheelchair
+            normalizeTo={1.86}
+            position={[2.72, -2.03, 1.38]}
+            rotation={[0, -2.42, 0]}
+            shadows={false}
+          />
+        </Suspense>
         <pointLight ref={keyLight} position={[0.7, 2.15, 1.8]} color="#b9f7ff" intensity={0} distance={11} decay={2} />
         <pointLight position={[-3.7, -0.2, -1.8]} color={CLINICAL} intensity={mobile ? 1.6 : 2.8} distance={6} decay={2} />
       </group>
@@ -427,6 +519,15 @@ const DEFENSE_POSITIONS: Vec3[] = [
   [1.42, -1.15, -3.26],
   [3.2, -1.15, -1.52],
   [3.72, -1.15, 1.1],
+];
+
+const DEFENSE_EVIDENCE_NODES: Vec3[] = [
+  [-3.5, -0.55, -4.22],
+  [-2.15, 0.38, -4.22],
+  [-0.72, -0.02, -4.22],
+  [0.72, 0.38, -4.22],
+  [2.15, -0.02, -4.22],
+  [3.5, -0.55, -4.22],
 ];
 
 function TraineeNode({
@@ -584,6 +685,7 @@ function InstructorConsole({
   onAdvance: () => void;
 }) {
   const screen = useRef<THREE.MeshStandardMaterial>(null);
+  const dashboardTexture = useInterfaceCrop(0.36, 0.55, 0.32, 0.2);
 
   useFrame(({ clock }) => {
     if (!screen.current) return;
@@ -616,14 +718,20 @@ function InstructorConsole({
         <RoundedBox args={[2.08, 1.09, 0.035]} radius={0.04} smoothness={2} position={[0, 0, 0.085]}>
           <meshStandardMaterial ref={screen} color="#0a130b" emissive="#243410" emissiveIntensity={0.72} roughness={0.32} />
         </RoundedBox>
+        <mesh position={[0, 0, 0.111]}>
+          <planeGeometry args={[1.98, 0.99]} />
+          <meshBasicMaterial map={dashboardTexture} toneMapped={false} fog={false} />
+        </mesh>
         {Array.from({ length: 6 }, (_, unitIndex) => (
-          <group position={[-0.82 + (unitIndex % 3) * 0.82, 0.24 - Math.floor(unitIndex / 3) * 0.48, 0.12]} key={unitIndex}>
+          <group position={[-0.82 + (unitIndex % 3) * 0.82, 0.24 - Math.floor(unitIndex / 3) * 0.48, 0.13]} key={unitIndex}>
             <RoundedBox args={[0.62, 0.28, 0.02]} radius={0.025} smoothness={2}>
               <meshStandardMaterial
                 color={unitIndex < scenario ? "#a7ca39" : "#253029"}
                 emissive={unitIndex < scenario ? DEFENSE : "#101410"}
                 emissiveIntensity={unitIndex < scenario ? 0.72 : 0.08}
                 roughness={0.42}
+                transparent
+                opacity={0.34}
               />
             </RoundedBox>
           </group>
@@ -636,8 +744,12 @@ function InstructorConsole({
         <RoundedBox args={[0.75, 1.03, 0.025]} radius={0.06} smoothness={2} position={[0, 0, 0.058]}>
           <meshStandardMaterial color="#17200e" emissive={DEFENSE} emissiveIntensity={hovered ? 0.8 : 0.35} roughness={0.35} />
         </RoundedBox>
+        <mesh position={[0, 0, 0.074]}>
+          <planeGeometry args={[0.68, 0.93]} />
+          <meshBasicMaterial map={dashboardTexture} toneMapped={false} fog={false} />
+        </mesh>
         <Line
-          points={[[-0.28, -0.1, 0.08], [-0.15, -0.1, 0.08], [-0.08, -0.24, 0.08], [0.02, 0.2, 0.08], [0.12, -0.1, 0.08], [0.29, -0.1, 0.08]]}
+          points={[[-0.28, -0.1, 0.084], [-0.15, -0.1, 0.084], [-0.08, -0.24, 0.084], [0.02, 0.2, 0.084], [0.12, -0.1, 0.084], [0.29, -0.1, 0.084]]}
           color={DEFENSE}
           lineWidth={mobile ? 0.8 : 1.2}
         />
@@ -650,12 +762,10 @@ export function DefenseWorld({ progress, index, position, mobile }: TrainingWorl
   const root = useRef<THREE.Group>(null);
   const keyLight = useRef<THREE.PointLight>(null);
   const [scenario, setScenario] = useState(6);
-  const [selected, setSelected] = useState(0);
-  const [hoveredNode, setHoveredNode] = useState<number | null>(null);
   const [consoleHovered, setConsoleHovered] = useState(false);
   const presence = useWorldPresence(progress, index, root);
   usePresenceLight(keyLight, presence, mobile ? 7 : 13);
-  useCursor(hoveredNode !== null || consoleHovered);
+  useCursor(consoleHovered);
 
   useEffect(() => {
     const handleAction = (event: Event) => {
@@ -676,24 +786,35 @@ export function DefenseWorld({ progress, index, position, mobile }: TrainingWorl
         </mesh>
         <mesh position={[0, -1.83, 0]}>
           <torusGeometry args={[4.58, 0.035, 8, mobile ? 48 : 88]} />
-          <meshStandardMaterial color={DEFENSE} emissive={DEFENSE} emissiveIntensity={0.7} roughness={0.25} />
+          <meshStandardMaterial color={DEFENSE} emissive={DEFENSE} emissiveIntensity={0.42} roughness={0.25} transparent opacity={0.2} />
         </mesh>
+        <EvidenceBackdrop
+          image={tacticalBackdrop}
+          position={[0, 0.65, -4.42]}
+          size={mobile ? [8.6, 4.84] : [10.5, 5.91]}
+          accent={DEFENSE}
+          tint={scenario === 1 ? "#d8ff90" : "#ffffff"}
+        />
         <group position={[0, -1.36, 0]}>
           <mesh>
             <cylinderGeometry args={[1.3, 1.65, 0.82, mobile ? 24 : 40]} />
             <meshStandardMaterial color="#172127" metalness={0.64} roughness={0.28} />
           </mesh>
-          <mesh position={[0, 0.52, 0]} rotation={[0.18, 0.3, 0.08]}>
-            <icosahedronGeometry args={[0.82, mobile ? 0 : 1]} />
-            <meshStandardMaterial color="#17210e" emissive={DEFENSE} emissiveIntensity={0.42} wireframe metalness={0.1} roughness={0.35} />
-          </mesh>
-          <mesh position={[0, 0.52, 0]}>
+          <Suspense fallback={null}>
+            <SourcedSciFiHelmet
+              normalizeTo={1.55}
+              position={[0, 0.84, 0]}
+              rotation={[0.02, -0.52, 0.03]}
+              shadows={false}
+            />
+          </Suspense>
+          <mesh position={[0, 0.48, 0.28]}>
             <sphereGeometry args={[0.22, 12, 8]} />
             <meshStandardMaterial color={DEFENSE} emissive={DEFENSE} emissiveIntensity={2.1} transparent opacity={0.62} />
           </mesh>
         </group>
 
-        {DEFENSE_POSITIONS.map((nodePosition, nodeIndex) => (
+        {DEFENSE_EVIDENCE_NODES.map((nodePosition, nodeIndex) => (
           <group key={nodeIndex}>
             <Line
               points={[
@@ -706,15 +827,14 @@ export function DefenseWorld({ progress, index, position, mobile }: TrainingWorl
               opacity={nodeIndex < scenario ? 0.58 : 0.16}
             />
             <NetworkPulse start={nodePosition} active={nodeIndex < scenario} offset={nodeIndex / 6} mobile={mobile} />
-            <TraineeNode
-              position={nodePosition}
-              nodeIndex={nodeIndex}
-              active={nodeIndex < scenario}
-              selected={nodeIndex === selected}
-              mobile={mobile}
-              onHover={setHoveredNode}
-              onSelect={setSelected}
-            />
+            <mesh position={nodePosition}>
+              <circleGeometry args={[nodeIndex < scenario ? 0.1 : 0.065, mobile ? 12 : 20]} />
+              <meshStandardMaterial
+                color={nodeIndex < scenario ? DEFENSE : "#39423e"}
+                emissive={DEFENSE}
+                emissiveIntensity={nodeIndex < scenario ? 1.7 : 0.04}
+              />
+            </mesh>
           </group>
         ))}
 
@@ -726,23 +846,6 @@ export function DefenseWorld({ progress, index, position, mobile }: TrainingWorl
           onAdvance={() => setScenario((current) => (current % 6) + 1)}
         />
 
-        {[-3.8, 0, 3.8].map((x, rackIndex) => (
-          <group position={[x, -0.25, -4.35]} key={x}>
-            <RoundedBox args={[1.5, 3.5, 0.65]} radius={0.1} smoothness={3}>
-              <meshStandardMaterial color="#11191d" metalness={0.56} roughness={0.36} />
-            </RoundedBox>
-            {Array.from({ length: mobile ? 4 : 6 }, (_, stripIndex) => (
-              <mesh position={[0, 1.15 - stripIndex * 0.43, 0.35]} key={stripIndex}>
-                <boxGeometry args={[1.1, 0.055, 0.025]} />
-                <meshStandardMaterial
-                  color={stripIndex <= rackIndex + 1 ? DEFENSE : "#34413a"}
-                  emissive={DEFENSE}
-                  emissiveIntensity={stripIndex <= rackIndex + 1 ? 0.65 : 0.04}
-                />
-              </mesh>
-            ))}
-          </group>
-        ))}
         <pointLight ref={keyLight} position={[0, 2.4, 1.4]} color="#e7ff8a" intensity={0} distance={12} decay={2} />
         <pointLight position={[0, -0.2, 0]} color={DEFENSE} intensity={mobile ? 3 : 5.5} distance={7} decay={2} />
       </group>
@@ -886,7 +989,7 @@ function Responder({
   );
 }
 
-function FireAndSmoke({ contained, mobile }: { contained: boolean; mobile: boolean }) {
+function FireAndSmoke({ contained, mobile, position = [-2.3, -1.82, 0.45] }: { contained: boolean; mobile: boolean; position?: Vec3 }) {
   const flame = useRef<THREE.Group>(null);
   const fireLight = useRef<THREE.PointLight>(null);
   const smoke = useRef<THREE.Group>(null);
@@ -928,7 +1031,7 @@ function FireAndSmoke({ contained, mobile }: { contained: boolean; mobile: boole
   });
 
   return (
-    <group position={[-2.3, -1.82, 0.45]}>
+    <group position={position}>
       <group ref={flame}>
         <mesh position={[0, 0.52, 0]}>
           <coneGeometry args={[0.48, 1.25, mobile ? 8 : 14]} />
@@ -1055,6 +1158,31 @@ function WarehouseShell({ mobile }: { mobile: boolean }) {
   );
 }
 
+function IncidentDisplay({ contained }: { contained: boolean }) {
+  const incidentTexture = useInterfaceCrop(0.31, 0.64, 0.69, 0.18);
+
+  return (
+    <group position={[-3.4, 1.05, -4.48]} rotation={[0, 0.08, 0]}>
+      <RoundedBox args={[2.75, 1.66, 0.13]} radius={0.08} smoothness={3}>
+        <meshStandardMaterial color="#11181c" metalness={0.62} roughness={0.28} />
+      </RoundedBox>
+      <mesh position={[0, 0, 0.075]}>
+        <planeGeometry args={[2.52, 1.42]} />
+        <meshBasicMaterial
+          map={incidentTexture}
+          color={contained ? "#b9fff6" : "#ffffff"}
+          toneMapped={false}
+          fog={false}
+        />
+      </mesh>
+      <mesh position={[-1.18, 0.68, 0.09]}>
+        <circleGeometry args={[0.055, 20]} />
+        <meshBasicMaterial color={contained ? CLINICAL : EMERGENCY} toneMapped={false} />
+      </mesh>
+    </group>
+  );
+}
+
 export function EmergencyWorld({ progress, index, position, mobile }: TrainingWorldProps) {
   const root = useRef<THREE.Group>(null);
   const keyLight = useRef<THREE.PointLight>(null);
@@ -1089,7 +1217,21 @@ export function EmergencyWorld({ progress, index, position, mobile }: TrainingWo
     <group position={position}>
       <group ref={root} visible={Math.abs(progress.current - index) < 0.94}>
         <WarehouseShell mobile={mobile} />
-        <EmergencyVehicle mobile={mobile} />
+        <EvidenceBackdrop
+          image={emergencyBackdrop}
+          position={[0, 0.62, -4.3]}
+          size={mobile ? [8.7, 4.9] : [10.7, 6.02]}
+          accent={contained ? CLINICAL : EMERGENCY}
+          tint={contained ? "#b8e7eb" : "#ffffff"}
+        />
+        <Suspense fallback={null}>
+          <SourcedFireExtinguisher
+            normalizeTo={1.34}
+            position={[1.05, -1.98, 1.62]}
+            rotation={[0, -0.2, 0]}
+            shadows={false}
+          />
+        </Suspense>
         <mesh>
           <tubeGeometry args={[hoseCurve, mobile ? 32 : 64, 0.055, mobile ? 5 : 8, false]} />
           <meshStandardMaterial color={contained ? "#74ecff" : "#354852"} emissive="#74ecff" emissiveIntensity={contained ? 0.78 : 0.08} roughness={0.48} />
@@ -1103,10 +1245,7 @@ export function EmergencyWorld({ progress, index, position, mobile }: TrainingWo
             mobile={mobile}
           />
         ))}
-        <Responder position={[-0.7, -1.18, 0.92]} color="#ff743e" responderIndex={0} contained={contained} mobile={mobile} />
-        <Responder position={[-1.55, -1.18, 0.1]} color="#ffd65c" responderIndex={1} contained={contained} mobile={mobile} />
-        <Responder position={[0.3, -1.18, 0.18]} color="#62c9ff" responderIndex={2} contained={contained} mobile={mobile} />
-        <FireAndSmoke contained={contained} mobile={mobile} />
+        <FireAndSmoke contained={contained} mobile={mobile} position={[3.15, -1.82, -3.6]} />
         <IncidentBeacon
           contained={contained}
           hovered={beaconHovered}

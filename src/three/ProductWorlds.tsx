@@ -1,4 +1,5 @@
 import {
+  Suspense,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -11,6 +12,7 @@ import { Line, RoundedBox } from "@react-three/drei";
 import { useFrame, useLoader } from "@react-three/fiber";
 import type { ThreeEvent } from "@react-three/fiber";
 import * as THREE from "three";
+import { SourcedHoverSpeeder } from "./SourcedAssets";
 
 type SharedWorldProps = {
   progress: MutableRefObject<number>;
@@ -176,7 +178,12 @@ function VideoPortal({
       </mesh>
       <mesh position={[0, 0, 0.04]} renderOrder={1}>
         <planeGeometry args={[width, height]} />
-        <meshBasicMaterial map={texture} toneMapped={false} side={THREE.DoubleSide} />
+        <meshBasicMaterial
+          map={texture}
+          toneMapped={false}
+          side={THREE.DoubleSide}
+          fog={false}
+        />
       </mesh>
       {[
         [0, height / 2 + frame, 0.055, width + 0.26, frame],
@@ -213,55 +220,64 @@ const HOVER_TRACK: Vec3[] = [
 ];
 
 function TrackDeck() {
-  const segments = useMemo(
-    () =>
-      HOVER_TRACK.slice(0, -1).map((start, segmentIndex) => {
-        const end = HOVER_TRACK[segmentIndex + 1];
-        const dx = end[0] - start[0];
-        const dz = end[2] - start[2];
-        return {
-          position: [
-            (start[0] + end[0]) / 2,
-            (start[1] + end[1]) / 2,
-            (start[2] + end[2]) / 2,
-          ] as Vec3,
-          length: Math.hypot(dx, dz) + 0.12,
-          rotation: Math.atan2(dx, dz),
-        };
-      }),
-    [],
-  );
+  const { geometry, leftRail, rightRail, centerMarks } = useMemo(() => {
+    const curve = new THREE.CatmullRomCurve3(
+      HOVER_TRACK.map((point) => new THREE.Vector3(...point)),
+      false,
+      "centripetal",
+      0.42,
+    );
+    const samples = 52;
+    const halfWidth = 0.94;
+    const positions: number[] = [];
+    const uvs: number[] = [];
+    const indices: number[] = [];
+    const left: Vec3[] = [];
+    const right: Vec3[] = [];
+    const marks: { position: Vec3; rotation: number }[] = [];
 
-  const leftRail = useMemo(
-    () => HOVER_TRACK.map(([x, y, z]) => [x - 0.79, y + 0.13, z] as Vec3),
-    [],
-  );
-  const rightRail = useMemo(
-    () => HOVER_TRACK.map(([x, y, z]) => [x + 0.79, y + 0.13, z] as Vec3),
-    [],
-  );
+    for (let sample = 0; sample <= samples; sample += 1) {
+      const t = sample / samples;
+      const point = curve.getPoint(t);
+      const tangent = curve.getTangent(t).normalize();
+      const normal = new THREE.Vector3(-tangent.z, 0, tangent.x).normalize();
+      const leftPoint = point.clone().addScaledVector(normal, halfWidth);
+      const rightPoint = point.clone().addScaledVector(normal, -halfWidth);
+      positions.push(...leftPoint.toArray(), ...rightPoint.toArray());
+      uvs.push(0, t * 7, 1, t * 7);
+      left.push([leftPoint.x, leftPoint.y + 0.09, leftPoint.z]);
+      right.push([rightPoint.x, rightPoint.y + 0.09, rightPoint.z]);
+
+      if (sample < samples) {
+        const root = sample * 2;
+        indices.push(root, root + 2, root + 1, root + 2, root + 3, root + 1);
+      }
+      if (sample > 3 && sample < samples - 2 && sample % 7 === 0) {
+        marks.push({
+          position: [point.x, point.y + 0.045, point.z],
+          rotation: Math.atan2(tangent.x, tangent.z),
+        });
+      }
+    }
+
+    const ribbon = new THREE.BufferGeometry();
+    ribbon.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+    ribbon.setAttribute("uv", new THREE.Float32BufferAttribute(uvs, 2));
+    ribbon.setIndex(indices);
+    ribbon.computeVertexNormals();
+    return { geometry: ribbon, leftRail: left, rightRail: right, centerMarks: marks };
+  }, []);
 
   return (
     <group>
-      {segments.map((segment, segmentIndex) => (
-        <mesh
-          key={segmentIndex}
-          position={segment.position}
-          rotation={[0, segment.rotation, 0]}
-        >
-          <boxGeometry args={[1.62, 0.14, segment.length]} />
-          <meshStandardMaterial
-            color="#101923"
-            metalness={0.38}
-            roughness={0.58}
-          />
-        </mesh>
-      ))}
-      <Line points={leftRail} color={CYAN} lineWidth={1.35} transparent opacity={0.76} />
-      <Line points={rightRail} color={CYAN} lineWidth={1.35} transparent opacity={0.76} />
-      {HOVER_TRACK.slice(1, -1).map(([x, y, z], stripeIndex) => (
-        <mesh key={stripeIndex} position={[x, y + 0.09, z]}>
-          <boxGeometry args={[1.28, 0.018, 0.05]} />
+      <mesh geometry={geometry}>
+        <meshStandardMaterial color="#101923" metalness={0.42} roughness={0.62} />
+      </mesh>
+      <Line points={leftRail} color={CYAN} lineWidth={1.1} transparent opacity={0.56} />
+      <Line points={rightRail} color={CYAN} lineWidth={1.1} transparent opacity={0.56} />
+      {centerMarks.map((mark, stripeIndex) => (
+        <mesh key={stripeIndex} position={mark.position} rotation={[-Math.PI / 2, 0, mark.rotation]}>
+          <planeGeometry args={[0.72, 0.08]} />
           <meshBasicMaterial color={CYAN} transparent opacity={0.28} />
         </mesh>
       ))}
@@ -340,13 +356,13 @@ function HoverGate({ position, phase }: { position: Vec3; phase: number }) {
   });
 
   return (
-    <group position={position}>
+    <group position={position} scale={0.66}>
       <mesh ref={ring}>
         <torusGeometry args={[1.02, 0.075, 10, 56]} />
         <meshStandardMaterial
           color={CYAN}
           emissive={CYAN}
-          emissiveIntensity={2.1}
+          emissiveIntensity={1.35}
           roughness={0.22}
           metalness={0.2}
         />
@@ -368,13 +384,23 @@ function HoverGate({ position, phase }: { position: Vec3; phase: number }) {
 function HoverDevice({
   progress,
   index,
+  mobile,
 }: {
   progress: MutableRefObject<number>;
   index: number;
+  mobile: boolean;
 }) {
   const craft = useRef<THREE.Group>(null);
   const thrusters = useRef<THREE.Group>(null);
+  const boostLight = useRef<THREE.PointLight>(null);
   const boosted = useRef(false);
+  const baseX = mobile ? 0.5 : 1.2;
+  const baseY = mobile ? 0.95 : 0.1;
+  const baseZ = 0.35;
+  const baseScale = mobile ? 0.72 : 0.9;
+  const modelRotation: Vec3 = mobile
+    ? [0.04, Math.PI + 0.24, -0.04]
+    : [0, Math.PI, 0];
 
   useEffect(() => {
     const handleAction = (event: Event) => {
@@ -389,15 +415,36 @@ function HoverDevice({
   useFrame((state, delta) => {
     if (!craft.current) return;
     const proximity = proximityAt(progress, index);
-    const steering = proximity > 0.3 ? state.pointer.x * 0.95 : 0;
-    const targetX = steering + Math.sin(state.clock.elapsedTime * 0.72) * 0.12;
+    const steering = proximity > 0.3
+      ? state.pointer.x * (mobile ? 0.42 : 0.95)
+      : 0;
+    const targetX = baseX + steering + Math.sin(state.clock.elapsedTime * 0.72) * 0.12;
     craft.current.position.x = THREE.MathUtils.damp(
       craft.current.position.x,
       targetX,
       5.5,
       delta,
     );
-    craft.current.position.y = -0.78 + Math.sin(state.clock.elapsedTime * 2.1) * 0.055;
+    craft.current.position.y = THREE.MathUtils.damp(
+      craft.current.position.y,
+      baseY + (boosted.current ? 0.18 : 0) + Math.sin(state.clock.elapsedTime * 2.1) * 0.055,
+      6,
+      delta,
+    );
+    craft.current.position.z = THREE.MathUtils.damp(
+      craft.current.position.z,
+      baseZ + (boosted.current ? 0.35 : 0),
+      6,
+      delta,
+    );
+    const targetCraftScale = baseScale * (boosted.current ? 1.14 : 1);
+    const craftScale = THREE.MathUtils.damp(
+      craft.current.scale.x,
+      targetCraftScale,
+      6,
+      delta,
+    );
+    craft.current.scale.setScalar(craftScale);
     craft.current.rotation.z = THREE.MathUtils.damp(
       craft.current.rotation.z,
       -steering * 0.12,
@@ -411,10 +458,19 @@ function HoverDevice({
       delta,
     );
     if (thrusters.current) {
-      const scale = boosted.current ? 1.75 : 1 + Math.sin(state.clock.elapsedTime * 5) * 0.12;
-      thrusters.current.scale.z = THREE.MathUtils.damp(
-        thrusters.current.scale.z,
-        scale,
+      const idlePulse = 1 + Math.sin(state.clock.elapsedTime * 5) * 0.08;
+      const targetXY = boosted.current ? 1.8 : idlePulse;
+      const targetZ = boosted.current ? 2.8 : idlePulse;
+      thrusters.current.scale.set(
+        THREE.MathUtils.damp(thrusters.current.scale.x, targetXY, 7, delta),
+        THREE.MathUtils.damp(thrusters.current.scale.y, targetXY, 7, delta),
+        THREE.MathUtils.damp(thrusters.current.scale.z, targetZ, 7, delta),
+      );
+    }
+    if (boostLight.current) {
+      boostLight.current.intensity = THREE.MathUtils.damp(
+        boostLight.current.intensity,
+        boosted.current ? 12 : 4.5,
         7,
         delta,
       );
@@ -427,36 +483,41 @@ function HoverDevice({
   };
 
   return (
-    <group ref={craft} position={[0, -0.78, 2.45]} onClick={toggleBoost}>
-      <RoundedBox args={[1.25, 0.16, 1.55]} radius={0.1} smoothness={3} rotation={[0.16, 0, 0]}>
-        <meshStandardMaterial color="#172532" metalness={0.72} roughness={0.24} />
-      </RoundedBox>
-      <mesh position={[0, 0.17, -0.08]} rotation={[0.08, 0, 0]}>
-        <boxGeometry args={[0.52, 0.08, 0.92]} />
-        <meshStandardMaterial color="#293c4b" roughness={0.45} metalness={0.48} />
-      </mesh>
-      {[-0.72, 0.72].map((x) => (
-        <mesh key={x} position={[x, -0.01, 0.08]} rotation={[0.08, 0, x < 0 ? 0.22 : -0.22]}>
-          <boxGeometry args={[0.36, 0.1, 1.05]} />
-          <meshStandardMaterial color="#0c1119" metalness={0.65} roughness={0.25} />
-        </mesh>
-      ))}
-      <group ref={thrusters} position={[0, -0.09, 0.72]}>
-        {[-0.43, 0.43].map((x) => (
-          <mesh key={x} position={[x, 0, 0.14]} rotation={[Math.PI / 2, 0, 0]}>
-            <coneGeometry args={[0.13, 0.72, 18, 1, true]} />
+    <group
+      ref={craft}
+      position={[baseX, baseY, baseZ]}
+      scale={baseScale}
+      onClick={toggleBoost}
+    >
+      <Suspense fallback={null}>
+        <SourcedHoverSpeeder
+          normalizeTo={2.2}
+          position={[0, -0.04, 0]}
+          rotation={modelRotation}
+          shadows={false}
+        />
+      </Suspense>
+      <group ref={thrusters} position={[0, -0.03, -0.62]}>
+        {[-0.24, 0.24].map((x) => (
+          <mesh key={x} position={[x, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
+            <capsuleGeometry args={[0.035, 0.22, 4, 10]} />
             <meshBasicMaterial
               color={CYAN}
               transparent
-              opacity={0.55}
-              side={THREE.DoubleSide}
+              opacity={0.82}
               depthWrite={false}
               toneMapped={false}
             />
           </mesh>
         ))}
       </group>
-      <pointLight color={CYAN} intensity={4.5} distance={3.5} position={[0, -0.1, 0.8]} />
+      <pointLight
+        ref={boostLight}
+        color={CYAN}
+        intensity={4.5}
+        distance={4.5}
+        position={[0, -0.1, 0.8]}
+      />
     </group>
   );
 }
@@ -489,7 +550,7 @@ export function HoverWorld({
     return () => window.removeEventListener("larion:scene-action", handleAction);
   }, [start]);
 
-  useFrame((state, delta) => {
+  useFrame((_, delta) => {
     if (!world.current) return;
     presence.current = THREE.MathUtils.damp(
       presence.current,
@@ -498,38 +559,37 @@ export function HoverWorld({
       delta,
     );
     world.current.visible = presence.current > 0.012;
-    const scale = 0.9 + presence.current * 0.1;
+    const scale = 0.97 + presence.current * 0.03;
     world.current.scale.setScalar(scale);
     world.current.position.set(
       position[0],
-      position[1] + (1 - presence.current) * 0.28,
+      position[1] + (1 - presence.current) * 0.12,
       position[2],
     );
-    world.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.15) * 0.012;
+    world.current.rotation.y = 0;
   });
 
   const gatePositions: Vec3[] = [
-    [-0.25, -0.25, 0.65],
-    [0.55, -0.18, -2.15],
-    [-0.42, -0.12, -5.05],
+    [2.7, -0.62, -3.35],
   ];
 
   return (
     <group ref={world} position={position} visible={Math.abs(progress.current - index) < 0.94}>
       <CanyonRocks mobile={mobile} />
       <TrackDeck />
-      {gatePositions.slice(0, mobile ? 2 : 3).map((gatePosition, gateIndex) => (
+      {gatePositions.slice(0, mobile ? 0 : 1).map((gatePosition, gateIndex) => (
         <HoverGate
           key={gatePosition[2]}
           position={gatePosition}
           phase={gateIndex * 1.9}
         />
       ))}
-      <HoverDevice progress={progress} index={index} />
+      <HoverDevice progress={progress} index={index} mobile={mobile} />
       <VideoPortal
         texture={ready ? texture : posterTexture}
-        position={[0, 0.42, -7.55]}
-        size={mobile ? [3.45, 1.94] : [5.15, 2.9]}
+        position={[0.55, 0.62, -6.55]}
+        rotation={[0, -0.045, 0]}
+        size={mobile ? [5.25, 2.95] : [7.15, 4.02]}
         color={CYAN}
         onToggle={toggle}
       />
@@ -537,18 +597,39 @@ export function HoverWorld({
         <planeGeometry args={[15, 17]} />
         <meshStandardMaterial color="#060a10" roughness={0.98} metalness={0.02} />
       </mesh>
-      <pointLight color={CYAN} intensity={mobile ? 5 : 8} distance={15} position={[0, 2.5, 1.4]} />
-      <pointLight color="#7d8dff" intensity={mobile ? 2 : 4} distance={13} position={[-4, 3, -5]} />
+      <pointLight color={CYAN} intensity={mobile ? 4.4 : 7.2} distance={15} position={[0.5, 0.7, 1.7]} />
+      <pointLight color="#776dff" intensity={mobile ? 2.8 : 5.5} distance={14} position={[-4, 3, -5]} />
     </group>
   );
 }
 
 function Fan({ position, scale = 1 }: { position: Vec3; scale?: number }) {
   const blades = useRef<THREE.Group>(null);
+  const motionDisk = useRef<THREE.MeshBasicMaterial>(null);
+  const powered = useRef(false);
+
+  useEffect(() => {
+    const handleAction = (event: Event) => {
+      if ((event as CustomEvent<string>).detail === "flybox") {
+        powered.current = !powered.current;
+      }
+    };
+    window.addEventListener("larion:scene-action", handleAction);
+    return () => window.removeEventListener("larion:scene-action", handleAction);
+  }, []);
 
   useFrame((state, delta) => {
     if (!blades.current) return;
-    blades.current.rotation.z += delta * (2.6 + Math.sin(state.clock.elapsedTime) * 0.25);
+    const speed = powered.current ? 18 : 5.4 + Math.sin(state.clock.elapsedTime) * 0.4;
+    blades.current.rotation.z += delta * speed;
+    if (motionDisk.current) {
+      motionDisk.current.opacity = THREE.MathUtils.damp(
+        motionDisk.current.opacity,
+        powered.current ? 0.19 : 0.035,
+        6,
+        delta,
+      );
+    }
   });
 
   return (
@@ -571,6 +652,17 @@ function Fan({ position, scale = 1 }: { position: Vec3; scale?: number }) {
       <mesh position={[0, 0, 0.045]}>
         <circleGeometry args={[0.09, 24]} />
         <meshStandardMaterial color={GOLD} emissive={GOLD} emissiveIntensity={1.4} />
+      </mesh>
+      <mesh position={[0, 0, 0.018]}>
+        <circleGeometry args={[0.49, 48]} />
+        <meshBasicMaterial
+          ref={motionDisk}
+          color={CYAN}
+          transparent
+          opacity={0.035}
+          depthWrite={false}
+          toneMapped={false}
+        />
       </mesh>
     </group>
   );
@@ -642,16 +734,16 @@ function FlightBody({
       5.5,
       delta,
     );
-    rig.current.rotation.x = THREE.MathUtils.damp(
-      rig.current.rotation.x,
-      targetPitch,
-      5.5,
-      delta,
-    );
     rig.current.position.y = THREE.MathUtils.damp(
       rig.current.position.y,
-      (lifted.current ? 0.32 : 0.08) + Math.sin(state.clock.elapsedTime * 1.25) * 0.055,
+      (lifted.current ? 0.74 : 0.08) + Math.sin(state.clock.elapsedTime * 1.25) * 0.055,
       5,
+      delta,
+    );
+    rig.current.rotation.x = THREE.MathUtils.damp(
+      rig.current.rotation.x,
+      (lifted.current ? -0.18 : 0) + targetPitch,
+      5.5,
       delta,
     );
   });
@@ -662,7 +754,7 @@ function FlightBody({
   };
 
   return (
-    <group ref={rig} position={[-0.8, 0.08, 0.65]} onClick={toggleLift}>
+    <group ref={rig} position={[-0.15, 0.08, 0.65]} onClick={toggleLift}>
       <mesh position={[0, 0.05, 0]}>
         <capsuleGeometry args={[0.3, 0.88, 8, 18]} />
         <meshStandardMaterial color="#e2b63f" roughness={0.65} />
@@ -797,10 +889,10 @@ export function FlyboxWorld({
     world.current.visible = presence.current > 0.012;
     world.current.position.set(
       position[0],
-      position[1] + (1 - presence.current) * 0.3,
+      position[1] + (1 - presence.current) * 0.12,
       position[2],
     );
-    const scale = 0.9 + presence.current * 0.1;
+    const scale = 0.97 + presence.current * 0.03;
     world.current.scale.setScalar(scale);
     if (chamber.current) {
       chamber.current.rotation.z = Math.sin(state.clock.elapsedTime * 0.2) * 0.01;
@@ -814,7 +906,7 @@ export function FlyboxWorld({
 
   return (
     <group ref={world} position={position} visible={Math.abs(progress.current - index) < 0.94}>
-      <group ref={chamber}>
+      <group ref={chamber} position={mobile ? [-1.2, 0, 0] : [-1.35, 0, 0]}>
         <mesh position={[0, 0, -0.86]}>
           <torusGeometry args={[3.5, 0.11, 12, 96]} />
           <meshStandardMaterial color="#303b45" metalness={0.86} roughness={0.24} />
@@ -839,14 +931,15 @@ export function FlyboxWorld({
       </group>
       <VideoPortal
         texture={ready ? texture : posterTexture}
-        position={mobile ? [2.25, 0.3, -1.45] : [3.65, 0.35, -1.65]}
-        rotation={[0, -0.28, 0]}
-        size={mobile ? [2.65, 1.49] : [4.15, 2.34]}
+        position={mobile ? [1.65, 0.25, -1.08] : [2.85, 0.32, -1.1]}
+        rotation={[0, -0.075, 0]}
+        size={mobile ? [4.2, 2.36] : [5.35, 3.01]}
         color={GOLD}
         onToggle={toggle}
       />
       <pointLight color={GOLD} intensity={mobile ? 5 : 8} distance={12} position={[0, 3.1, 2.5]} />
       <pointLight color={CYAN} intensity={mobile ? 2.5 : 4.5} distance={11} position={[-3.4, -0.5, 1]} />
+      <pointLight color="#cdefff" intensity={mobile ? 5 : 8} distance={9} position={[-1.1, 2.6, 2.8]} />
     </group>
   );
 }
@@ -964,7 +1057,13 @@ function PhysicalPhone({
 }) {
   const phone = useRef<THREE.Group>(null);
   const hovered = useRef(false);
-  const layout = PHONE_LAYOUT[phoneIndex] ?? PHONE_LAYOUT[PHONE_LAYOUT.length - 1];
+  const desktopLayout = PHONE_LAYOUT[phoneIndex] ?? PHONE_LAYOUT[PHONE_LAYOUT.length - 1];
+  const mobileLayouts = [
+    { position: [-1.18, -0.08, -0.72] as Vec3, rotation: [0.02, 0.18, -0.04] as Vec3 },
+    { position: [0, 0.24, 0.42] as Vec3, rotation: [0, 0, 0.012] as Vec3 },
+    { position: [1.18, -0.1, -0.75] as Vec3, rotation: [-0.02, -0.18, 0.04] as Vec3 },
+  ];
+  const layout = mobile ? mobileLayouts[phoneIndex] : desktopLayout;
   const targetPosition = useRef(new THREE.Vector3());
   const targetRotation = useRef(new THREE.Euler());
 
@@ -1000,7 +1099,9 @@ function PhysicalPhone({
 
   const handleFocus = (event: ThreeEvent<MouseEvent>) => {
     event.stopPropagation();
-    onFocus(focused === phoneIndex ? -1 : phoneIndex);
+    const nextFocus = focused === phoneIndex ? -1 : phoneIndex;
+    onFocus(nextFocus);
+    window.dispatchEvent(new CustomEvent("larion:product-focused", { detail: nextFocus }));
   };
 
   return (
@@ -1077,24 +1178,35 @@ export function MobileWorld({
   const textures = useLoader(THREE.TextureLoader, screens);
   const world = useRef<THREE.Group>(null);
   const presence = useRef(0);
-  const [focused, setFocused] = useState(-1);
+  const [focused, setFocused] = useState(1);
 
   useEffect(() => {
     const handleAction = (event: Event) => {
       if ((event as CustomEvent<string>).detail !== "mobile") return;
       setFocused((current) => (current + 1) % 3);
     };
+    const handleProductSelect = (event: Event) => {
+      const detail = (event as CustomEvent<number | { index?: number }>).detail;
+      const selected = typeof detail === "number" ? detail : Number(detail?.index);
+      if (Number.isInteger(selected) && selected >= 0 && selected < 3) {
+        setFocused(selected);
+      }
+    };
     window.addEventListener("larion:scene-action", handleAction);
-    return () => window.removeEventListener("larion:scene-action", handleAction);
+    window.addEventListener("larion:product-select", handleProductSelect);
+    return () => {
+      window.removeEventListener("larion:scene-action", handleAction);
+      window.removeEventListener("larion:product-select", handleProductSelect);
+    };
   }, []);
 
   useEffect(() => {
     textures.forEach((texture) => {
       texture.colorSpace = THREE.SRGBColorSpace;
-      texture.anisotropy = mobile ? 2 : 4;
-      texture.minFilter = THREE.LinearFilter;
+      texture.anisotropy = mobile ? 4 : 8;
+      texture.minFilter = THREE.LinearMipmapLinearFilter;
       texture.magFilter = THREE.LinearFilter;
-      texture.generateMipmaps = false;
+      texture.generateMipmaps = true;
       texture.needsUpdate = true;
     });
   }, [mobile, textures]);
@@ -1110,10 +1222,10 @@ export function MobileWorld({
     world.current.visible = presence.current > 0.012;
     world.current.position.set(
       position[0],
-      position[1] + (1 - presence.current) * 0.3,
+      position[1] + (1 - presence.current) * 0.15,
       position[2],
     );
-    const scale = 0.88 + presence.current * 0.12;
+    const scale = 0.96 + presence.current * 0.04;
     world.current.scale.setScalar(scale);
     world.current.rotation.y = THREE.MathUtils.damp(
       world.current.rotation.y,

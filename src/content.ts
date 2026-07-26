@@ -31,7 +31,14 @@ export type Chapter = {
   note?: string;
   noteDetail?: string;
   nextLabel: string;
-  interaction: string;
+  interaction: {
+    label: string;
+    resetLabel: string;
+    idleStatus: string;
+    activeStatus: string;
+    resetStatus: string;
+    resetEvents?: number;
+  };
   projectLink?: {
     label: string;
     href: string;
@@ -46,12 +53,12 @@ export const chapters: Chapter[] = [
     eyebrow: "Clinical simulation",
     title: "Train the decision before it matters.",
     body:
-      "Immersive clinical simulation for hospital teams, nurses and pre-hospital emergency care—built to rehearse critical decisions safely and repeatedly.",
+      "Production VR training for hospital teams, nurses and pre-hospital responders—repeatable scenarios for decisions that cannot be rehearsed on real patients.",
     tags: [
       "Hospital networks",
       "Nurse training",
-      "MDA emergency care",
-      "Repeatable scenarios",
+      "MDA / pre-hospital care",
+      "Scenario replay",
     ],
     accent: "#74ecff",
     accentRgb: "116, 236, 255",
@@ -61,7 +68,13 @@ export const chapters: Chapter[] = [
     noteDetail:
       "The work is real. Client environments and operational material are confidential, so this scene is an original reconstruction.",
     nextLabel: "Connected training",
-    interaction: "Trigger a vital alert",
+    interaction: {
+      label: "Start vital deterioration",
+      resetLabel: "Reset patient state",
+      idleStatus: "Patient stable · scenario ready.",
+      activeStatus: "Vitals unstable · clinical response in progress.",
+      resetStatus: "Patient reset · scenario ready.",
+    },
   },
   {
     id: "tactical",
@@ -70,14 +83,13 @@ export const chapters: Chapter[] = [
     eyebrow: "Connected defense training",
     title: "Six trainees. One live scenario.",
     body:
-      "A connected Unreal system brings six participants, instructor control, wearables, tracked peripherals and physical feedback into one live session.",
+      "A production Unreal Engine platform connects up to six trainees over LAN with live instructor control, watch vitals, tracked weapons and physical feedback.",
     tags: [
-      "Unreal Engine",
-      "Up to 6 over LAN",
-      "PC + tablet control",
+      "6-player LAN",
+      "PC + tablet instructor control",
       "Galaxy Watch vitals",
-      "WonderFitter peripherals",
-      "bHaptics suit",
+      "WonderFitter tracking",
+      "bHaptics feedback",
     ],
     accent: "#d7ff4f",
     accentRgb: "215, 255, 79",
@@ -87,7 +99,14 @@ export const chapters: Chapter[] = [
     noteDetail:
       "The capabilities and technical details are genuine. The visual contains no client interface, personnel or operational material.",
     nextLabel: "Emergency response",
-    interaction: "Cycle the live network",
+    interaction: {
+      label: "Trace one live node",
+      resetLabel: "Restore all six nodes",
+      idleStatus: "Six trainees synchronized over LAN.",
+      activeStatus: "Tracing one participant across vitals, tracking and haptics.",
+      resetStatus: "All six nodes restored and synchronized.",
+      resetEvents: 5,
+    },
   },
   {
     id: "emergency",
@@ -96,7 +115,7 @@ export const chapters: Chapter[] = [
     eyebrow: "Emergency response training",
     title: "Rehearse pressure. Protect the response.",
     body:
-      "Repeatable VR scenarios let police, fire and emergency-service teams train coordination under pressure without putting the real response at risk.",
+      "VR training systems for police, fire and emergency teams—coordinating roles, timing and response under pressure without risking a live operation.",
     tags: [
       "Police training",
       "Fire + rescue",
@@ -111,7 +130,13 @@ export const chapters: Chapter[] = [
     noteDetail:
       "This is an original visualization of the training category, not footage from a client deployment.",
     nextLabel: "Hover The Edge",
-    interaction: "Contain the incident",
+    interaction: {
+      label: "Contain the incident",
+      resetLabel: "Reset the response",
+      idleStatus: "Incident active · response team deployed.",
+      activeStatus: "Incident contained · scenario ready for review.",
+      resetStatus: "Incident reset · response scenario live again.",
+    },
   },
   {
     id: "hover-the-edge",
@@ -120,7 +145,7 @@ export const chapters: Chapter[] = [
     eyebrow: "Hover The Edge",
     title: "Movement is the mechanic.",
     body:
-      "A released VR game built around speed, spatial judgment and physical instinct through a world that never stops moving.",
+      "A released VR game where speed, spatial judgment and full-body instinct drive every run through a world that never stops moving.",
     tags: [
       "Released VR title",
       "Unreal Engine",
@@ -135,9 +160,15 @@ export const chapters: Chapter[] = [
     alignment: "left",
     note: "Gameplay footage · Hover The Edge",
     nextLabel: "FlyboxVR",
-    interaction: "Boost the hover craft",
+    interaction: {
+      label: "Engage boost",
+      resetLabel: "Release boost",
+      idleStatus: "Craft ready · gameplay portal online.",
+      activeStatus: "Boost engaged · thrust and gameplay running.",
+      resetStatus: "Boost released · gameplay continues in the portal.",
+    },
     projectLink: {
-      label: "Watch full gameplay",
+      label: "Watch gameplay",
       href: "https://www.youtube.com/watch?v=yD0MdJfYck0",
     },
   },
@@ -148,7 +179,7 @@ export const chapters: Chapter[] = [
     eyebrow: "FlyboxVR",
     title: "When the body believes the world.",
     body:
-      "A location-based flight experience where balance and full-body movement become the interface between the physical rig and virtual world.",
+      "A location-based VR flight system that turns balance and full-body movement into real-time control of the virtual world.",
     tags: [
       "Location-based VR",
       "Physical interaction",
@@ -163,23 +194,35 @@ export const chapters: Chapter[] = [
     alignment: "right",
     note: "Project footage · FlyboxVR",
     nextLabel: "Mobile products",
-    interaction: "Lift the flight rig",
+    interaction: {
+      label: "Lift the flight rig",
+      resetLabel: "Lower the flight rig",
+      idleStatus: "Rig grounded · airflow visualization ready.",
+      activeStatus: "Rig lifted · body input mapped to flight.",
+      resetStatus: "Rig lowered · project footage remains available.",
+    },
   },
   {
     id: "mobile-products",
     number: "06",
     nav: "Apps",
-    eyebrow: "Mobile products",
-    title: "The same thinking, in your hand.",
+    eyebrow: "Mobile product engineering",
+    title: "Systems thinking, beyond the headset.",
     body:
-      "Clear systems, expressive interaction and useful products people can understand in seconds.",
-    tags: ["Product design", "Mobile engineering", "iOS", "Flutter", "Data-rich UX"],
+      "Mobile products that turn complex home, finance and health information into clear daily decisions.",
+    tags: ["Product strategy", "Mobile engineering", "iOS", "Flutter", "Data-rich UX"],
     accent: "#c8a7ff",
     accentRgb: "200, 167, 255",
     world: "mobile",
     alignment: "left",
-    nextLabel: "Finish the journey",
-    interaction: "Focus the next product",
+    nextLabel: "Start a conversation",
+    interaction: {
+      label: "Select a product",
+      resetLabel: "Clear product focus",
+      idleStatus: "Choose a product to inspect its interface.",
+      activeStatus: "Product selected in the 3D gallery.",
+      resetStatus: "Product gallery reset.",
+    },
   },
 ];
 

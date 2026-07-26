@@ -62,3 +62,28 @@ the following restrictions:
    misrepresented as being the original software.
 
 3. This notice may not be removed or altered from any source distribution.
+
+CC0 3D assets
+--------------
+The following modified 3D assets are included under the Creative Commons CC0
+1.0 Universal public-domain dedication. Attribution is not required, but source
+credits and modification records are retained for provenance.
+
+Wheelchair 01 — Garreth Dean
+Source: https://polyhaven.com/a/wheelchair_01
+License: https://polyhaven.com/license
+
+Korean Fire Extinguisher 01 — UM JOORIN
+Source: https://polyhaven.com/a/korean_fire_extinguisher_01
+License: https://polyhaven.com/license
+
+Challenger spaceship — Quaternius
+Source: https://quaternius.com/packs/ultimatespaceships.html
+License: https://creativecommons.org/publicdomain/zero/1.0/
+
+SciFi Helmet — Michael Pavlovic; glTF conversion by Norbert Nopper
+Source: https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/SciFiHelmet
+License: https://creativecommons.org/publicdomain/zero/1.0/legalcode
+
+Packaging notes, exact file hashes, and detailed modifications are recorded in
+public/assets/models/README.md.

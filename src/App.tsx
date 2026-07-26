@@ -10,6 +10,9 @@ import {
 import type { ErrorInfo, MouseEvent as ReactMouseEvent, ReactNode } from "react";
 import { chapters, contact, mobileProducts } from "./content";
 import type { Chapter } from "./content";
+import hospitalBackdrop from "../assets/journey/worlds/hospital-world.webp";
+import tacticalBackdrop from "../assets/journey/worlds/tactical-world.webp";
+import emergencyBackdrop from "../assets/journey/worlds/emergency-world.webp";
 
 const Experience = lazy(() => import("./Experience"));
 
@@ -141,7 +144,8 @@ type JumpHandler = (
 ) => void;
 
 function Header({ activeStage, onJump }: { activeStage: number; onJump: JumpHandler }) {
-  const chapterNumber = activeStage > 0 && activeStage < 7 ? activeStage : 0;
+  const journeyComplete = activeStage === 7;
+  const chapterNumber = Math.max(0, Math.min(6, activeStage));
   return (
     <header className="site-header">
       <a className="wordmark" href="#top" aria-label="Larion Siments, home" onClick={(event) => onJump(event, "top", 0)}>
@@ -152,18 +156,31 @@ function Header({ activeStage, onJump }: { activeStage: number; onJump: JumpHand
         </span>
       </a>
 
-      <div className="header-status" aria-live="polite">
-        <span>{chapterNumber ? String(chapterNumber).padStart(2, "0") : "00"}</span>
+      <div
+        className="header-status"
+        data-complete={journeyComplete || undefined}
+        aria-label={journeyComplete
+          ? "Journey complete, six of six"
+          : chapterNumber === 0
+            ? "Journey entry, six chapters"
+            : `Chapter ${chapterNumber} of 6`}
+        aria-live="polite"
+      >
+        <span>{String(chapterNumber).padStart(2, "0")}</span>
         <i />
-        <span>06</span>
+        <span>{journeyComplete ? "DONE" : "06"}</span>
       </div>
 
       <div className="header-actions">
-        <a className="skip-experience" href="#contact" onClick={(event) => onJump(event, "contact", 7)}>
-          Skip journey
+        <a
+          className="skip-experience"
+          href={journeyComplete ? "#top" : "#contact"}
+          onClick={(event) => onJump(event, journeyComplete ? "top" : "contact", journeyComplete ? 0 : 7)}
+        >
+          {journeyComplete ? "Replay journey" : "Skip journey"}
         </a>
         <a className="header-cta" href={contact.emailHref}>
-          Start a project <span aria-hidden="true">↗</span>
+          Discuss a project <span aria-hidden="true">↗</span>
         </a>
       </div>
     </header>
@@ -197,76 +214,175 @@ function JourneyRail({ activeStage, onJump }: { activeStage: number; onJump: Jum
 }
 
 function WorldFallback({ world }: { world: Chapter["world"] }) {
+  const chapter = chapters.find((item) => item.world === world);
+  const asset = world === "clinical"
+    ? hospitalBackdrop
+    : world === "tactical"
+      ? tacticalBackdrop
+      : world === "emergency"
+        ? emergencyBackdrop
+        : world === "hover" || world === "flybox"
+          ? chapter?.poster
+          : world === "mobile"
+            ? mobileProducts[1].screen
+            : hospitalBackdrop;
+
   return (
     <div className={`world-fallback world-fallback--${world}`} aria-hidden="true">
-      <i />
-      <i />
-      <i />
-      <span />
+      <img src={asset} alt="" loading="lazy" decoding="async" />
     </div>
   );
 }
 
-function Hero() {
+function Hero({ onJump }: { onJump: JumpHandler }) {
   return (
     <section className="hero" id="top" data-stage="0" aria-labelledby="hero-title">
       <WorldFallback world="clinical" />
       <article className="hero__content">
-        <p className="hero__eyebrow">Larion Siments · Unreal Engine + VR systems</p>
+        <p className="hero__eyebrow">Larion Siments · Production Unreal Engine + VR systems</p>
         <h1 id="hero-title">
-          Real-time worlds.
-          <span>Real-world impact.</span>
+          Immersive training.
+          <span>Engineered for reality.</span>
         </h1>
         <p className="hero__lede">
-          End-to-end Unreal Engine and VR systems—multiplayer simulation, instructor
-          control, wearables, tracked hardware and production deployment.
+          I design and ship Unreal Engine and VR systems for hospitals, defense teams
+          and emergency services—multiplayer, instructor-controlled and connected to real hardware.
         </p>
+        <ul className="hero__proof" aria-label="Core production capabilities">
+          <li><strong>UE</strong><span>Production systems</span></li>
+          <li><strong>06</strong><span>Participants over LAN</span></li>
+          <li><strong>I/O</strong><span>Wearables + tracked hardware</span></li>
+        </ul>
         <div className="hero__actions">
-          <a className="primary-button" href="#clinical">
-            Enter the journey <span aria-hidden="true">↓</span>
+          <a className="primary-button" href="#clinical" onClick={(event) => onJump(event, "clinical", 1)}>
+            Explore the systems <span aria-hidden="true">↓</span>
           </a>
           <a className="quiet-link" href={contact.emailHref}>
-            Discuss a project <span aria-hidden="true">↗</span>
+            Discuss a VR project <span aria-hidden="true">↗</span>
           </a>
         </div>
       </article>
       <div className="hero__system-note" aria-hidden="true">
-        <span>Scroll to move through the worlds</span>
+        <span>Scroll through six production systems</span>
         <i />
-        <span>Move the cursor to wake the system</span>
+        <span>Use each control to inspect the build</span>
       </div>
     </section>
   );
 }
 
-function ProductNames() {
+function ProductNames({
+  interactive,
+  selected,
+  onSelect,
+}: {
+  interactive: boolean;
+  selected: number;
+  onSelect: (index: number) => void;
+}) {
   return (
-    <div className="product-names" aria-label="Selected mobile products">
+    <div className="product-names" role="group" aria-label="Select a mobile product">
       {mobileProducts.map((product, index) => (
-        <span key={product.name}>
-          <i>{String(index + 1).padStart(2, "0")}</i>
-          <b>{product.name}</b>
-          <small>{product.line}</small>
+        <span
+          key={product.name}
+          className={selected === index ? "is-selected" : undefined}
+          data-selected={selected === index || undefined}
+          data-muted={selected >= 0 && selected !== index || undefined}
+        >
+          <button
+            type="button"
+            disabled={!interactive}
+            aria-pressed={selected === index}
+            aria-label={`${product.name}: ${product.line}`}
+            onClick={() => onSelect(index)}
+          >
+            <i>{String(index + 1).padStart(2, "0")}</i>
+            <b>{product.name}</b>
+            <small>{product.line}</small>
+          </button>
         </span>
       ))}
     </div>
   );
 }
 
+type InteractionState = "idle" | "active" | "reset";
+
+function dispatchSceneAction(world: Chapter["world"], count = 1) {
+  for (let eventIndex = 0; eventIndex < count; eventIndex += 1) {
+    window.dispatchEvent(new CustomEvent("larion:scene-action", { detail: world }));
+  }
+}
+
 function ChapterSection({
   chapter,
   index,
   interactive,
+  onJump,
 }: {
   chapter: Chapter;
   index: number;
   interactive: boolean;
+  onJump: JumpHandler;
 }) {
+  const [interactionState, setInteractionState] = useState<InteractionState>("idle");
+  const [selectedProduct, setSelectedProduct] = useState(1);
+  const isMobileChapter = chapter.world === "mobile";
+  const interactionActive = interactionState === "active";
+  const interactionStatus = interactionActive
+    ? chapter.interaction.activeStatus
+    : interactionState === "reset"
+      ? chapter.interaction.resetStatus
+      : chapter.interaction.idleStatus;
+
+  useEffect(() => {
+    if (!isMobileChapter) return;
+    const handleProductFocus = (event: Event) => {
+      const next = Number((event as CustomEvent<number>).detail);
+      if (Number.isInteger(next) && next >= -1 && next < mobileProducts.length) {
+        setSelectedProduct(next);
+      }
+    };
+    window.addEventListener("larion:product-focused", handleProductFocus);
+    return () => window.removeEventListener("larion:product-focused", handleProductFocus);
+  }, [isMobileChapter]);
+
+  const handleInteraction = () => {
+    if (!interactive) return;
+    if (interactionActive) {
+      dispatchSceneAction(chapter.world, chapter.interaction.resetEvents ?? 1);
+      setInteractionState("reset");
+      return;
+    }
+    dispatchSceneAction(chapter.world);
+    setInteractionState("active");
+  };
+
+  const handleProductSelect = (productIndex: number) => {
+    if (!interactive || productIndex === selectedProduct) return;
+    const eventsNeeded = selectedProduct < 0
+      ? productIndex + 1
+      : (productIndex - selectedProduct + mobileProducts.length) % mobileProducts.length;
+    dispatchSceneAction("mobile", eventsNeeded);
+    window.dispatchEvent(new CustomEvent("larion:product-select", {
+      detail: {
+        index: productIndex,
+        name: mobileProducts[productIndex]?.name,
+      },
+    }));
+    setSelectedProduct(productIndex);
+  };
+
+  const selectedProductName = selectedProduct >= 0
+    ? mobileProducts[selectedProduct]?.name
+    : null;
+
   return (
     <section
-      className={`chapter chapter--${chapter.world}`}
+      className={`chapter chapter--${chapter.world} chapter--align-${chapter.alignment}`}
       id={chapter.id}
       data-stage={index + 1}
+      data-alignment={chapter.alignment}
       aria-labelledby={`${chapter.id}-title`}
     >
       <WorldFallback world={chapter.world} />
@@ -277,22 +393,48 @@ function ChapterSection({
         </p>
         <h2 id={`${chapter.id}-title`}>{chapter.title}</h2>
         <p className="scene-caption__body">{chapter.body}</p>
-        <p className="scene-caption__proof">{chapter.tags.join("  /  ")}</p>
+        <ul className="scene-caption__proof" aria-label="Project capabilities">
+          {chapter.tags.map((tag) => <li key={tag}>{tag}</li>)}
+        </ul>
 
-        {chapter.world === "mobile" ? <ProductNames /> : null}
+        {isMobileChapter ? (
+          <ProductNames
+            interactive={interactive}
+            selected={selectedProduct}
+            onSelect={handleProductSelect}
+          />
+        ) : null}
 
         <div className="scene-caption__meta">
-          <button
-            className="scene-interaction"
-            type="button"
-            disabled={!interactive}
-            onClick={() => window.dispatchEvent(new CustomEvent("larion:scene-action", { detail: chapter.world }))}
+          {!isMobileChapter ? (
+            <button
+              className="scene-interaction"
+              type="button"
+              disabled={!interactive}
+              aria-pressed={interactionActive}
+              aria-describedby={`${chapter.id}-interaction-status`}
+              onClick={handleInteraction}
+            >
+              <i aria-hidden="true" />
+              {interactionActive ? chapter.interaction.resetLabel : chapter.interaction.label}
+            </button>
+          ) : null}
+          <span
+            className="scene-status scene-detail"
+            id={`${chapter.id}-interaction-status`}
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
           >
-            <i aria-hidden="true" /> {chapter.interaction}
-          </button>
+            {isMobileChapter
+              ? selectedProductName
+                ? `${selectedProductName} selected · interface focused in the 3D gallery.`
+                : chapter.interaction.idleStatus
+              : interactionStatus}
+          </span>
           {chapter.noteDetail ? (
             <details className="scene-detail">
-              <summary>Project context +</summary>
+              <summary>Why this scene is reconstructed +</summary>
               <p>{chapter.noteDetail}</p>
             </details>
           ) : null}
@@ -312,6 +454,11 @@ function ChapterSection({
       <a
         className="chapter-next"
         href={`#${chapters[index + 1]?.id ?? "contact"}`}
+        onClick={(event) => onJump(
+          event,
+          chapters[index + 1]?.id ?? "contact",
+          chapters[index + 1] ? index + 2 : 7,
+        )}
         aria-label={`Continue to ${chapters[index + 1]?.nav ?? "contact"}`}
       >
         <span>{chapter.nextLabel}</span>
@@ -325,21 +472,21 @@ function ContactSection() {
   return (
     <section className="contact" id="contact" data-stage="7" aria-labelledby="contact-title">
       <article className="contact__content">
-        <p className="contact__eyebrow">Your world is next</p>
-        <h2 id="contact-title">Build the world people remember.</h2>
+        <p className="contact__eyebrow">Journey complete · Ready to scope the system</p>
+        <h2 id="contact-title">Bring me the training challenge.</h2>
         <p>
-          If it needs to train, connect, react or feel physically real, tell me what
-          the experience has to achieve. I’ll reply personally.
+          Tell me who needs to train, what has to feel real and which hardware or
+          constraints are already in play. I’ll reply personally with the clearest next step.
         </p>
         <a className="contact__primary" href={contact.emailHref}>
-          <span>Start a project</span>
+          <span>Discuss your Unreal / VR project</span>
           <strong>{contact.email}</strong>
           <i aria-hidden="true">↗</i>
         </a>
         <a className="contact__secondary" href={contact.whatsapp} target="_blank" rel="noreferrer">
-          WhatsApp <span aria-hidden="true">↗</span>
+          Message on WhatsApp <span aria-hidden="true">↗</span>
         </a>
-        <p className="availability"><i /> Bangkok · Available worldwide</p>
+        <p className="availability"><i /> Bangkok · Building worldwide</p>
       </article>
     </section>
   );
@@ -471,9 +618,15 @@ export default function App() {
       ) : null}
 
       <main id="main">
-        <Hero />
+        <Hero onJump={handleJump} />
         {chapters.map((chapter, index) => (
-          <ChapterSection key={chapter.id} chapter={chapter} index={index} interactive={sceneInteractive} />
+          <ChapterSection
+            key={chapter.id}
+            chapter={chapter}
+            index={index}
+            interactive={sceneInteractive}
+            onJump={handleJump}
+          />
         ))}
         <ContactSection />
       </main>
