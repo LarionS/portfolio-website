@@ -8,10 +8,9 @@ import {
   RoundedBox,
   Sparkles,
 } from "@react-three/drei";
-import { Bloom, EffectComposer, Noise, Vignette } from "@react-three/postprocessing";
-import { BlendFunction } from "postprocessing";
 import * as THREE from "three";
 import { chapters, mobileProducts } from "./content";
+import type { JourneySceneState } from "./sceneState";
 import {
   ClinicalWorld,
   DefenseWorld,
@@ -26,6 +25,8 @@ type ExperienceProps = {
   pointer: MutableRefObject<{ x: number; y: number }>;
   mobile: boolean;
   visible: boolean;
+  sceneState: JourneySceneState;
+  onUpdateScene: (patch: Partial<JourneySceneState>) => void;
   onReady: () => void;
 };
 
@@ -45,6 +46,9 @@ type CameraShot = {
   lookAt: THREE.Vector3;
   fov: number;
   aspectShift: number;
+  travelLift: number;
+  travelLateral: number;
+  travelRoll: number;
 };
 
 const shot = (
@@ -52,35 +56,39 @@ const shot = (
   lookAt: [number, number, number],
   fov: number,
   aspectShift: number,
+  travel: [number, number, number] = [0.7, 0, 0],
 ): CameraShot => ({
   position: new THREE.Vector3(...position),
   lookAt: new THREE.Vector3(...lookAt),
   fov,
   aspectShift,
+  travelLift: travel[0],
+  travelLateral: travel[1],
+  travelRoll: travel[2],
 });
 
 // Each station owns a composed hero frame. Travel only occupies the middle of a
 // scroll segment, so the camera has time to arrive and become still around copy.
 const DESKTOP_SHOTS: CameraShot[] = [
-  shot([-0.6, 1.2, 12.5], [2, 0.45, -0.4], 40, 0.65),
-  shot([-1.2, 1.75, -16.6], [-0.9, -0.05, -28], 39, 0.42),
-  shot([4.8, 1.75, -49.2], [1.55, -0.28, -60.2], 39, 0.32),
-  shot([-0.2, 1.2, -82.2], [-1.4, -0.75, -93], 39, 0.48),
-  shot([1.1, 1.35, -120.2], [-1.8, -0.25, -134.1], 39, 0.58),
-  shot([6, 1.7, -149], [5.5, -0.55, -161], 42, 0.3),
-  shot([-1.9, 1, -184], [-3.3, -0.7, -196], 39, 0.36),
-  shot([0.2, 1.25, -217], [-2.1, -0.25, -228], 40, 0.18),
+  shot([-0.6, 1.2, 12.5], [2, 0.45, -0.4], 40, 0.65, [0.55, 0.1, 0.002]),
+  shot([-0.8, 1.45, -16.8], [-0.55, -0.45, -28], 38.5, 0.42, [1.25, 0.2, -0.006]),
+  shot([4.6, 2.05, -48.2], [1.25, -0.6, -60.2], 40.5, 0.32, [0.34, -0.95, -0.011]),
+  shot([0.15, 1.35, -82], [-0.9, -0.85, -93], 39, 0.48, [0.58, 0.62, 0.006]),
+  shot([0.9, 0.95, -120.1], [0.25, -0.5, -134], 39, 0.58, [0.72, -0.18, -0.004]),
+  shot([5.5, 1.7, -149], [4.7, -0.55, -161], 40.5, 0.3, [1.05, 0.34, 0.008]),
+  shot([-1.9, 1, -184], [-3.3, -0.7, -196], 39, 0.36, [0.22, 0.08, 0.001]),
+  shot([0.2, 1.25, -217], [-3.1, -0.25, -228], 40, 0.18, [0, 0, 0]),
 ];
 
 const MOBILE_SHOTS: CameraShot[] = [
-  shot([3.2, 1.55, 18.2], [6.8, -0.2, 0], 53, 0),
-  shot([1, 2.1, -8.2], [0.7, -0.9, -28], 54, 0),
-  shot([-1, 2.1, -38.5], [-1.3, -1.05, -60], 54, 0),
-  shot([1.2, 1.7, -71.8], [0.2, -1.2, -93], 54, 0),
-  shot([-0.1, 0.9, -121.2], [-0.7, -1.5, -134], 52, 0),
-  shot([3.6, 1.1, -149.1], [2, -1.15, -161.4], 52, 0),
-  shot([-1.8, 1.25, -178.2], [-1.8, -1, -196], 52, 0),
-  shot([0.5, 1.25, -212.2], [-2, -1.05, -228], 51, 0),
+  shot([3.2, 1.55, 18.2], [6.8, -0.2, 0], 53, 0, [0.28, 0, 0]),
+  shot([1.2, 1.55, -11.5], [1, -1.05, -28], 52, 0, [0.52, 0.08, -0.003]),
+  shot([3.2, 1.65, -42], [-1, -1.1, -60], 53, 0, [0.22, -0.22, -0.006]),
+  shot([0.4, 1.4, -76], [-0.1, -1.25, -93], 52, 0, [0.38, 0.2, 0.003]),
+  shot([0.2, 0.9, -121.2], [0.1, -1.25, -134], 52, 0, [0.42, 0, -0.003]),
+  shot([3.4, 1.4, -145.5], [1.6, -1.35, -161.3], 54, 0, [0.52, 0.16, 0.005]),
+  shot([-1.8, 1.25, -178.2], [-1.8, -1, -196], 52, 0, [0.16, 0.04, 0]),
+  shot([0.5, 1.25, -212.2], [-2.6, -1.05, -228], 51, 0, [0, 0, 0]),
 ];
 
 function sampleSegment(value: number) {
@@ -125,8 +133,8 @@ function CameraDirector({
 
     // A small vertical travel arc avoids the mechanical straight-line dolly,
     // while remaining perfectly still at every authored station.
-    targetPosition.current.y += transition * (mobile ? 0.48 : 0.92);
-    targetPosition.current.x += transition * (index % 2 === 0 ? 0.18 : -0.18) * (mobile ? 0.35 : 1);
+    targetPosition.current.y += transition * current.travelLift;
+    targetPosition.current.x += transition * current.travelLateral * (mobile ? 0.48 : 1);
 
     const aspect = size.width / Math.max(size.height, 1);
     if (mobile) {
@@ -165,7 +173,7 @@ function CameraDirector({
     director.current.position.copy(camera.position);
     director.current.lookAt(targetLook.current);
     director.current.rotateZ(
-      transition * (index % 2 === 0 ? 0.005 : -0.005) + pointer.current.x * 0.0025 * pointerScale,
+      transition * current.travelRoll + pointer.current.x * 0.0025 * pointerScale,
     );
     targetQuaternion.current.copy(director.current.quaternion);
     if (!initialized.current) {
@@ -226,7 +234,7 @@ function SignalThread({ progress }: { progress: MutableRefObject<number> }) {
           new THREE.Vector3(-0.5, -2.7, -127),
           new THREE.Vector3(1.2, -3.02, -161),
           new THREE.Vector3(-1.8, -3.18, -196),
-          new THREE.Vector3(0.5, -1.6, -228),
+          new THREE.Vector3(3.64, -0.42, -228),
         ],
         false,
         "centripetal",
@@ -413,91 +421,133 @@ function IntroWorld({ progress }: { progress: MutableRefObject<number> }) {
 function ContactWorld({
   progress,
   mobile,
+  assembled,
+  onToggle,
 }: {
   progress: MutableRefObject<number>;
   mobile: boolean;
+  assembled: boolean;
+  onToggle: () => void;
 }) {
   const group = useRef<THREE.Group>(null);
-  const nodes = useRef<THREE.Group>(null);
+  const modules = useRef<(THREE.Group | null)[]>([]);
+  const pulse = useRef<THREE.Mesh>(null);
+  const pulseMaterial = useRef<THREE.MeshBasicMaterial>(null);
+  const core = useRef<THREE.Group>(null);
+  const assemblyEnergy = useRef(assembled ? 1 : 0);
   const cyan = useMemo(() => glowColor("#72efff", 4.5), []);
+  const sourcePositions = useMemo(
+    () => [
+      new THREE.Vector3(0.25, 2.35, 0.15),
+      new THREE.Vector3(2.45, -1.55, 0.3),
+      new THREE.Vector3(5.4, 1.35, -0.25),
+    ],
+    [],
+  );
+  const assembledPositions = useMemo(
+    () => [
+      new THREE.Vector3(2.25, 0.92, 0),
+      new THREE.Vector3(3.45, -0.72, 0),
+      new THREE.Vector3(4.05, 0.92, 0),
+    ],
+    [],
+  );
 
-  useFrame(({ clock }, delta) => {
-    if (!group.current || !nodes.current) return;
+  useFrame((state, delta) => {
+    if (!group.current) return;
     const proximity = THREE.MathUtils.clamp(1 - Math.abs(progress.current - 7) / 0.92, 0, 1);
     group.current.visible = proximity > 0.015;
-    nodes.current.rotation.z += delta * 0.055;
-    nodes.current.rotation.y = Math.sin(clock.elapsedTime * 0.22) * 0.16;
     const scale = 0.82 + proximity * 0.18;
     group.current.scale.setScalar(scale);
-  });
-
-  const nodePositions = Array.from({ length: 6 }, (_, index) => {
-    const angle = (index / 6) * Math.PI * 2;
-    return [Math.cos(angle) * 3.2, Math.sin(angle) * 3.2, 0] as [number, number, number];
+    assemblyEnergy.current = THREE.MathUtils.damp(
+      assemblyEnergy.current,
+      assembled ? 1 : 0,
+      assembled ? 6.5 : 4.2,
+      delta,
+    );
+    modules.current.forEach((module, moduleIndex) => {
+      if (!module) return;
+      const start = sourcePositions[moduleIndex];
+      const destination = assembledPositions[moduleIndex];
+      module.position.lerpVectors(start, destination, assemblyEnergy.current);
+      if (!assembled) {
+        module.position.x += state.pointer.x * (moduleIndex - 1) * 0.16;
+        module.position.y += state.pointer.y * (moduleIndex === 1 ? -0.12 : 0.1);
+      }
+      module.rotation.y += delta * (0.14 + moduleIndex * 0.05);
+      module.rotation.z = Math.sin(state.clock.elapsedTime * 0.45 + moduleIndex) * 0.08 * (1 - assemblyEnergy.current);
+    });
+    if (core.current) {
+      const targetScale = 0.35 + assemblyEnergy.current * 0.65;
+      const nextScale = THREE.MathUtils.damp(core.current.scale.x, targetScale, 7, delta);
+      core.current.scale.setScalar(nextScale);
+      core.current.rotation.y += delta * (assembled ? 0.22 : 0.06);
+    }
+    if (pulse.current && pulseMaterial.current) {
+      const pulsePhase = assembled ? (state.clock.elapsedTime * 0.5) % 1 : 0;
+      pulse.current.scale.setScalar(1 + pulsePhase * 3.2);
+      pulseMaterial.current.opacity = assembled ? (1 - pulsePhase) * 0.36 : 0;
+    }
   });
 
   return (
     <group ref={group} position={WORLD_POSITIONS[7]}>
-      <group ref={nodes}>
-        <Line
-          points={[...nodePositions, nodePositions[0]]}
-          color="#72efff"
-          lineWidth={1.2}
-          transparent
-          opacity={mobile ? 0.16 : 0.42}
-        />
-        {nodePositions.map((position, index) => (
-          <group key={index} position={position}>
-            <mesh>
-              <sphereGeometry args={[0.14, 18, 18]} />
-              <meshBasicMaterial color={cyan} toneMapped={false} />
-            </mesh>
-            <mesh>
-              <ringGeometry args={[0.28, 0.3, 48]} />
-              <meshBasicMaterial color={cyan} transparent opacity={mobile ? 0.22 : 0.5} toneMapped={false} side={THREE.DoubleSide} />
-            </mesh>
-          </group>
-        ))}
+      <group
+        position={mobile ? [-2.8, 1.55, 0] : [-2, 0, 0]}
+        scale={mobile ? 0.72 : 1}
+        onClick={(event) => {
+          event.stopPropagation();
+          onToggle();
+        }}
+        onPointerEnter={() => {
+          document.body.style.cursor = "pointer";
+        }}
+        onPointerLeave={() => {
+          document.body.style.cursor = "";
+        }}
+      >
+        <group ref={(value) => { modules.current[0] = value; }}>
+          <RoundedBox args={[1.7, 0.62, 0.5]} radius={0.18} smoothness={4}>
+            <meshPhysicalMaterial color="#1b2931" metalness={0.75} roughness={0.22} clearcoat={0.8} />
+          </RoundedBox>
+          <mesh position={[0.48, 0, 0.31]}>
+            <circleGeometry args={[0.12, 24]} />
+            <meshBasicMaterial color={cyan} toneMapped={false} />
+          </mesh>
+        </group>
+        <group ref={(value) => { modules.current[1] = value; }}>
+          <mesh rotation={[Math.PI / 2, 0, 0]}>
+            <cylinderGeometry args={[0.58, 0.58, 0.45, 6]} />
+            <meshPhysicalMaterial color="#c8a7ff" metalness={0.62} roughness={0.24} clearcoat={0.8} />
+          </mesh>
+          <mesh position={[0, 0, 0.28]}>
+            <ringGeometry args={[0.24, 0.29, 6]} />
+            <meshBasicMaterial color={cyan} toneMapped={false} />
+          </mesh>
+        </group>
+        <group ref={(value) => { modules.current[2] = value; }}>
+          <mesh rotation={[0.2, 0.1, 0]}>
+            <torusKnotGeometry args={[0.46, 0.12, mobile ? 48 : 80, 10, 2, 3]} />
+            <meshPhysicalMaterial color="#f5c65c" metalness={0.72} roughness={0.2} clearcoat={0.9} />
+          </mesh>
+        </group>
+        <group ref={core} position={[3.14, 0.08, 0]} scale={0.35}>
+          <mesh>
+            <dodecahedronGeometry args={[0.78, 1]} />
+            <meshPhysicalMaterial color="#07171c" metalness={0.72} roughness={0.16} clearcoat={1} />
+          </mesh>
+          <mesh scale={0.72}>
+            <icosahedronGeometry args={[0.78, 2]} />
+            <meshBasicMaterial color={cyan} wireframe transparent opacity={0.78} toneMapped={false} />
+          </mesh>
+        </group>
+        <mesh ref={pulse} position={[3.14, 0.08, -0.05]}>
+          <ringGeometry args={[0.92, 0.96, 72]} />
+          <meshBasicMaterial ref={pulseMaterial} color={cyan} transparent opacity={0} toneMapped={false} depthWrite={false} />
+        </mesh>
       </group>
-      <mesh>
-        <sphereGeometry args={[1.15, 48, 48]} />
-        <meshPhysicalMaterial
-          color="#72efff"
-          roughness={0.03}
-          metalness={0.12}
-          clearcoat={1}
-          clearcoatRoughness={0.04}
-          transparent
-          opacity={mobile ? 0.18 : 0.38}
-          emissive="#123f48"
-          emissiveIntensity={0.7}
-        />
-      </mesh>
-      <mesh scale={0.72}>
-        <icosahedronGeometry args={[1, 2]} />
-        <meshBasicMaterial color={cyan} wireframe toneMapped={false} />
-      </mesh>
-      <pointLight color="#72efff" intensity={mobile ? 13 : 26} distance={13} />
+      <pointLight position={[3.14, 0.08, 1.2]} color="#72efff" intensity={assembled ? (mobile ? 12 : 22) : 5} distance={13} />
     </group>
-  );
-}
-
-function PostEffects({ mobile }: { mobile: boolean }) {
-  return (
-    <EffectComposer multisampling={0} enableNormalPass={false}>
-      <Bloom
-        intensity={mobile ? 0.3 : 0.48}
-        luminanceThreshold={1.05}
-        luminanceSmoothing={0.28}
-        mipmapBlur
-      />
-      <Noise
-        premultiply
-        opacity={mobile ? 0 : 0.014}
-        blendFunction={BlendFunction.SOFT_LIGHT}
-      />
-      <Vignette offset={0.18} darkness={mobile ? 0.38 : 0.43} eskil={false} />
-    </EffectComposer>
   );
 }
 
@@ -505,6 +555,8 @@ function World({
   progress,
   pointer,
   mobile,
+  sceneState,
+  onUpdateScene,
 }: Omit<ExperienceProps, "visible" | "onReady">) {
   const hoverVideo = chapters.find((chapter) => chapter.world === "hover")?.video ?? "";
   const hoverPoster = chapters.find((chapter) => chapter.world === "hover")?.poster ?? "";
@@ -528,20 +580,19 @@ function World({
       <SignalThread progress={progress} />
       <SimulationAtmosphere progress={progress} mobile={mobile} />
       <SceneGate progress={progress} index={0}><IntroWorld progress={progress} /></SceneGate>
-      <SceneGate progress={progress} index={1}><ClinicalWorld progress={progress} index={1} position={WORLD_POSITIONS[1]} mobile={mobile} /></SceneGate>
-      <SceneGate progress={progress} index={2}><DefenseWorld progress={progress} index={2} position={WORLD_POSITIONS[2]} mobile={mobile} /></SceneGate>
-      <SceneGate progress={progress} index={3}><EmergencyWorld progress={progress} index={3} position={WORLD_POSITIONS[3]} mobile={mobile} /></SceneGate>
+      <SceneGate progress={progress} index={1}><ClinicalWorld progress={progress} index={1} position={WORLD_POSITIONS[1]} mobile={mobile} active={sceneState.clinicalActive} onToggle={() => onUpdateScene({ clinicalActive: !sceneState.clinicalActive })} /></SceneGate>
+      <SceneGate progress={progress} index={2}><DefenseWorld progress={progress} index={2} position={WORLD_POSITIONS[2]} mobile={mobile} selectedNode={sceneState.tacticalNode} onSelectNode={(tacticalNode) => onUpdateScene({ tacticalNode })} /></SceneGate>
+      <SceneGate progress={progress} index={3}><EmergencyWorld progress={progress} index={3} position={WORLD_POSITIONS[3]} mobile={mobile} active={sceneState.emergencyActive} onToggle={() => onUpdateScene({ emergencyActive: !sceneState.emergencyActive })} /></SceneGate>
       <SceneGate progress={progress} index={4}>
-        <Suspense fallback={null}><HoverWorld progress={progress} index={4} position={WORLD_POSITIONS[4]} mobile={mobile} videoUrl={hoverVideo} posterUrl={hoverPoster} /></Suspense>
+        <Suspense fallback={null}><HoverWorld progress={progress} index={4} position={WORLD_POSITIONS[4]} mobile={mobile} videoUrl={hoverVideo} posterUrl={hoverPoster} active={sceneState.hoverBoost} onActiveChange={(hoverBoost: boolean) => onUpdateScene({ hoverBoost })} /></Suspense>
       </SceneGate>
       <SceneGate progress={progress} index={5}>
-        <Suspense fallback={null}><FlyboxWorld progress={progress} index={5} position={WORLD_POSITIONS[5]} mobile={mobile} videoUrl={flyboxVideo} posterUrl={flyboxPoster} /></Suspense>
+        <Suspense fallback={null}><FlyboxWorld progress={progress} index={5} position={WORLD_POSITIONS[5]} mobile={mobile} videoUrl={flyboxVideo} posterUrl={flyboxPoster} active={sceneState.flyboxActive} onActiveChange={(flyboxActive: boolean) => onUpdateScene({ flyboxActive })} /></Suspense>
       </SceneGate>
       <SceneGate progress={progress} index={6}>
-        <Suspense fallback={null}><MobileWorld progress={progress} index={6} position={WORLD_POSITIONS[6]} mobile={mobile} screens={mobileProducts.map((product) => product.screen)} /></Suspense>
+        <Suspense fallback={null}><MobileWorld progress={progress} index={6} position={WORLD_POSITIONS[6]} mobile={mobile} screens={mobileProducts.map((product) => product.screen)} focused={sceneState.mobileFocus} onFocus={(mobileFocus: number) => onUpdateScene({ mobileFocus })} /></Suspense>
       </SceneGate>
-      <SceneGate progress={progress} index={7}><ContactWorld progress={progress} mobile={mobile} /></SceneGate>
-      {!mobile ? <PostEffects mobile={false} /> : null}
+      <SceneGate progress={progress} index={7}><ContactWorld progress={progress} mobile={mobile} assembled={sceneState.contactAssembled} onToggle={() => onUpdateScene({ contactAssembled: !sceneState.contactAssembled })} /></SceneGate>
     </>
   );
 }
@@ -551,6 +602,8 @@ export default function Experience({
   pointer,
   mobile,
   visible,
+  sceneState,
+  onUpdateScene,
   onReady,
 }: ExperienceProps) {
   const shots = mobile ? MOBILE_SHOTS : DESKTOP_SHOTS;
@@ -576,7 +629,7 @@ export default function Experience({
           onReady();
         }}
       >
-        <World progress={progress} pointer={pointer} mobile={mobile} />
+        <World progress={progress} pointer={pointer} mobile={mobile} sceneState={sceneState} onUpdateScene={onUpdateScene} />
       </Canvas>
     </div>
   );

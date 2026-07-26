@@ -7,6 +7,7 @@ export const SOURCED_ASSET_PATHS = {
   wheelchair: "/assets/models/wheelchair-cc0.glb",
   fireExtinguisher: "/assets/models/fire-extinguisher-cc0.glb",
   hoverSpeeder: "/assets/models/challenger-speeder-cc0.glb",
+  hoverboard: "/assets/models/hoverboard-original.glb",
   sciFiHelmet: "/assets/models/scifi-helmet-cc0.glb",
 } as const;
 
@@ -168,6 +169,23 @@ export function SourcedHoverSpeeder({
   return (
     <SourcedModel
       asset="hoverSpeeder"
+      normalizeTo={normalizeTo}
+      anchor={anchor}
+      shadows={shadows}
+      {...props}
+    />
+  );
+}
+
+export function SourcedHoverboard({
+  normalizeTo = 2.6,
+  anchor = "center",
+  shadows = true,
+  ...props
+}: SourcedAssetProps) {
+  return (
+    <SourcedModel
+      asset="hoverboard"
       normalizeTo={normalizeTo}
       anchor={anchor}
       shadows={shadows}

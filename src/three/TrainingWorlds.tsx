@@ -1,16 +1,11 @@
-import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef } from "react";
 import type { MutableRefObject } from "react";
-import { Line, RoundedBox, useCursor } from "@react-three/drei";
+import { Line, RoundedBox } from "@react-three/drei";
 import { useFrame, useLoader } from "@react-three/fiber";
 import * as THREE from "three";
-import systemsInterface from "../../assets/journey/worlds/systems-interface-v1.webp";
-import tacticalBackdrop from "../../assets/journey/worlds/tactical-world.webp";
-import emergencyBackdrop from "../../assets/journey/worlds/emergency-world.webp";
-import {
-  SourcedFireExtinguisher,
-  SourcedSciFiHelmet,
-  SourcedWheelchair,
-} from "./SourcedAssets";
+import clinicalBackdrop from "../../assets/journey/worlds/story-first/clinical-decision-v2.webp";
+import tacticalBackdrop from "../../assets/journey/worlds/story-first/tactical-system-v2.webp";
+import emergencyBackdrop from "../../assets/journey/worlds/story-first/emergency-coordination-v2.webp";
 
 type Vec3 = [number, number, number];
 
@@ -21,6 +16,21 @@ export type TrainingWorldProps = {
   mobile: boolean;
 };
 
+export type ClinicalWorldProps = TrainingWorldProps & {
+  active: boolean;
+  onToggle: () => void;
+};
+
+export type DefenseWorldProps = TrainingWorldProps & {
+  selectedNode: number | null;
+  onSelectNode: (node: number | null) => void;
+};
+
+export type EmergencyWorldProps = TrainingWorldProps & {
+  active: boolean;
+  onToggle: () => void;
+};
+
 const CLINICAL = "#74ecff";
 const DEFENSE = "#d7ff4f";
 const EMERGENCY = "#ff713f";
@@ -28,43 +38,16 @@ const GRAPHITE = "#080d12";
 const DARK_METAL = "#101820";
 const MID_METAL = "#26343d";
 
-function useInterfaceCrop(
-  repeatX: number,
-  repeatY: number,
-  offsetX: number,
-  offsetY: number,
-) {
-  const source = useLoader(THREE.TextureLoader, systemsInterface);
-  const texture = useMemo(() => {
-    const cropped = source.clone();
-    cropped.colorSpace = THREE.SRGBColorSpace;
-    cropped.wrapS = THREE.ClampToEdgeWrapping;
-    cropped.wrapT = THREE.ClampToEdgeWrapping;
-    cropped.repeat.set(repeatX, repeatY);
-    cropped.offset.set(offsetX, offsetY);
-    cropped.minFilter = THREE.LinearMipmapLinearFilter;
-    cropped.magFilter = THREE.LinearFilter;
-    cropped.generateMipmaps = true;
-    cropped.needsUpdate = true;
-    return cropped;
-  }, [offsetX, offsetY, repeatX, repeatY, source]);
-
-  useEffect(() => () => texture.dispose(), [texture]);
-  return texture;
-}
-
-function EvidenceBackdrop({
+function EvidenceImage({
   image,
-  position,
   size,
-  accent,
-  tint = "#ffffff",
+  tint,
+  opacity,
 }: {
   image: string;
-  position: Vec3;
   size: [number, number];
-  accent: string;
-  tint?: string;
+  tint: string;
+  opacity: number;
 }) {
   const texture = useLoader(THREE.TextureLoader, image);
 
@@ -73,19 +56,48 @@ function EvidenceBackdrop({
     texture.minFilter = THREE.LinearMipmapLinearFilter;
     texture.magFilter = THREE.LinearFilter;
     texture.generateMipmaps = true;
-    texture.anisotropy = 8;
     texture.needsUpdate = true;
   }, [texture]);
 
   return (
+    <mesh position={[0, 0, 0.16]}>
+      <planeGeometry args={size} />
+      <meshBasicMaterial
+        map={texture}
+        color={tint}
+        transparent={opacity < 1}
+        opacity={opacity}
+        side={THREE.DoubleSide}
+        toneMapped={false}
+        fog={false}
+      />
+    </mesh>
+  );
+}
+
+function EvidenceBackdrop({
+  image,
+  position,
+  size,
+  accent,
+  tint = "#ffffff",
+  opacity = 1,
+}: {
+  image: string;
+  position: Vec3;
+  size: [number, number];
+  accent: string;
+  tint?: string;
+  opacity?: number;
+}) {
+  return (
     <group position={position}>
       <RoundedBox args={[size[0] + 0.34, size[1] + 0.34, 0.18]} radius={0.08} smoothness={3} position={[0, 0, -0.08]}>
-        <meshStandardMaterial color="#080d11" metalness={0.74} roughness={0.24} />
+        <meshBasicMaterial color="#030609" toneMapped={false} />
       </RoundedBox>
-      <mesh position={[0, 0, 0.035]}>
-        <planeGeometry args={size} />
-        <meshBasicMaterial map={texture} color={tint} toneMapped={false} fog={false} />
-      </mesh>
+      <Suspense fallback={null}>
+        <EvidenceImage image={image} size={size} tint={tint} opacity={opacity} />
+      </Suspense>
       <mesh position={[0, -size[1] / 2 - 0.12, 0.06]}>
         <boxGeometry args={[size[0] + 0.18, 0.045, 0.04]} />
         <meshStandardMaterial color={accent} emissive={accent} emissiveIntensity={1.15} />
@@ -190,11 +202,33 @@ function Beam({
   );
 }
 
-function ClinicalBed({ mobile }: { mobile: boolean }) {
+function ClinicalBed({
+  mobile,
+  active,
+  onToggle,
+}: {
+  mobile: boolean;
+  active: boolean;
+  onToggle: () => void;
+}) {
   const segments = mobile ? 8 : 14;
+  const sensors = useRef<THREE.Group>(null);
+
+  useFrame(({ clock }) => {
+    if (!sensors.current) return;
+    const pulse = active ? 1 + Math.sin(clock.elapsedTime * 8.2) * 0.1 : 1;
+    sensors.current.scale.setScalar(pulse);
+  });
 
   return (
-    <group position={[0, -0.72, 0.15]} rotation={[0, -0.04, 0]}>
+    <group
+      position={[0, -0.72, 0.15]}
+      rotation={[0, -0.04, 0]}
+      onClick={(event) => {
+        event.stopPropagation();
+        onToggle();
+      }}
+    >
       <RoundedBox args={[3.45, 0.48, 1.45]} radius={0.16} smoothness={3} position={[0, -0.74, 0]}>
         <meshStandardMaterial color="#17232b" metalness={0.68} roughness={0.28} />
       </RoundedBox>
@@ -255,36 +289,36 @@ function ClinicalBed({ mobile }: { mobile: boolean }) {
             </mesh>
           </group>
         ))}
-        {[[-1.64, 0.08, 0.31], [-0.19, 0, 0.32], [0.72, -0.06, 0.26]].map((point, pointIndex) => (
-          <mesh position={point as Vec3} key={pointIndex}>
-            <sphereGeometry args={[0.045, 8, 8]} />
-            <meshStandardMaterial color={CLINICAL} emissive={CLINICAL} emissiveIntensity={2.3} />
-          </mesh>
-        ))}
+        <group ref={sensors}>
+          {[[-1.64, 0.08, 0.31], [-0.19, 0, 0.32], [0.72, -0.06, 0.26]].map((point, pointIndex) => (
+            <mesh position={point as Vec3} key={pointIndex}>
+              <sphereGeometry args={[active ? 0.062 : 0.045, 8, 8]} />
+              <meshStandardMaterial
+                color={active ? "#ff714c" : CLINICAL}
+                emissive={active ? "#ff3f24" : CLINICAL}
+                emissiveIntensity={active ? 4.2 : 2.3}
+              />
+            </mesh>
+          ))}
+        </group>
       </group>
     </group>
   );
 }
 
-function ClinicalMonitor({ mobile }: { mobile: boolean }) {
-  const [hovered, setHovered] = useState(false);
-  const [alert, setAlert] = useState(false);
+function ClinicalMonitor({
+  mobile,
+  active,
+  onToggle,
+}: {
+  mobile: boolean;
+  active: boolean;
+  onToggle: () => void;
+}) {
   const screenMaterial = useRef<THREE.MeshStandardMaterial>(null);
-  const interfaceTexture = useInterfaceCrop(0.315, 0.455, 0.008, 0.54);
-  useCursor(hovered);
-
-  useEffect(() => {
-    const handleAction = (event: Event) => {
-      if ((event as CustomEvent<string>).detail === "clinical") {
-        setAlert((current) => !current);
-      }
-    };
-    window.addEventListener("larion:scene-action", handleAction);
-    return () => window.removeEventListener("larion:scene-action", handleAction);
-  }, []);
 
   const signal = useMemo<Vec3[]>(() => {
-    const values = alert
+    const values = active
       ? [0, 0.02, -0.03, 0.08, -0.12, 0.52, -0.38, 0.14, 0.02, 0, 0.04, -0.02, 0.06, -0.04, 0.34, -0.28, 0.09, 0]
       : [0, 0.02, 0.01, 0.04, -0.03, 0.29, -0.2, 0.08, 0.02, 0, 0.02, 0.01, 0.03, -0.02, 0.25, -0.17, 0.06, 0];
     return values.map((value, valueIndex) => [
@@ -292,26 +326,21 @@ function ClinicalMonitor({ mobile }: { mobile: boolean }) {
       value,
       0.278,
     ]);
-  }, [alert]);
+  }, [active]);
 
   useFrame(({ clock }) => {
     if (!screenMaterial.current) return;
-    const beat = 0.5 + Math.sin(clock.elapsedTime * (alert ? 8.5 : 4.3)) * 0.5;
-    screenMaterial.current.emissiveIntensity = (hovered ? 1.15 : 0.72) + beat * (alert ? 0.55 : 0.18);
+    const beat = 0.5 + Math.sin(clock.elapsedTime * (active ? 8.5 : 4.3)) * 0.5;
+    screenMaterial.current.emissiveIntensity = 0.72 + beat * (active ? 0.72 : 0.18);
   });
 
   return (
     <group
       position={[3.32, 0.66, -0.72]}
       rotation={[0, -0.2, 0]}
-      onPointerOver={(event) => {
-        event.stopPropagation();
-        setHovered(true);
-      }}
-      onPointerOut={() => setHovered(false)}
       onClick={(event) => {
         event.stopPropagation();
-        setAlert((current) => !current);
+        onToggle();
       }}
     >
       <RoundedBox args={[1.7, 1.32, 0.28]} radius={0.14} smoothness={4}>
@@ -322,22 +351,21 @@ function ClinicalMonitor({ mobile }: { mobile: boolean }) {
           ref={screenMaterial}
           color="#031012"
           roughness={0.24}
-          emissive={alert ? "#ff5d43" : "#072d30"}
+          emissive={active ? "#ff5d43" : "#072d30"}
           emissiveIntensity={0.8}
         />
       </RoundedBox>
       <mesh position={[0, 0.05, 0.248]}>
         <planeGeometry args={[1.34, 0.88]} />
         <meshBasicMaterial
-          map={interfaceTexture}
-          color={alert ? "#ff9e8e" : "#ffffff"}
+          color={active ? "#5b1d15" : "#062b31"}
           toneMapped={false}
           fog={false}
         />
       </mesh>
       <Line
         points={signal}
-        color={alert ? "#ff6b48" : CLINICAL}
+        color={active ? "#ff6b48" : CLINICAL}
         lineWidth={mobile ? 1.1 : 1.8}
         transparent
         opacity={0.95}
@@ -346,8 +374,8 @@ function ClinicalMonitor({ mobile }: { mobile: boolean }) {
         <mesh position={[0.65, y - 0.93, 0.26]} key={y}>
           <circleGeometry args={[0.035, mobile ? 8 : 14]} />
           <meshStandardMaterial
-            color={lightIndex === 0 && alert ? "#ff5d43" : CLINICAL}
-            emissive={lightIndex === 0 && alert ? "#ff5d43" : CLINICAL}
+            color={lightIndex === 0 && active ? "#ff5d43" : CLINICAL}
+            emissive={lightIndex === 0 && active ? "#ff5d43" : CLINICAL}
             emissiveIntensity={2}
           />
         </mesh>
@@ -483,30 +511,242 @@ function ClinicalRoomShell({ mobile }: { mobile: boolean }) {
   );
 }
 
-export function ClinicalWorld({ progress, index, position, mobile }: TrainingWorldProps) {
+function ClinicalDecisionTimeline({
+  active,
+  mobile,
+  onToggle,
+}: {
+  active: boolean;
+  mobile: boolean;
+  onToggle: () => void;
+}) {
+  const cursor = useRef<THREE.Group>(null);
+  const width = mobile ? 5.1 : 6.65;
+  const stages = [-width * 0.36, 0, width * 0.36];
+
+  useFrame(({ clock }, delta) => {
+    if (!cursor.current) return;
+    cursor.current.position.x = THREE.MathUtils.damp(
+      cursor.current.position.x,
+      active ? stages[2] : stages[0],
+      7,
+      delta,
+    );
+    const pulse = active ? 1 + Math.sin(clock.elapsedTime * 6.4) * 0.12 : 1;
+    cursor.current.scale.setScalar(pulse);
+  });
+
+  return (
+    <group
+      position={[0.85, mobile ? 2.12 : 2.72, -4.04]}
+      onClick={(event) => {
+        event.stopPropagation();
+        onToggle();
+      }}
+    >
+      <RoundedBox args={[width, 0.72, 0.075]} radius={0.055} smoothness={3} position={[0, 0, -0.045]}>
+        <meshStandardMaterial color="#071015" metalness={0.48} roughness={0.34} transparent opacity={0.76} />
+      </RoundedBox>
+      <Line
+        points={stages.map((x) => [x, 0.08, 0.02] as Vec3)}
+        color={active ? "#ff714c" : CLINICAL}
+        lineWidth={mobile ? 1 : 1.6}
+        transparent
+        opacity={0.72}
+      />
+      {stages.map((x, stageIndex) => {
+        const reached = active ? stageIndex <= 2 : stageIndex === 0;
+        return (
+          <group key={x} position={[x, 0.08, 0.05]}>
+            <mesh>
+              <circleGeometry args={[0.12, mobile ? 12 : 20]} />
+              <meshBasicMaterial
+                color={reached ? (active ? "#ff714c" : CLINICAL) : "#304047"}
+                toneMapped={false}
+              />
+            </mesh>
+            <mesh position={[0, -0.25, 0]}>
+              <boxGeometry args={[0.58, 0.045, 0.02]} />
+              <meshBasicMaterial
+                color={reached ? (active ? "#ff9b72" : "#a8f5ff") : "#253137"}
+                transparent
+                opacity={reached ? 0.86 : 0.34}
+                toneMapped={false}
+              />
+            </mesh>
+          </group>
+        );
+      })}
+      <group ref={cursor} position={[stages[0], 0.08, 0.11]}>
+        <mesh>
+          <ringGeometry args={[0.19, 0.225, mobile ? 18 : 28]} />
+          <meshBasicMaterial color={active ? "#ff714c" : CLINICAL} toneMapped={false} />
+        </mesh>
+      </group>
+    </group>
+  );
+}
+
+function ClinicalSignalOverlay({
+  active,
+  mobile,
+  onToggle,
+}: {
+  active: boolean;
+  mobile: boolean;
+  onToggle: () => void;
+}) {
+  const scanner = useRef<THREE.Group>(null);
+  const pulseMaterial = useRef<THREE.MeshBasicMaterial>(null);
+  const width = mobile ? 5.55 : 7.15;
+  const waveform = useMemo<Vec3[]>(() => {
+    const values = active
+      ? [0, 0.03, -0.04, 0.12, -0.13, 0.46, -0.34, 0.15, 0.02, 0, 0.04, -0.02, 0.08, -0.05, 0.37, -0.27, 0.1, 0]
+      : [0, 0.02, 0.01, 0.04, -0.03, 0.24, -0.16, 0.07, 0.02, 0, 0.02, 0.01, 0.03, -0.02, 0.2, -0.14, 0.05, 0];
+    return values.map((value, valueIndex) => [
+      -width * 0.43 + valueIndex * ((width * 0.86) / (values.length - 1)),
+      value,
+      0.11,
+    ]);
+  }, [active, width]);
+
+  useFrame(({ clock }, delta) => {
+    if (scanner.current) {
+      const phase = (clock.elapsedTime * (active ? 0.24 : 0.065)) % 1;
+      const destination = active
+        ? THREE.MathUtils.lerp(-width * 0.44, width * 0.44, phase)
+        : -width * 0.44;
+      scanner.current.position.x = THREE.MathUtils.damp(
+        scanner.current.position.x,
+        destination,
+        active ? 9 : 5,
+        delta,
+      );
+    }
+    if (pulseMaterial.current) {
+      const beat = 0.5 + Math.sin(clock.elapsedTime * (active ? 7.8 : 3.8)) * 0.5;
+      pulseMaterial.current.opacity = active ? 0.5 + beat * 0.45 : 0.3 + beat * 0.16;
+    }
+  });
+
+  return (
+    <group
+      position={[0.85, mobile ? -1.24 : -1.48, -4.03]}
+      onClick={(event) => {
+        event.stopPropagation();
+        onToggle();
+      }}
+    >
+      <RoundedBox args={[width, 1.18, 0.07]} radius={0.055} smoothness={3} position={[0, 0, -0.05]}>
+        <meshStandardMaterial
+          color="#061015"
+          metalness={0.42}
+          roughness={0.38}
+          transparent
+          opacity={0.7}
+        />
+      </RoundedBox>
+      <Line
+        points={waveform}
+        color={active ? "#ff7958" : CLINICAL}
+        lineWidth={mobile ? 1.15 : 1.85}
+        transparent
+        opacity={0.94}
+      />
+      <Line
+        points={[
+          [-width * 0.44, -0.39, 0.08],
+          [width * 0.44, -0.39, 0.08],
+        ]}
+        color={active ? "#ff7958" : CLINICAL}
+        lineWidth={mobile ? 0.55 : 0.85}
+        transparent
+        opacity={0.34}
+      />
+      {[-0.31, 0, 0.31].map((normalized, metricIndex) => (
+        <group key={normalized} position={[normalized * width, -0.39, 0.1]}>
+          <mesh>
+            <circleGeometry args={[mobile ? 0.045 : 0.055, 18]} />
+            <meshBasicMaterial
+              color={metricIndex === 1 && active ? "#ff7958" : CLINICAL}
+              transparent
+              opacity={active ? 0.96 : 0.58}
+              toneMapped={false}
+            />
+          </mesh>
+          <mesh position={[0, 0.18 + metricIndex * 0.035, 0]}>
+            <boxGeometry args={[0.42, 0.025, 0.018]} />
+            <meshBasicMaterial
+              color={active ? "#ffb09a" : "#b6f7ff"}
+              transparent
+              opacity={active ? 0.74 : 0.38}
+              toneMapped={false}
+            />
+          </mesh>
+        </group>
+      ))}
+      <group ref={scanner} position={[-width * 0.44, 0, 0.15]}>
+        <mesh>
+          <boxGeometry args={[0.018, 0.92, 0.018]} />
+          <meshBasicMaterial
+            ref={pulseMaterial}
+            color={active ? "#ff7958" : CLINICAL}
+            transparent
+            opacity={0.42}
+            toneMapped={false}
+            depthWrite={false}
+          />
+        </mesh>
+        <mesh position={[0, 0.46, 0]}>
+          <circleGeometry args={[0.055, 18]} />
+          <meshBasicMaterial color={active ? "#ff7958" : CLINICAL} toneMapped={false} />
+        </mesh>
+      </group>
+    </group>
+  );
+}
+
+export function ClinicalWorld({
+  progress,
+  index,
+  position,
+  mobile,
+  active,
+  onToggle,
+}: ClinicalWorldProps) {
   const root = useRef<THREE.Group>(null);
   const keyLight = useRef<THREE.PointLight>(null);
   const presence = useWorldPresence(progress, index, root);
-  usePresenceLight(keyLight, presence, mobile ? 5 : 9);
+  usePresenceLight(keyLight, presence, mobile ? 5.5 : 9.5);
 
   return (
     <group position={position}>
       <group ref={root} visible={Math.abs(progress.current - index) < 0.94}>
-        <ClinicalRoomShell mobile={mobile} />
-        <ClinicalBed mobile={mobile} />
-        <ClinicalMonitor mobile={mobile} />
-        <IVStand mobile={mobile} />
-        <SurgicalLight mobile={mobile} />
-        <Suspense fallback={null}>
-          <SourcedWheelchair
-            normalizeTo={1.86}
-            position={[2.72, -2.03, 1.38]}
-            rotation={[0, -2.42, 0]}
-            shadows={false}
-          />
-        </Suspense>
-        <pointLight ref={keyLight} position={[0.7, 2.15, 1.8]} color="#b9f7ff" intensity={0} distance={11} decay={2} />
-        <pointLight position={[-3.7, -0.2, -1.8]} color={CLINICAL} intensity={mobile ? 1.6 : 2.8} distance={6} decay={2} />
+        <EvidenceBackdrop
+          image={clinicalBackdrop}
+          position={[0.72, 0.66, -4.46]}
+          size={mobile ? [8.8, 4.95] : [11.45, 6.44]}
+          accent={active ? "#ff714c" : CLINICAL}
+          tint={active ? "#e7c1b8" : "#e7fbff"}
+          opacity={active ? 0.86 : 0.94}
+        />
+        <ClinicalSignalOverlay active={active} mobile={mobile} onToggle={onToggle} />
+        <ClinicalDecisionTimeline active={active} mobile={mobile} onToggle={onToggle} />
+        <pointLight
+          ref={keyLight}
+          position={[1.2, 2.2, 1.8]}
+          color={active ? "#ff8a65" : "#b9f7ff"}
+          intensity={0}
+          distance={11}
+          decay={2}
+        />
+        <pointLight
+          position={[3.35, 0.25, 1.15]}
+          color={active ? "#ff542f" : CLINICAL}
+          intensity={active ? (mobile ? 3.2 : 5.4) : (mobile ? 1.4 : 2.6)}
+          distance={7}
+          decay={2}
+        />
       </group>
     </group>
   );
@@ -521,22 +761,12 @@ const DEFENSE_POSITIONS: Vec3[] = [
   [3.72, -1.15, 1.1],
 ];
 
-const DEFENSE_EVIDENCE_NODES: Vec3[] = [
-  [-3.5, -0.55, -4.22],
-  [-2.15, 0.38, -4.22],
-  [-0.72, -0.02, -4.22],
-  [0.72, 0.38, -4.22],
-  [2.15, -0.02, -4.22],
-  [3.5, -0.55, -4.22],
-];
-
-function TraineeNode({
+function TelemetryBeaconNode({
   position,
   nodeIndex,
   active,
   selected,
   mobile,
-  onHover,
   onSelect,
 }: {
   position: Vec3;
@@ -544,35 +774,83 @@ function TraineeNode({
   active: boolean;
   selected: boolean;
   mobile: boolean;
-  onHover: (node: number | null) => void;
   onSelect: (node: number) => void;
 }) {
-  const inner = useRef<THREE.Group>(null);
-  const vest = useRef<THREE.MeshStandardMaterial>(null);
-  const segments = mobile ? 8 : 14;
+  const assembly = useRef<THREE.Group>(null);
+  const coreMaterial = useRef<THREE.MeshStandardMaterial>(null);
+  const wearableOrbit = useRef<THREE.Group>(null);
+  const equipmentModule = useRef<THREE.Group>(null);
+  const hapticPulse = useRef<THREE.Group>(null);
+  const returnPulse = useRef<THREE.Mesh>(null);
+  const segments = mobile ? 12 : 20;
   const yaw = Math.atan2(-position[0], -position[2]);
 
   useFrame(({ clock }, delta) => {
-    if (!inner.current) return;
-    const targetScale = selected ? 1.075 : 1;
-    const scale = THREE.MathUtils.damp(inner.current.scale.x, targetScale, 8, delta);
-    inner.current.scale.setScalar(scale);
-    inner.current.position.y = Math.sin(clock.elapsedTime * 1.2 + nodeIndex * 0.9) * 0.018;
-    if (vest.current) {
-      const pulse = 0.5 + Math.sin(clock.elapsedTime * (active ? 3.2 : 1.1) + nodeIndex) * 0.5;
-      vest.current.emissiveIntensity = active ? 0.2 + pulse * 0.7 : 0.04;
+    if (!assembly.current) return;
+    const targetScale = selected ? 1.1 : active ? 1 : 0.9;
+    const scale = THREE.MathUtils.damp(
+      assembly.current.scale.x,
+      targetScale,
+      8,
+      delta,
+    );
+    assembly.current.scale.setScalar(scale);
+    assembly.current.position.y =
+      Math.sin(clock.elapsedTime * 1.2 + nodeIndex * 0.9) * 0.022;
+    assembly.current.rotation.y = Math.sin(
+      clock.elapsedTime * 0.38 + nodeIndex,
+    ) * (selected ? 0.1 : 0.035);
+
+    if (coreMaterial.current) {
+      const pulse =
+        0.5 +
+        Math.sin(clock.elapsedTime * (selected ? 5.2 : 2.1) + nodeIndex) * 0.5;
+      coreMaterial.current.emissiveIntensity = selected
+        ? 1.05 + pulse * 1.15
+        : active
+          ? 0.38 + pulse * 0.32
+          : 0.06;
+    }
+    if (wearableOrbit.current) {
+      wearableOrbit.current.rotation.z += delta * (selected ? 1.45 : 0.28);
+      wearableOrbit.current.rotation.y += delta * (selected ? 0.72 : 0.12);
+    }
+    if (equipmentModule.current) {
+      equipmentModule.current.position.x = THREE.MathUtils.damp(
+        equipmentModule.current.position.x,
+        selected ? 0.72 : 0.57,
+        7,
+        delta,
+      );
+      equipmentModule.current.rotation.z = THREE.MathUtils.damp(
+        equipmentModule.current.rotation.z,
+        selected ? -0.16 : -0.05,
+        7,
+        delta,
+      );
+    }
+    if (hapticPulse.current) {
+      const hapticScale = selected
+        ? 1 + (Math.sin(clock.elapsedTime * 5.8) * 0.5 + 0.5) * 0.2
+        : 0.92;
+      hapticPulse.current.scale.setScalar(hapticScale);
+    }
+    if (returnPulse.current) {
+      const phase = (clock.elapsedTime * 0.7 + nodeIndex * 0.13) % 1;
+      returnPulse.current.visible = selected;
+      returnPulse.current.position.y = 0.78 + phase * 1.22;
     }
   });
 
-  const vital = useMemo<Vec3[]>(
+  const wearableSignal = useMemo<Vec3[]>(
     () => [
-      [-0.47, 2.42, 0.2],
-      [-0.31, 2.42, 0.2],
-      [-0.23, 2.31, 0.2],
-      [-0.13, 2.58, 0.2],
-      [-0.02, 2.35, 0.2],
-      [0.1, 2.42, 0.2],
-      [0.46, 2.42, 0.2],
+      [-0.45, 1.2, 0.19],
+      [-0.3, 1.2, 0.19],
+      [-0.21, 1.08, 0.19],
+      [-0.1, 1.38, 0.19],
+      [0.02, 1.14, 0.19],
+      [0.14, 1.2, 0.19],
+      [0.45, 1.2, 0.19],
     ],
     [],
   );
@@ -580,127 +858,244 @@ function TraineeNode({
   return (
     <group position={position} rotation={[0, yaw, 0]}>
       <group
-        ref={inner}
-        onPointerOver={(event) => {
-          event.stopPropagation();
-          onHover(nodeIndex);
-        }}
-        onPointerOut={() => onHover(null)}
+        ref={assembly}
         onClick={(event) => {
           event.stopPropagation();
           onSelect(nodeIndex);
         }}
       >
-        <mesh position={[0, 2.02, 0]}>
-          <sphereGeometry args={[0.32, segments, Math.max(6, segments / 2)]} />
-          <meshStandardMaterial color="#7e8d91" roughness={0.62} metalness={0.18} />
+        <mesh position={[0, -0.63, 0]}>
+          <cylinderGeometry args={[0.52, 0.68, 0.16, segments]} />
+          <meshStandardMaterial
+            color="#10181c"
+            metalness={0.72}
+            roughness={0.3}
+            emissive={active ? DEFENSE : "#000000"}
+            emissiveIntensity={active ? 0.12 : 0}
+          />
         </mesh>
-        <mesh position={[0, 2.03, 0.08]} rotation={[Math.PI / 2, 0, 0]}>
-          <torusGeometry args={[0.36, 0.055, 8, segments * 2]} />
-          <meshStandardMaterial color="#11191e" metalness={0.72} roughness={0.22} />
+        <mesh position={[0, -0.49, 0]}>
+          <cylinderGeometry args={[0.34, 0.47, 0.2, 8]} />
+          <meshStandardMaterial
+            color="#263238"
+            metalness={0.62}
+            roughness={0.26}
+          />
         </mesh>
-        <RoundedBox args={[0.69, 0.27, 0.28]} radius={0.09} smoothness={3} position={[0, 2.04, 0.31]}>
-          <meshStandardMaterial color="#05090c" emissive={active ? DEFENSE : "#172016"} emissiveIntensity={active ? 0.36 : 0.04} metalness={0.7} roughness={0.2} />
-        </RoundedBox>
-        <RoundedBox args={[0.88, 1.15, 0.48]} radius={0.16} smoothness={3} position={[0, 1.08, 0]}>
-          <meshStandardMaterial color="#273239" roughness={0.56} metalness={0.22} />
-        </RoundedBox>
-        <RoundedBox args={[0.73, 0.78, 0.12]} radius={0.1} smoothness={3} position={[0, 1.12, 0.31]}>
-          <meshStandardMaterial ref={vest} color="#111a19" emissive={DEFENSE} emissiveIntensity={0.2} roughness={0.48} metalness={0.28} />
-        </RoundedBox>
-        {[-0.25, 0, 0.25].flatMap((x) =>
-          [0.89, 1.1, 1.31].map((y) => (
-            <mesh position={[x, y, 0.39]} key={`${x}-${y}`}>
-              <sphereGeometry args={[0.035, 8, 8]} />
-              <meshStandardMaterial color={DEFENSE} emissive={DEFENSE} emissiveIntensity={active ? 1.5 : 0.16} />
+        <Beam
+          start={[0, -0.42, 0]}
+          end={[0, 0.4, 0]}
+          radius={0.045}
+          color="#5d6c70"
+          metalness={0.76}
+          roughness={0.2}
+          segments={segments}
+        />
+
+        <group ref={hapticPulse} position={[0, -0.47, 0]} rotation={[Math.PI / 2, 0, 0]}>
+          {[0.42, 0.57].map((radius, ringIndex) => (
+            <mesh key={radius}>
+              <torusGeometry args={[radius, ringIndex === 0 ? 0.026 : 0.014, 8, segments * 2]} />
+              <meshBasicMaterial
+                color={DEFENSE}
+                transparent
+                opacity={selected ? (ringIndex === 0 ? 0.82 : 0.42) : 0.11}
+                toneMapped={false}
+                depthWrite={false}
+              />
             </mesh>
-          )),
-        )}
-        <Beam start={[-0.34, 1.55, 0]} end={[-0.58, 0.62, 0.14]} radius={0.1} color="#66757a" segments={segments} />
-        <Beam start={[0.34, 1.55, 0]} end={[0.56, 0.72, 0.32]} radius={0.1} color="#66757a" segments={segments} />
-        <Beam start={[-0.22, 0.52, 0]} end={[-0.27, -0.65, 0.08]} radius={0.12} color="#39464b" segments={segments} />
-        <Beam start={[0.22, 0.52, 0]} end={[0.27, -0.65, 0.08]} radius={0.12} color="#39464b" segments={segments} />
-        <group position={[-0.57, 0.78, 0.14]} rotation={[Math.PI / 2, 0, 0]}>
+          ))}
+        </group>
+
+        <group position={[0, 0.35, 0]}>
           <mesh>
-            <torusGeometry args={[0.12, 0.04, 7, 16]} />
-            <meshStandardMaterial color="#11171a" metalness={0.72} roughness={0.22} />
+            <octahedronGeometry args={[0.34, 0]} />
+            <meshStandardMaterial
+              ref={coreMaterial}
+              color="#17211c"
+              emissive={DEFENSE}
+              emissiveIntensity={0.4}
+              metalness={0.68}
+              roughness={0.18}
+            />
           </mesh>
-          <mesh position={[0, 0, 0.045]}>
-            <circleGeometry args={[0.075, 12]} />
-            <meshStandardMaterial color={active ? DEFENSE : "#314038"} emissive={DEFENSE} emissiveIntensity={active ? 1.1 : 0.12} />
+          <mesh scale={1.28}>
+            <icosahedronGeometry args={[0.34, 1]} />
+            <meshBasicMaterial
+              color={DEFENSE}
+              wireframe
+              transparent
+              opacity={selected ? 0.86 : active ? 0.34 : 0.1}
+              toneMapped={false}
+            />
           </mesh>
         </group>
-        <group position={[0.45, 0.78, 0.48]} rotation={[0.02, 0, -0.42]}>
-          <RoundedBox args={[1.12, 0.13, 0.16]} radius={0.04} smoothness={2}>
-            <meshStandardMaterial color="#151c20" metalness={0.72} roughness={0.26} />
-          </RoundedBox>
-          <RoundedBox args={[0.35, 0.3, 0.16]} radius={0.03} smoothness={2} position={[-0.38, -0.16, 0]}>
-            <meshStandardMaterial color="#263135" metalness={0.54} roughness={0.38} />
-          </RoundedBox>
-          <Beam start={[0.52, 0, 0]} end={[0.88, 0, 0]} radius={0.035} color="#667274" segments={8} />
+
+        <group ref={wearableOrbit} position={[0, 0.35, 0]} rotation={[0.68, 0.36, 0]}>
+          <mesh>
+            <torusGeometry args={[0.52, 0.026, 8, segments * 2]} />
+            <meshStandardMaterial
+              color="#23312a"
+              emissive={DEFENSE}
+              emissiveIntensity={selected ? 1.25 : active ? 0.34 : 0.04}
+              metalness={0.52}
+              roughness={0.22}
+            />
+          </mesh>
+          <mesh position={[0.52, 0, 0]}>
+            <sphereGeometry args={[0.065, 10, 10]} />
+            <meshBasicMaterial color={DEFENSE} toneMapped={false} />
+          </mesh>
         </group>
-        <Line points={vital} color={active ? DEFENSE : "#4a564a"} lineWidth={mobile ? 0.8 : 1.25} transparent opacity={active ? 0.86 : 0.28} />
-        <mesh position={[0, -0.7, 0]}>
-          <cylinderGeometry args={[0.62, 0.78, 0.11, mobile ? 16 : 28]} />
-          <meshStandardMaterial color="#10171b" metalness={0.48} roughness={0.38} emissive={active ? DEFENSE : "#000000"} emissiveIntensity={active ? 0.18 : 0} />
+
+        <group ref={equipmentModule} position={[0.57, 0.12, 0.04]} rotation={[0.08, 0.14, -0.05]}>
+          <RoundedBox args={[0.72, 0.14, 0.2]} radius={0.045} smoothness={2}>
+            <meshStandardMaterial
+              color="#1b252a"
+              emissive={selected ? DEFENSE : "#111812"}
+              emissiveIntensity={selected ? 0.78 : 0.08}
+              metalness={0.72}
+              roughness={0.24}
+            />
+          </RoundedBox>
+          <mesh position={[0.31, 0, 0.115]}>
+            <boxGeometry args={[0.1, 0.06, 0.025]} />
+            <meshBasicMaterial color={selected ? DEFENSE : "#5e6b61"} toneMapped={false} />
+          </mesh>
+        </group>
+
+        <Line
+          points={wearableSignal}
+          color={active ? DEFENSE : "#465146"}
+          lineWidth={mobile ? 0.72 : 1.15}
+          transparent
+          opacity={selected ? 0.96 : active ? 0.46 : 0.14}
+        />
+
+        <Line
+          points={[[0, 0.73, 0], [0, 2.02, 0]]}
+          color={CLINICAL}
+          lineWidth={mobile ? 0.62 : 0.95}
+          transparent
+          opacity={selected ? 0.72 : 0.08}
+          dashed
+          dashSize={0.13}
+          gapSize={0.14}
+        />
+        <mesh ref={returnPulse} position={[0, 0.78, 0]} visible={false}>
+          <sphereGeometry args={[mobile ? 0.045 : 0.06, 10, 10]} />
+          <meshBasicMaterial color={CLINICAL} toneMapped={false} />
         </mesh>
+        <mesh position={[0, 2.02, 0]} rotation={[Math.PI / 2, 0, 0]}>
+          <ringGeometry args={[0.09, 0.125, segments]} />
+          <meshBasicMaterial
+            color={selected ? CLINICAL : DEFENSE}
+            transparent
+            opacity={selected ? 0.92 : active ? 0.35 : 0.1}
+            toneMapped={false}
+            side={THREE.DoubleSide}
+          />
+        </mesh>
+
+        {Array.from({ length: 6 }, (_, indicatorIndex) => (
+          <mesh
+            key={indicatorIndex}
+            position={[-0.25 + indicatorIndex * 0.1, -0.56, 0.49]}
+          >
+            <circleGeometry args={[0.022, 10]} />
+            <meshBasicMaterial
+              color={indicatorIndex === nodeIndex ? DEFENSE : "#334038"}
+              transparent
+              opacity={indicatorIndex === nodeIndex ? 0.95 : 0.28}
+              toneMapped={false}
+            />
+          </mesh>
+        ))}
+
+        <pointLight
+          color={selected ? CLINICAL : DEFENSE}
+          intensity={selected ? (mobile ? 2.7 : 4.6) : active ? 0.8 : 0.15}
+          distance={3.2}
+          position={[0, 0.45, 0.5]}
+        />
       </group>
     </group>
   );
 }
 
-function NetworkPulse({ start, active, offset, mobile }: { start: Vec3; active: boolean; offset: number; mobile: boolean }) {
-  const pulse = useRef<THREE.Mesh>(null);
-  const from = useMemo(() => new THREE.Vector3(start[0], start[1] + 1.15, start[2]), [start]);
-  const to = useMemo(() => new THREE.Vector3(0, -0.15, 0), []);
+function InstructorTelemetry({
+  target,
+  mobile,
+}: {
+  target: Vec3;
+  mobile: boolean;
+}) {
+  const dispatchPulse = useRef<THREE.Mesh>(null);
+  const returnPulse = useRef<THREE.Mesh>(null);
+  const consolePoint = useMemo(() => new THREE.Vector3(0, -0.18, 3.82), []);
+  const traineePoint = useMemo(
+    () => new THREE.Vector3(target[0], target[1] + 1.18, target[2]),
+    [target],
+  );
 
   useFrame(({ clock }) => {
-    if (!pulse.current) return;
-    pulse.current.visible = active;
-    const t = (clock.elapsedTime * 0.34 + offset) % 1;
-    pulse.current.position.lerpVectors(from, to, t);
-    const scale = 0.7 + Math.sin(t * Math.PI) * 0.55;
-    pulse.current.scale.setScalar(scale);
+    const phase = (clock.elapsedTime * 0.36) % 1;
+    if (dispatchPulse.current) {
+      const dispatchT = THREE.MathUtils.smootherstep(Math.min(phase * 2, 1), 0, 1);
+      dispatchPulse.current.visible = phase < 0.56;
+      dispatchPulse.current.position.lerpVectors(consolePoint, traineePoint, dispatchT);
+    }
+    if (returnPulse.current) {
+      const returnT = THREE.MathUtils.smootherstep(Math.max((phase - 0.5) * 2, 0), 0, 1);
+      returnPulse.current.visible = phase >= 0.44;
+      returnPulse.current.position.lerpVectors(traineePoint, consolePoint, returnT);
+    }
   });
 
   return (
-    <mesh ref={pulse} visible={active}>
-      <sphereGeometry args={[mobile ? 0.045 : 0.06, 8, 8]} />
-      <meshStandardMaterial color={DEFENSE} emissive={DEFENSE} emissiveIntensity={2.6} />
-    </mesh>
+    <group>
+      <Line
+        points={[consolePoint.toArray() as Vec3, traineePoint.toArray() as Vec3]}
+        color={DEFENSE}
+        lineWidth={mobile ? 1 : 1.6}
+        transparent
+        opacity={0.78}
+        dashed
+        dashSize={0.2}
+        gapSize={0.17}
+      />
+      <mesh ref={dispatchPulse}>
+        <sphereGeometry args={[mobile ? 0.055 : 0.075, 10, 10]} />
+        <meshBasicMaterial color="#f1ff9a" toneMapped={false} />
+      </mesh>
+      <mesh ref={returnPulse}>
+        <sphereGeometry args={[mobile ? 0.05 : 0.068, 10, 10]} />
+        <meshBasicMaterial color={CLINICAL} toneMapped={false} />
+      </mesh>
+    </group>
   );
 }
 
 function InstructorConsole({
-  scenario,
-  hovered,
+  selectedNode,
   mobile,
-  onHover,
   onAdvance,
 }: {
-  scenario: number;
-  hovered: boolean;
+  selectedNode: number | null;
   mobile: boolean;
-  onHover: (hovered: boolean) => void;
   onAdvance: () => void;
 }) {
   const screen = useRef<THREE.MeshStandardMaterial>(null);
-  const dashboardTexture = useInterfaceCrop(0.36, 0.55, 0.32, 0.2);
 
   useFrame(({ clock }) => {
     if (!screen.current) return;
-    screen.current.emissiveIntensity = (hovered ? 1.15 : 0.68) + Math.sin(clock.elapsedTime * 2.4) * 0.08;
+    screen.current.emissiveIntensity = (selectedNode === null ? 0.62 : 0.94) + Math.sin(clock.elapsedTime * 2.4) * 0.08;
   });
 
   return (
     <group
       position={[0, -1.17, 4.05]}
       rotation={[-0.02, 0, 0]}
-      onPointerOver={(event) => {
-        event.stopPropagation();
-        onHover(true);
-      }}
-      onPointerOut={() => onHover(false)}
       onClick={(event) => {
         event.stopPropagation();
         onAdvance();
@@ -720,15 +1115,15 @@ function InstructorConsole({
         </RoundedBox>
         <mesh position={[0, 0, 0.111]}>
           <planeGeometry args={[1.98, 0.99]} />
-          <meshBasicMaterial map={dashboardTexture} toneMapped={false} fog={false} />
+          <meshBasicMaterial color="#101d12" toneMapped={false} fog={false} />
         </mesh>
         {Array.from({ length: 6 }, (_, unitIndex) => (
           <group position={[-0.82 + (unitIndex % 3) * 0.82, 0.24 - Math.floor(unitIndex / 3) * 0.48, 0.13]} key={unitIndex}>
             <RoundedBox args={[0.62, 0.28, 0.02]} radius={0.025} smoothness={2}>
               <meshStandardMaterial
-                color={unitIndex < scenario ? "#a7ca39" : "#253029"}
-                emissive={unitIndex < scenario ? DEFENSE : "#101410"}
-                emissiveIntensity={unitIndex < scenario ? 0.72 : 0.08}
+                color={unitIndex === selectedNode ? "#d7ff4f" : "#253029"}
+                emissive={unitIndex === selectedNode ? DEFENSE : "#101410"}
+                emissiveIntensity={unitIndex === selectedNode ? 0.9 : 0.08}
                 roughness={0.42}
                 transparent
                 opacity={0.34}
@@ -742,11 +1137,11 @@ function InstructorConsole({
           <meshStandardMaterial color="#11181c" metalness={0.65} roughness={0.25} />
         </RoundedBox>
         <RoundedBox args={[0.75, 1.03, 0.025]} radius={0.06} smoothness={2} position={[0, 0, 0.058]}>
-          <meshStandardMaterial color="#17200e" emissive={DEFENSE} emissiveIntensity={hovered ? 0.8 : 0.35} roughness={0.35} />
+          <meshStandardMaterial color="#17200e" emissive={DEFENSE} emissiveIntensity={selectedNode === null ? 0.3 : 0.82} roughness={0.35} />
         </RoundedBox>
         <mesh position={[0, 0, 0.074]}>
           <planeGeometry args={[0.68, 0.93]} />
-          <meshBasicMaterial map={dashboardTexture} toneMapped={false} fog={false} />
+          <meshBasicMaterial color="#13230f" toneMapped={false} fog={false} />
         </mesh>
         <Line
           points={[[-0.28, -0.1, 0.084], [-0.15, -0.1, 0.084], [-0.08, -0.24, 0.084], [0.02, 0.2, 0.084], [0.12, -0.1, 0.084], [0.29, -0.1, 0.084]]}
@@ -758,24 +1153,24 @@ function InstructorConsole({
   );
 }
 
-export function DefenseWorld({ progress, index, position, mobile }: TrainingWorldProps) {
+export function DefenseWorld({
+  progress,
+  index,
+  position,
+  mobile,
+  selectedNode,
+  onSelectNode,
+}: DefenseWorldProps) {
   const root = useRef<THREE.Group>(null);
   const keyLight = useRef<THREE.PointLight>(null);
-  const [scenario, setScenario] = useState(6);
-  const [consoleHovered, setConsoleHovered] = useState(false);
   const presence = useWorldPresence(progress, index, root);
-  usePresenceLight(keyLight, presence, mobile ? 7 : 13);
-  useCursor(consoleHovered);
-
-  useEffect(() => {
-    const handleAction = (event: Event) => {
-      if ((event as CustomEvent<string>).detail === "tactical") {
-        setScenario((current) => (current % 6) + 1);
-      }
-    };
-    window.addEventListener("larion:scene-action", handleAction);
-    return () => window.removeEventListener("larion:scene-action", handleAction);
-  }, []);
+  usePresenceLight(keyLight, presence, mobile ? 6.5 : 12);
+  const selectNode = (node: number) => {
+    onSelectNode(selectedNode === node ? null : node);
+  };
+  const advanceNode = () => {
+    onSelectNode(selectedNode === null ? 0 : selectedNode >= 5 ? null : selectedNode + 1);
+  };
 
   return (
     <group position={position}>
@@ -790,91 +1185,242 @@ export function DefenseWorld({ progress, index, position, mobile }: TrainingWorl
         </mesh>
         <EvidenceBackdrop
           image={tacticalBackdrop}
-          position={[0, 0.65, -4.42]}
-          size={mobile ? [8.6, 4.84] : [10.5, 5.91]}
+          position={[0.15, 0.68, -4.58]}
+          size={mobile ? [8.8, 4.95] : [11.45, 6.44]}
           accent={DEFENSE}
-          tint={scenario === 1 ? "#d8ff90" : "#ffffff"}
+          tint={selectedNode === null ? "#eaf0e4" : "#e4ffc0"}
+          opacity={selectedNode === null ? 0.92 : 0.84}
         />
-        <group position={[0, -1.36, 0]}>
-          <mesh>
-            <cylinderGeometry args={[1.3, 1.65, 0.82, mobile ? 24 : 40]} />
-            <meshStandardMaterial color="#172127" metalness={0.64} roughness={0.28} />
-          </mesh>
-          <Suspense fallback={null}>
-            <SourcedSciFiHelmet
-              normalizeTo={1.55}
-              position={[0, 0.84, 0]}
-              rotation={[0.02, -0.52, 0.03]}
-              shadows={false}
-            />
-          </Suspense>
-          <mesh position={[0, 0.48, 0.28]}>
-            <sphereGeometry args={[0.22, 12, 8]} />
-            <meshStandardMaterial color={DEFENSE} emissive={DEFENSE} emissiveIntensity={2.1} transparent opacity={0.62} />
-          </mesh>
-        </group>
-
-        {DEFENSE_EVIDENCE_NODES.map((nodePosition, nodeIndex) => (
-          <group key={nodeIndex}>
-            <Line
-              points={[
-                [nodePosition[0], nodePosition[1] + 1.15, nodePosition[2]],
-                [0, -0.15, 0],
-              ]}
-              color={nodeIndex < scenario ? DEFENSE : "#35403a"}
-              lineWidth={mobile ? 0.7 : 1.15}
-              transparent
-              opacity={nodeIndex < scenario ? 0.58 : 0.16}
-            />
-            <NetworkPulse start={nodePosition} active={nodeIndex < scenario} offset={nodeIndex / 6} mobile={mobile} />
-            <mesh position={nodePosition}>
-              <circleGeometry args={[nodeIndex < scenario ? 0.1 : 0.065, mobile ? 12 : 20]} />
-              <meshStandardMaterial
-                color={nodeIndex < scenario ? DEFENSE : "#39423e"}
-                emissive={DEFENSE}
-                emissiveIntensity={nodeIndex < scenario ? 1.7 : 0.04}
+        {DEFENSE_POSITIONS.map((nodePosition, nodeIndex) => {
+          const target = [nodePosition[0], nodePosition[1] + 1.18, nodePosition[2]] as Vec3;
+          const isSelected = selectedNode === nodeIndex;
+          return (
+            <group key={nodeIndex}>
+              {selectedNode === null ? (
+                <Line
+                  points={[[0, -0.18, 3.82], target]}
+                  color={DEFENSE}
+                  lineWidth={mobile ? 0.45 : 0.75}
+                  transparent
+                  opacity={0.2}
+                  dashed
+                  dashSize={0.16}
+                  gapSize={0.26}
+                />
+              ) : null}
+              <TelemetryBeaconNode
+                position={nodePosition}
+                nodeIndex={nodeIndex}
+                active={selectedNode === null || isSelected}
+                selected={isSelected}
+                mobile={mobile}
+                onSelect={selectNode}
               />
-            </mesh>
-          </group>
-        ))}
+            </group>
+          );
+        })}
+
+        {selectedNode !== null && DEFENSE_POSITIONS[selectedNode] ? (
+          <InstructorTelemetry target={DEFENSE_POSITIONS[selectedNode]} mobile={mobile} />
+        ) : null}
 
         <InstructorConsole
-          scenario={scenario}
-          hovered={consoleHovered}
+          selectedNode={selectedNode}
           mobile={mobile}
-          onHover={setConsoleHovered}
-          onAdvance={() => setScenario((current) => (current % 6) + 1)}
+          onAdvance={advanceNode}
         />
 
         <pointLight ref={keyLight} position={[0, 2.4, 1.4]} color="#e7ff8a" intensity={0} distance={12} decay={2} />
-        <pointLight position={[0, -0.2, 0]} color={DEFENSE} intensity={mobile ? 3 : 5.5} distance={7} decay={2} />
+        <pointLight
+          position={selectedNode === null ? [0, -0.2, 0] : [DEFENSE_POSITIONS[selectedNode][0], 0.4, DEFENSE_POSITIONS[selectedNode][2]]}
+          color={selectedNode === null ? DEFENSE : CLINICAL}
+          intensity={selectedNode === null ? (mobile ? 2.4 : 4.5) : (mobile ? 4 : 7.5)}
+          distance={7}
+          decay={2}
+        />
       </group>
     </group>
   );
 }
 
-const EMERGENCY_ROUTE: Vec3[] = [
-  [4.4, -1.83, 2.5],
-  [3.1, -1.83, 2.05],
-  [1.55, -1.83, 1.75],
-  [0.4, -1.83, 1.0],
-  [-0.45, -1.83, 0.72],
-  [-1.35, -1.83, 0.56],
-  [-2.3, -1.83, 0.45],
+const EMERGENCY_ROLE_PATHS: { color: string; points: Vec3[] }[] = [
+  {
+    color: "#51b9ff",
+    points: [
+      [-3.55, -1.84, 2.35],
+      [-2.72, -1.75, 0.72],
+      [-1.45, -1.56, -3.25],
+    ],
+  },
+  {
+    color: EMERGENCY,
+    points: [
+      [0.1, -1.84, 2.55],
+      [0.18, -1.68, 0.34],
+      [0.35, -1.4, -3.5],
+    ],
+  },
+  {
+    color: "#ff5368",
+    points: [
+      [3.72, -1.84, 2.2],
+      [2.92, -1.7, 0.54],
+      [2.35, -1.48, -3.18],
+    ],
+  },
 ];
 
-function RouteLight({ position, lightIndex, active, mobile }: { position: Vec3; lightIndex: number; active: boolean; mobile: boolean }) {
-  const material = useRef<THREE.MeshStandardMaterial>(null);
-  useFrame(({ clock }) => {
-    if (!material.current) return;
-    const wave = 0.5 + Math.sin(clock.elapsedTime * 4.8 - lightIndex * 0.82) * 0.5;
-    material.current.emissiveIntensity = active ? 0.35 + wave * 2.4 : 0.08;
+function EmergencyRolePath({
+  points,
+  color,
+  active,
+  offset,
+  mobile,
+  onToggle,
+}: {
+  points: Vec3[];
+  color: string;
+  active: boolean;
+  offset: number;
+  mobile: boolean;
+  onToggle: () => void;
+}) {
+  const pulse = useRef<THREE.Mesh>(null);
+  const curve = useMemo(
+    () => new THREE.CatmullRomCurve3(points.map((point) => new THREE.Vector3(...point))),
+    [points],
+  );
+  const end = points[points.length - 1];
+
+  useFrame(({ clock }, delta) => {
+    if (!pulse.current) return;
+    if (active) {
+      pulse.current.position.x = THREE.MathUtils.damp(pulse.current.position.x, end[0], 5, delta);
+      pulse.current.position.y = THREE.MathUtils.damp(pulse.current.position.y, end[1], 5, delta);
+      pulse.current.position.z = THREE.MathUtils.damp(pulse.current.position.z, end[2], 5, delta);
+      const settledScale = THREE.MathUtils.damp(pulse.current.scale.x, 0.72, 5, delta);
+      pulse.current.scale.setScalar(settledScale);
+      return;
+    }
+    const t = (clock.elapsedTime * 0.24 + offset) % 1;
+    pulse.current.position.copy(curve.getPointAt(t));
+    const travellingScale = 0.82 + Math.sin(t * Math.PI) * 0.32;
+    pulse.current.scale.setScalar(travellingScale);
   });
+
   return (
-    <mesh position={position} rotation={[-Math.PI / 2, 0, 0]}>
-      <ringGeometry args={[mobile ? 0.09 : 0.12, mobile ? 0.15 : 0.2, mobile ? 12 : 20]} />
-      <meshStandardMaterial ref={material} color={active ? EMERGENCY : "#384147"} emissive={EMERGENCY} emissiveIntensity={0.5} roughness={0.34} />
-    </mesh>
+    <group
+      onClick={(event) => {
+        event.stopPropagation();
+        onToggle();
+      }}
+    >
+      <Line
+        points={curve.getPoints(mobile ? 18 : 30).map((point) => point.toArray() as Vec3)}
+        color={active ? CLINICAL : color}
+        lineWidth={mobile ? 1.15 : 1.8}
+        transparent
+        opacity={active ? 0.34 : 0.82}
+      />
+      <mesh ref={pulse} position={points[0]}>
+        <sphereGeometry args={[mobile ? 0.075 : 0.1, 12, 10]} />
+        <meshBasicMaterial color={active ? CLINICAL : color} toneMapped={false} />
+      </mesh>
+      <mesh position={end}>
+        <icosahedronGeometry args={[mobile ? 0.1 : 0.14, 1]} />
+        <meshBasicMaterial
+          color={active ? CLINICAL : color}
+          transparent
+          opacity={active ? 0.62 : 0.92}
+          toneMapped={false}
+        />
+      </mesh>
+    </group>
+  );
+}
+
+function IncidentEnergy({
+  active,
+  mobile,
+  onToggle,
+}: {
+  active: boolean;
+  mobile: boolean;
+  onToggle: () => void;
+}) {
+  const energy = useRef<THREE.Group>(null);
+  const smoke = useRef<THREE.Group>(null);
+  const puffs = useMemo(
+    () =>
+      Array.from({ length: mobile ? 4 : 7 }, (_, puffIndex) => ({
+        position: [
+          Math.sin(puffIndex * 2.17) * (0.18 + puffIndex * 0.035),
+          0.38 + puffIndex * 0.31,
+          Math.cos(puffIndex * 1.73) * (0.14 + puffIndex * 0.025),
+        ] as Vec3,
+        scale: 0.34 + (puffIndex % 3) * 0.13,
+      })),
+    [mobile],
+  );
+
+  useFrame(({ clock }, delta) => {
+    if (energy.current) {
+      const targetScale = active ? 0.34 : 1 + Math.sin(clock.elapsedTime * 4.8) * 0.035;
+      const nextScale = THREE.MathUtils.damp(energy.current.scale.x, targetScale, 4.5, delta);
+      energy.current.scale.setScalar(nextScale);
+      energy.current.rotation.y += delta * (active ? 0.08 : 0.32);
+    }
+    if (smoke.current) {
+      smoke.current.position.y = THREE.MathUtils.damp(smoke.current.position.y, active ? 0.18 : 0, 2.5, delta);
+      const targetSmoke = active ? 0.48 : 1;
+      const smokeScale = THREE.MathUtils.damp(smoke.current.scale.x, targetSmoke, 2.5, delta);
+      smoke.current.scale.setScalar(smokeScale);
+    }
+  });
+
+  return (
+    <group
+      position={[0.35, -1.38, -3.35]}
+      onClick={(event) => {
+        event.stopPropagation();
+        onToggle();
+      }}
+    >
+      <group ref={energy}>
+        <mesh position={[0, 0.48, 0]}>
+          <icosahedronGeometry args={[mobile ? 0.34 : 0.48, 2]} />
+          <meshStandardMaterial
+            color={active ? CLINICAL : "#ff6a35"}
+            emissive={active ? CLINICAL : "#ff3e1e"}
+            emissiveIntensity={active ? 0.8 : 2.6}
+            wireframe
+            transparent
+            opacity={active ? 0.48 : 0.82}
+          />
+        </mesh>
+        <pointLight
+          position={[0, 0.52, 0.2]}
+          color={active ? CLINICAL : "#ff552b"}
+          intensity={active ? 1.2 : (mobile ? 5 : 8.5)}
+          distance={6}
+          decay={2}
+        />
+      </group>
+      <group ref={smoke} position={[0, 0, 0]}>
+        {puffs.map((puff, puffIndex) => (
+          <mesh key={puffIndex} position={puff.position} scale={puff.scale}>
+            <sphereGeometry args={[0.62, mobile ? 7 : 10, mobile ? 5 : 8]} />
+            <meshStandardMaterial
+              color="#39464b"
+              roughness={0.94}
+              transparent
+              opacity={active ? 0.035 : 0.13}
+              depthWrite={false}
+            />
+          </mesh>
+        ))}
+      </group>
+    </group>
   );
 }
 
@@ -1159,8 +1705,6 @@ function WarehouseShell({ mobile }: { mobile: boolean }) {
 }
 
 function IncidentDisplay({ contained }: { contained: boolean }) {
-  const incidentTexture = useInterfaceCrop(0.31, 0.64, 0.69, 0.18);
-
   return (
     <group position={[-3.4, 1.05, -4.48]} rotation={[0, 0.08, 0]}>
       <RoundedBox args={[2.75, 1.66, 0.13]} radius={0.08} smoothness={3}>
@@ -1169,8 +1713,7 @@ function IncidentDisplay({ contained }: { contained: boolean }) {
       <mesh position={[0, 0, 0.075]}>
         <planeGeometry args={[2.52, 1.42]} />
         <meshBasicMaterial
-          map={incidentTexture}
-          color={contained ? "#b9fff6" : "#ffffff"}
+          color={contained ? "#0b3a3c" : "#32130d"}
           toneMapped={false}
           fog={false}
         />
@@ -1183,78 +1726,68 @@ function IncidentDisplay({ contained }: { contained: boolean }) {
   );
 }
 
-export function EmergencyWorld({ progress, index, position, mobile }: TrainingWorldProps) {
+export function EmergencyWorld({
+  progress,
+  index,
+  position,
+  mobile,
+  active,
+  onToggle,
+}: EmergencyWorldProps) {
   const root = useRef<THREE.Group>(null);
   const keyLight = useRef<THREE.PointLight>(null);
-  const [contained, setContained] = useState(false);
-  const [beaconHovered, setBeaconHovered] = useState(false);
   const presence = useWorldPresence(progress, index, root);
-  usePresenceLight(keyLight, presence, mobile ? 5 : 8);
-  useCursor(beaconHovered);
-
-  useEffect(() => {
-    const handleAction = (event: Event) => {
-      if ((event as CustomEvent<string>).detail === "emergency") {
-        setContained((current) => !current);
-      }
-    };
-    window.addEventListener("larion:scene-action", handleAction);
-    return () => window.removeEventListener("larion:scene-action", handleAction);
-  }, []);
-
-  const hoseCurve = useMemo(
-    () =>
-      new THREE.CatmullRomCurve3(
-        EMERGENCY_ROUTE.map(([x, y, z]) => new THREE.Vector3(x, y + 0.03, z)),
-        false,
-        "catmullrom",
-        0.45,
-      ),
-    [],
-  );
+  usePresenceLight(keyLight, presence, mobile ? 5.5 : 9);
 
   return (
     <group position={position}>
       <group ref={root} visible={Math.abs(progress.current - index) < 0.94}>
-        <WarehouseShell mobile={mobile} />
         <EvidenceBackdrop
           image={emergencyBackdrop}
-          position={[0, 0.62, -4.3]}
-          size={mobile ? [8.7, 4.9] : [10.7, 6.02]}
-          accent={contained ? CLINICAL : EMERGENCY}
-          tint={contained ? "#b8e7eb" : "#ffffff"}
+          position={[0.12, 0.66, -4.52]}
+          size={mobile ? [8.8, 4.95] : [11.45, 6.44]}
+          accent={active ? CLINICAL : EMERGENCY}
+          tint={active ? "#bdd8dd" : "#ffffff"}
+          opacity={active ? 0.7 : 0.94}
         />
-        <Suspense fallback={null}>
-          <SourcedFireExtinguisher
-            normalizeTo={1.34}
-            position={[1.05, -1.98, 1.62]}
-            rotation={[0, -0.2, 0]}
-            shadows={false}
-          />
-        </Suspense>
-        <mesh>
-          <tubeGeometry args={[hoseCurve, mobile ? 32 : 64, 0.055, mobile ? 5 : 8, false]} />
-          <meshStandardMaterial color={contained ? "#74ecff" : "#354852"} emissive="#74ecff" emissiveIntensity={contained ? 0.78 : 0.08} roughness={0.48} />
+        <mesh position={[0.3, -1.99, 0.18]} rotation={[-Math.PI / 2, 0, 0]}>
+          <planeGeometry args={[11.4, 8.4]} />
+          <meshStandardMaterial color="#080d11" roughness={0.88} metalness={0.16} />
         </mesh>
-        {EMERGENCY_ROUTE.map((routePosition, routeIndex) => (
-          <RouteLight
-            key={routeIndex}
-            position={routePosition}
-            lightIndex={routeIndex}
-            active={!contained}
+        {EMERGENCY_ROLE_PATHS.map((role, roleIndex) => (
+          <EmergencyRolePath
+            key={role.color}
+            points={role.points}
+            color={role.color}
+            active={active}
+            offset={roleIndex / EMERGENCY_ROLE_PATHS.length}
             mobile={mobile}
+            onToggle={onToggle}
           />
         ))}
-        <FireAndSmoke contained={contained} mobile={mobile} position={[3.15, -1.82, -3.6]} />
-        <IncidentBeacon
-          contained={contained}
-          hovered={beaconHovered}
-          mobile={mobile}
-          onHover={setBeaconHovered}
-          onToggle={() => setContained((current) => !current)}
+        <IncidentEnergy active={active} mobile={mobile} onToggle={onToggle} />
+        <pointLight
+          ref={keyLight}
+          position={[0.7, 2.9, 1.8]}
+          color={active ? "#b9f6ff" : "#ffd0bd"}
+          intensity={0}
+          distance={13}
+          decay={2}
         />
-        <pointLight ref={keyLight} position={[0.7, 2.9, 1.8]} color="#d6e9ed" intensity={0} distance={13} decay={2} />
-        <pointLight position={[3.1, -0.25, -0.7]} color="#3e9cff" intensity={mobile ? 2.2 : 4.5} distance={7} decay={2} />
+        <pointLight
+          position={[-2.35, -0.15, 0.9]}
+          color="#3e9cff"
+          intensity={active ? (mobile ? 2.4 : 4.2) : (mobile ? 1.6 : 3.2)}
+          distance={8}
+          decay={2}
+        />
+        <pointLight
+          position={[3.05, -0.35, 0.65]}
+          color={active ? CLINICAL : "#ff5368"}
+          intensity={active ? (mobile ? 1.8 : 3.4) : (mobile ? 2.8 : 5.2)}
+          distance={7}
+          decay={2}
+        />
       </group>
     </group>
   );

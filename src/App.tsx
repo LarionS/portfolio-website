@@ -10,9 +10,14 @@ import {
 import type { ErrorInfo, MouseEvent as ReactMouseEvent, ReactNode } from "react";
 import { chapters, contact, mobileProducts } from "./content";
 import type { Chapter } from "./content";
-import hospitalBackdrop from "../assets/journey/worlds/hospital-world.webp";
-import tacticalBackdrop from "../assets/journey/worlds/tactical-world.webp";
-import emergencyBackdrop from "../assets/journey/worlds/emergency-world.webp";
+import clinicalBackdrop from "../assets/journey/worlds/story-first/clinical-decision-v2.webp";
+import tacticalBackdrop from "../assets/journey/worlds/story-first/tactical-system-v2.webp";
+import emergencyBackdrop from "../assets/journey/worlds/story-first/emergency-coordination-v2.webp";
+import {
+  INITIAL_SCENE_STATE,
+  isWorldActive,
+} from "./sceneState";
+import type { JourneySceneState } from "./sceneState";
 
 const Experience = lazy(() => import("./Experience"));
 
@@ -179,8 +184,12 @@ function Header({ activeStage, onJump }: { activeStage: number; onJump: JumpHand
         >
           {journeyComplete ? "Replay journey" : "Skip journey"}
         </a>
-        <a className="header-cta" href={contact.emailHref}>
-          Discuss a project <span aria-hidden="true">↗</span>
+        <a
+          className="header-cta"
+          href="#contact"
+          onClick={(event) => onJump(event, "contact", 7)}
+        >
+          Discuss Unreal / VR <span aria-hidden="true">↓</span>
         </a>
       </div>
     </header>
@@ -189,7 +198,12 @@ function Header({ activeStage, onJump }: { activeStage: number; onJump: JumpHand
 
 function JourneyRail({ activeStage, onJump }: { activeStage: number; onJump: JumpHandler }) {
   return (
-    <nav className="journey-rail" aria-label="Project journey" id="project-index">
+    <nav
+      className="journey-rail"
+      aria-label="Project journey"
+      id="project-index"
+      data-current-stage={activeStage}
+    >
       <span className="journey-rail__track" aria-hidden="true">
         <i style={{ transform: `scaleY(${Math.max(0, Math.min(1, activeStage / 6))})` }} />
       </span>
@@ -216,7 +230,7 @@ function JourneyRail({ activeStage, onJump }: { activeStage: number; onJump: Jum
 function WorldFallback({ world }: { world: Chapter["world"] }) {
   const chapter = chapters.find((item) => item.world === world);
   const asset = world === "clinical"
-    ? hospitalBackdrop
+    ? clinicalBackdrop
     : world === "tactical"
       ? tacticalBackdrop
       : world === "emergency"
@@ -225,7 +239,7 @@ function WorldFallback({ world }: { world: Chapter["world"] }) {
           ? chapter?.poster
           : world === "mobile"
             ? mobileProducts[1].screen
-            : hospitalBackdrop;
+            : clinicalBackdrop;
 
   return (
     <div className={`world-fallback world-fallback--${world}`} aria-hidden="true">
@@ -257,8 +271,12 @@ function Hero({ onJump }: { onJump: JumpHandler }) {
           <a className="primary-button" href="#clinical" onClick={(event) => onJump(event, "clinical", 1)}>
             Explore the systems <span aria-hidden="true">↓</span>
           </a>
-          <a className="quiet-link" href={contact.emailHref}>
-            Discuss a VR project <span aria-hidden="true">↗</span>
+          <a
+            className="quiet-link"
+            href="#contact"
+            onClick={(event) => onJump(event, "contact", 7)}
+          >
+            Discuss your Unreal / VR project <span aria-hidden="true">↓</span>
           </a>
         </div>
       </article>
@@ -306,71 +324,46 @@ function ProductNames({
   );
 }
 
-type InteractionState = "idle" | "active" | "reset";
-
-function dispatchSceneAction(world: Chapter["world"], count = 1) {
-  for (let eventIndex = 0; eventIndex < count; eventIndex += 1) {
-    window.dispatchEvent(new CustomEvent("larion:scene-action", { detail: world }));
-  }
-}
-
 function ChapterSection({
   chapter,
   index,
   interactive,
   onJump,
+  sceneState,
+  onUpdateScene,
 }: {
   chapter: Chapter;
   index: number;
   interactive: boolean;
   onJump: JumpHandler;
+  sceneState: JourneySceneState;
+  onUpdateScene: (patch: Partial<JourneySceneState>) => void;
 }) {
-  const [interactionState, setInteractionState] = useState<InteractionState>("idle");
-  const [selectedProduct, setSelectedProduct] = useState(1);
   const isMobileChapter = chapter.world === "mobile";
-  const interactionActive = interactionState === "active";
+  const interactionActive = isWorldActive(sceneState, chapter.world);
+  const selectedProduct = sceneState.mobileFocus;
   const interactionStatus = interactionActive
     ? chapter.interaction.activeStatus
-    : interactionState === "reset"
-      ? chapter.interaction.resetStatus
-      : chapter.interaction.idleStatus;
-
-  useEffect(() => {
-    if (!isMobileChapter) return;
-    const handleProductFocus = (event: Event) => {
-      const next = Number((event as CustomEvent<number>).detail);
-      if (Number.isInteger(next) && next >= -1 && next < mobileProducts.length) {
-        setSelectedProduct(next);
-      }
-    };
-    window.addEventListener("larion:product-focused", handleProductFocus);
-    return () => window.removeEventListener("larion:product-focused", handleProductFocus);
-  }, [isMobileChapter]);
+    : chapter.interaction.idleStatus;
 
   const handleInteraction = () => {
     if (!interactive) return;
-    if (interactionActive) {
-      dispatchSceneAction(chapter.world, chapter.interaction.resetEvents ?? 1);
-      setInteractionState("reset");
-      return;
+    if (chapter.world === "clinical") {
+      onUpdateScene({ clinicalActive: !sceneState.clinicalActive });
+    } else if (chapter.world === "tactical") {
+      onUpdateScene({ tacticalNode: sceneState.tacticalNode === null ? 2 : null });
+    } else if (chapter.world === "emergency") {
+      onUpdateScene({ emergencyActive: !sceneState.emergencyActive });
+    } else if (chapter.world === "hover") {
+      onUpdateScene({ hoverBoost: !sceneState.hoverBoost });
+    } else if (chapter.world === "flybox") {
+      onUpdateScene({ flyboxActive: !sceneState.flyboxActive });
     }
-    dispatchSceneAction(chapter.world);
-    setInteractionState("active");
   };
 
   const handleProductSelect = (productIndex: number) => {
     if (!interactive || productIndex === selectedProduct) return;
-    const eventsNeeded = selectedProduct < 0
-      ? productIndex + 1
-      : (productIndex - selectedProduct + mobileProducts.length) % mobileProducts.length;
-    dispatchSceneAction("mobile", eventsNeeded);
-    window.dispatchEvent(new CustomEvent("larion:product-select", {
-      detail: {
-        index: productIndex,
-        name: mobileProducts[productIndex]?.name,
-      },
-    }));
-    setSelectedProduct(productIndex);
+    onUpdateScene({ mobileFocus: productIndex });
   };
 
   const selectedProductName = selectedProduct >= 0
@@ -434,7 +427,7 @@ function ChapterSection({
           </span>
           {chapter.noteDetail ? (
             <details className="scene-detail">
-              <summary>Why this scene is reconstructed +</summary>
+              <summary>About this reconstruction +</summary>
               <p>{chapter.noteDetail}</p>
             </details>
           ) : null}
@@ -468,25 +461,52 @@ function ChapterSection({
   );
 }
 
-function ContactSection() {
+function ContactSection({
+  assembled,
+  onAssemble,
+}: {
+  assembled: boolean;
+  onAssemble: (assembled: boolean) => void;
+}) {
   return (
-    <section className="contact" id="contact" data-stage="7" aria-labelledby="contact-title">
+    <section
+      className="contact"
+      id="contact"
+      data-stage="7"
+      data-assembled={assembled || undefined}
+      aria-labelledby="contact-title"
+    >
       <article className="contact__content">
-        <p className="contact__eyebrow">Journey complete · Ready to scope the system</p>
-        <h2 id="contact-title">Bring me the training challenge.</h2>
+        <p className="contact__eyebrow">Ready to build?</p>
+        <h2 id="contact-title">Let’s build the Unreal / VR system they won’t forget.</h2>
         <p>
-          Tell me who needs to train, what has to feel real and which hardware or
-          constraints are already in play. I’ll reply personally with the clearest next step.
+          Tell me what people need to practice, how many users are involved and
+          what hardware must connect. I’ll help turn it into a production plan.
         </p>
-        <a className="contact__primary" href={contact.emailHref}>
-          <span>Discuss your Unreal / VR project</span>
-          <strong>{contact.email}</strong>
+        <a
+          className="contact__primary"
+          href={contact.emailHref}
+          onPointerEnter={() => onAssemble(true)}
+          onFocus={() => onAssemble(true)}
+        >
+          <span>Direct project enquiry</span>
+          <strong>Email Larion directly</strong>
+          <small>{contact.email}</small>
           <i aria-hidden="true">↗</i>
         </a>
         <a className="contact__secondary" href={contact.whatsapp} target="_blank" rel="noreferrer">
-          Message on WhatsApp <span aria-hidden="true">↗</span>
+          Talk on WhatsApp <span aria-hidden="true">↗</span>
         </a>
-        <p className="availability"><i /> Bangkok · Building worldwide</p>
+        <button
+          className="contact__ignite"
+          type="button"
+          aria-pressed={assembled}
+          onClick={() => onAssemble(!assembled)}
+        >
+          <i aria-hidden="true" />
+          {assembled ? "System assembled" : "Play: assemble the system"}
+          <span aria-hidden="true">{assembled ? "✓" : "+"}</span>
+        </button>
       </article>
     </section>
   );
@@ -525,6 +545,10 @@ export default function App() {
   const [motionPaused, setMotionPaused] = useState(false);
   const [canvasRequested, setCanvasRequested] = useState(false);
   const [webglSupported] = useState(supportsWebGL);
+  const [sceneState, setSceneState] = useState<JourneySceneState>(INITIAL_SCENE_STATE);
+  const updateScene = useCallback((patch: Partial<JourneySceneState>) => {
+    setSceneState((current) => ({ ...current, ...patch }));
+  }, []);
 
   useEffect(() => {
     const reveal = () => setCanvasRequested(true);
@@ -598,6 +622,8 @@ export default function App() {
               pointer={pointer}
               mobile={compact}
               visible={pageVisible && !motionPaused}
+              sceneState={sceneState}
+              onUpdateScene={updateScene}
               onReady={() => setWebglReady(true)}
             />
           </Suspense>
@@ -626,9 +652,14 @@ export default function App() {
             index={index}
             interactive={sceneInteractive}
             onJump={handleJump}
+            sceneState={sceneState}
+            onUpdateScene={updateScene}
           />
         ))}
-        <ContactSection />
+        <ContactSection
+          assembled={sceneState.contactAssembled}
+          onAssemble={(contactAssembled) => updateScene({ contactAssembled })}
+        />
       </main>
       <Footer onJump={handleJump} />
     </div>

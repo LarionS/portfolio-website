@@ -438,6 +438,12 @@ main,
   background: radial-gradient(ellipse at 18% 48%, rgba(3, 6, 9, 0.96), rgba(3, 6, 9, 0.68) 45%, transparent 76%);
 }
 
+.chapter--align-right::before {
+  right: 0;
+  left: auto;
+  background: radial-gradient(ellipse at 82% 48%, rgba(3, 6, 9, 0.96), rgba(3, 6, 9, 0.68) 45%, transparent 76%);
+}
+
 .hero__content {
   position: sticky;
   top: 20svh;
@@ -665,7 +671,13 @@ main,
 .scene-caption {
   position: sticky;
   top: 21svh;
-  width: min(31rem, 34vw);
+  width: min(28rem, 31vw);
+}
+
+.chapter--clinical .scene-caption,
+.chapter--emergency .scene-caption,
+.chapter--hover .scene-caption {
+  width: min(27rem, 30vw);
 }
 
 .chapter--align-right .scene-caption {
@@ -719,7 +731,7 @@ main,
 .scene-caption h2 {
   margin: 0;
   font-family: "Space Grotesk", sans-serif;
-  font-size: clamp(2.9rem, 4.35vw, 5rem);
+  font-size: clamp(2.7rem, 3.85vw, 4.55rem);
   font-weight: 500;
   letter-spacing: -0.065em;
   line-height: 0.92;
@@ -730,7 +742,7 @@ main,
   max-width: 30rem;
   margin: 1.45rem 0 0;
   color: #b1babd;
-  font-size: clamp(0.92rem, 1.04vw, 1.05rem);
+  font-size: clamp(0.88rem, 0.96vw, 1rem);
   line-height: 1.62;
 }
 
@@ -739,7 +751,7 @@ main,
   max-width: 32rem;
   flex-wrap: wrap;
   gap: 0.42rem;
-  margin: 1.25rem 0 0;
+  margin: 1.05rem 0 0;
   padding: 0;
   color: #8d989d;
   font-family: "DM Mono", monospace;
@@ -763,7 +775,7 @@ main,
   flex-wrap: wrap;
   align-items: center;
   gap: 0.75rem 1.1rem;
-  margin-top: 1.35rem;
+  margin-top: 1.1rem;
 }
 
 .chapter--align-right .scene-caption__body {
@@ -981,7 +993,7 @@ main,
 
 .contact__content {
   position: sticky;
-  top: 20svh;
+  top: 15svh;
   width: min(61rem, 72vw);
 }
 
@@ -989,7 +1001,7 @@ main,
   max-width: 60rem;
   margin: 0;
   font-family: "Space Grotesk", sans-serif;
-  font-size: clamp(4rem, 7.2vw, 8rem);
+  font-size: clamp(3.8rem, 5.7vw, 6.8rem);
   font-weight: 500;
   letter-spacing: -0.075em;
   line-height: 0.87;
@@ -998,7 +1010,7 @@ main,
 
 .contact__content > p:not(.contact__eyebrow, .availability) {
   max-width: 39rem;
-  margin: 1.75rem 0 0;
+  margin: 1.25rem 0 0;
   color: #abb5b8;
   font-size: clamp(0.95rem, 1.16vw, 1.12rem);
   line-height: 1.66;
@@ -1010,7 +1022,7 @@ main,
   width: min(39rem, 70vw);
   min-height: 5.9rem;
   align-content: space-between;
-  margin-top: 2rem;
+  margin-top: 1.35rem;
   padding: 1.1rem 4rem 1.15rem 1.2rem;
   border: 1px solid rgba(var(--cyan-rgb), 0.58);
   background: rgba(6, 13, 17, 0.72);
@@ -1037,6 +1049,14 @@ main,
   letter-spacing: -0.035em;
 }
 
+.contact__primary small {
+  margin-top: 0.15rem;
+  color: #829095;
+  font-family: "DM Mono", monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.04em;
+}
+
 .contact__primary i {
   position: absolute;
   top: 1rem;
@@ -1056,6 +1076,73 @@ main,
   border-color: var(--cyan);
   background: rgba(var(--cyan-rgb), 0.11);
   box-shadow: 0 1.2rem 4rem rgba(0, 0, 0, 0.22), 0 0 3rem rgba(var(--cyan-rgb), 0.08);
+}
+
+.contact__ignite {
+  appearance: none;
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: 0.65rem;
+  margin-top: 1.55rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid rgba(var(--cyan-rgb), 0.28);
+  border-radius: 999px;
+  color: #b8c4c7;
+  background: rgba(3, 6, 9, 0.64);
+  backdrop-filter: blur(16px);
+  font-family: "DM Mono", monospace;
+  font-size: 0.57rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: color 220ms ease, border-color 220ms ease, background 220ms ease, transform 220ms ease;
+}
+
+.contact__ignite > i {
+  width: 0.46rem;
+  height: 0.46rem;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 0.9rem rgba(var(--cyan-rgb), 0.75);
+}
+
+.contact__ignite > span {
+  display: grid;
+  width: 1.45rem;
+  height: 1.45rem;
+  margin-left: 0.35rem;
+  place-items: center;
+  border: 1px solid rgba(var(--cyan-rgb), 0.3);
+  border-radius: 50%;
+  color: var(--cyan);
+}
+
+.contact__ignite:hover,
+.contact__ignite[aria-pressed="true"] {
+  transform: translateY(-2px);
+  border-color: rgba(var(--cyan-rgb), 0.72);
+  color: var(--ink);
+  background: rgba(var(--cyan-rgb), 0.1);
+}
+
+.contact[data-assembled="true"] .contact__primary {
+  border-color: var(--cyan);
+  box-shadow: 0 0 3.4rem rgba(var(--cyan-rgb), 0.11);
+}
+
+.contact[data-assembled="true"] .contact__primary i {
+  color: #031013;
+  background: var(--cyan);
+  animation: contactLaunch 1.8s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+@keyframes contactLaunch {
+  50% {
+    transform: translate(0.16rem, -0.16rem);
+    box-shadow: 0 0 1.5rem rgba(var(--cyan-rgb), 0.45);
+  }
 }
 
 .contact__secondary {
@@ -1151,7 +1238,7 @@ main,
 
 @media (max-width: 1050px) {
   .scene-caption {
-    width: min(34rem, 44vw);
+    width: min(31rem, 42vw);
   }
 
   .hero h1 {
@@ -1212,19 +1299,27 @@ main,
   }
 
   .journey-rail {
-    top: auto;
-    right: auto;
-    bottom: max(0.35rem, env(safe-area-inset-bottom));
-    left: 50%;
-    display: flex;
-    width: auto;
-    gap: 0.12rem;
-    padding: 0.22rem 0.32rem;
-    transform: translateX(-50%);
+    top: 50%;
+    right: max(0.3rem, env(safe-area-inset-right));
+    bottom: auto;
+    left: auto;
+    display: grid;
+    width: 2.25rem;
+    gap: 0;
+    padding: 0.28rem 0.16rem;
+    transform: translateY(-50%);
     border: 1px solid rgba(255, 255, 255, 0.11);
     border-radius: 999px;
     background: rgba(3, 6, 9, 0.72);
     backdrop-filter: blur(15px);
+    transition: opacity 220ms ease, transform 220ms ease;
+  }
+
+  .journey-rail[data-current-stage="0"],
+  .journey-rail[data-current-stage="7"] {
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(0.75rem, -50%);
   }
 
   .journey-rail__track,
@@ -1234,27 +1329,21 @@ main,
   }
 
   .journey-rail a {
-    width: 2.15rem;
-    min-width: 2.15rem;
-    min-height: 2.25rem;
+    width: 1.9rem;
+    min-width: 1.9rem;
+    min-height: 2.05rem;
     justify-content: center;
     gap: 0;
-    transition: width 220ms ease, color 180ms ease;
+    transition: color 180ms ease;
   }
 
   .journey-rail a.is-active {
-    width: 4.85rem;
-    gap: 0.5rem;
+    width: 1.9rem;
+    gap: 0;
   }
 
   .journey-rail a.is-active b {
-    display: block;
-    overflow: hidden;
-    opacity: 1;
-    transform: none;
-    font-size: 0.48rem;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    display: none;
   }
 
   .journey-rail a::after {
@@ -1294,6 +1383,8 @@ main,
 
   .chapter::before {
     top: 0;
+    right: auto;
+    left: 0;
     width: 100%;
     background:
       linear-gradient(180deg, rgba(3, 6, 9, 0.12) 0%, rgba(3, 6, 9, 0.04) 40%, rgba(3, 6, 9, 0.9) 53%, #030609 78%);
@@ -1363,15 +1454,21 @@ main,
   }
 
   .chapter {
-    min-height: 142svh;
-    padding: 44svh 1.15rem 30svh;
+    min-height: 150svh;
+    padding: 46svh 1.15rem 31svh;
     overflow-x: clip;
   }
 
   .scene-caption {
-    top: 38svh;
+    top: 34svh;
     width: 100%;
-    padding: 1.3rem 0 7.2rem;
+    padding: 1.3rem 2.7rem 7.2rem 0;
+  }
+
+  .chapter--clinical .scene-caption,
+  .chapter--emergency .scene-caption,
+  .chapter--hover .scene-caption {
+    width: 100%;
   }
 
   .chapter--align-right .scene-caption {
@@ -1466,12 +1563,16 @@ main,
   }
 
   .scene-status {
-    order: 3;
-    width: 100%;
-    max-width: none;
-    min-height: 0;
-    padding: 0 0 0 0.65rem;
-    font-size: 0.5rem;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    border: 0;
+    white-space: nowrap;
   }
 
   .product-names {
@@ -1540,8 +1641,7 @@ main,
   }
 
   .chapter-next {
-    right: 1rem;
-    bottom: 4.6rem;
+    display: none;
   }
 
   .chapter-next span {
@@ -1556,6 +1656,7 @@ main,
   .contact__content {
     top: 18svh;
     width: 100%;
+    padding-right: 2.7rem;
   }
 
   .contact h2 {
@@ -1573,6 +1674,10 @@ main,
     width: 100%;
     min-height: 5.7rem;
     margin-top: 1.4rem;
+  }
+
+  .contact__ignite {
+    margin-top: 1rem;
   }
 
   .site-footer {
