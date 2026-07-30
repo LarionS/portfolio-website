@@ -58,6 +58,15 @@ LTS. Mesh geometry uses `EXT_meshopt_compression`; the Drei `useGLTF` wrapper in
 - Final size: 363,040 bytes
 - SHA-256: `7679667b2985ffc7ccbc374311da98b3de9229def920f4d04b16893d5e883c1c`
 
+## flybox-flight-character.glb
+
+- Source: [CesiumMan in Khronos glTF Sample Assets](https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/CesiumMan)
+- Artist/rightsholder: Cesium
+- License: [CC BY 4.0 with trademark limitations](https://github.com/KhronosGroup/glTF-Sample-Assets/blob/main/Models/CesiumMan/README.md)
+- Modifications: the original skinned animation is retained; every source
+  texture map is removed from the rendered materials at runtime and replaced
+  with an original gold/charcoal flight suit. No Cesium logo is displayed.
+
 ## Runtime policy
 
 Models are requested only when the journey's `SceneGate` mounts the current or

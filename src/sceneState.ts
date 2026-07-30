@@ -1,9 +1,18 @@
 import type { WorldKind } from "./content";
 
+export type ClinicalPhase = "baseline" | "event" | "response" | "review";
+
+export type TacticalPhase =
+  | "ready"
+  | "dispatch"
+  | "feedback"
+  | "telemetry"
+  | "review";
+
 export type JourneySceneState = {
-  clinicalActive: boolean;
-  tacticalNode: number | null;
-  emergencyActive: boolean;
+  clinicalPhase: ClinicalPhase;
+  tacticalPhase: TacticalPhase;
+  emergencyStep: number;
   hoverBoost: boolean;
   flyboxActive: boolean;
   mobileFocus: number;
@@ -11,9 +20,9 @@ export type JourneySceneState = {
 };
 
 export const INITIAL_SCENE_STATE: JourneySceneState = {
-  clinicalActive: false,
-  tacticalNode: null,
-  emergencyActive: false,
+  clinicalPhase: "baseline",
+  tacticalPhase: "ready",
+  emergencyStep: 0,
   hoverBoost: false,
   flyboxActive: false,
   mobileFocus: 1,
@@ -22,13 +31,13 @@ export const INITIAL_SCENE_STATE: JourneySceneState = {
 
 export type BooleanWorld = Extract<
   WorldKind,
-  "clinical" | "emergency" | "hover" | "flybox"
+  "hover" | "flybox"
 >;
 
 export function isWorldActive(state: JourneySceneState, world: WorldKind) {
-  if (world === "clinical") return state.clinicalActive;
-  if (world === "tactical") return state.tacticalNode !== null;
-  if (world === "emergency") return state.emergencyActive;
+  if (world === "clinical") return state.clinicalPhase !== "baseline";
+  if (world === "tactical") return state.tacticalPhase !== "ready";
+  if (world === "emergency") return state.emergencyStep > 0;
   if (world === "hover") return state.hoverBoost;
   if (world === "flybox") return state.flyboxActive;
   return false;

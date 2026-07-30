@@ -10,9 +10,9 @@ import {
 import type { ErrorInfo, MouseEvent as ReactMouseEvent, ReactNode } from "react";
 import { chapters, contact, mobileProducts } from "./content";
 import type { Chapter } from "./content";
-import clinicalBackdrop from "../assets/journey/worlds/story-first/clinical-decision-v2.webp";
-import tacticalBackdrop from "../assets/journey/worlds/story-first/tactical-system-v2.webp";
-import emergencyBackdrop from "../assets/journey/worlds/story-first/emergency-coordination-v2.webp";
+import clinicalBackdrop from "../assets/journey/worlds/story-first/clinical-system-live.png";
+import tacticalBackdrop from "../assets/journey/worlds/story-first/tactical-system-live.png";
+import emergencyBackdrop from "../assets/journey/worlds/story-first/emergency-system-live.png";
 import {
   INITIAL_SCENE_STATE,
   isWorldActive,
@@ -342,18 +342,82 @@ function ChapterSection({
   const isMobileChapter = chapter.world === "mobile";
   const interactionActive = isWorldActive(sceneState, chapter.world);
   const selectedProduct = sceneState.mobileFocus;
-  const interactionStatus = interactionActive
+  const scenePhase = chapter.world === "clinical"
+    ? sceneState.clinicalPhase
+    : chapter.world === "tactical"
+      ? sceneState.tacticalPhase
+      : chapter.world === "emergency"
+        ? `step-${sceneState.emergencyStep}`
+        : interactionActive
+          ? "active"
+          : "idle";
+  let interactionLabel = interactionActive
+    ? chapter.interaction.resetLabel
+    : chapter.interaction.label;
+  let interactionStatus = interactionActive
     ? chapter.interaction.activeStatus
     : chapter.interaction.idleStatus;
+
+  if (chapter.world === "clinical") {
+    if (sceneState.clinicalPhase === "event") {
+      interactionLabel = "Reset scenario";
+      interactionStatus = "Patient deteriorating · vitals and room feedback changing.";
+    } else if (sceneState.clinicalPhase === "response") {
+      interactionLabel = "Reset scenario";
+      interactionStatus = "Trainee approaching the patient · response being recorded.";
+    } else if (sceneState.clinicalPhase === "review") {
+      interactionLabel = "Replay scenario";
+      interactionStatus = "Response captured · ready to review.";
+    }
+  } else if (chapter.world === "tactical") {
+    if (sceneState.tacticalPhase === "dispatch") {
+      interactionLabel = "Reset session";
+      interactionStatus = "Command leaving the instructor console · routing to all six bays.";
+    } else if (sceneState.tacticalPhase === "feedback") {
+      interactionLabel = "Reset session";
+      interactionStatus = "All six trainees reacting · weapons, watches and haptics active.";
+    } else if (sceneState.tacticalPhase === "telemetry") {
+      interactionLabel = "Reset session";
+      interactionStatus = "Return telemetry crossing the LAN.";
+    } else if (sceneState.tacticalPhase === "review") {
+      interactionLabel = "Replay dispatch";
+      interactionStatus = "Six responses reconciled · instructor timeline ready.";
+    }
+  } else if (chapter.world === "emergency") {
+    const emergencyLabels = [
+      "Secure the approach",
+      "Suppress the hazard",
+      "Stabilize casualty",
+      "Replay response",
+    ];
+    const emergencyStatuses = [
+      "Route blocked · fire and medical teams are waiting.",
+      "Approach secured · fire team cleared to enter.",
+      "Hazard suppressed · medical route is open.",
+      "Casualty stabilized · joint timeline ready.",
+    ];
+    interactionLabel = emergencyLabels[sceneState.emergencyStep] ?? emergencyLabels[0];
+    interactionStatus = emergencyStatuses[sceneState.emergencyStep] ?? emergencyStatuses[0];
+  }
 
   const handleInteraction = () => {
     if (!interactive) return;
     if (chapter.world === "clinical") {
-      onUpdateScene({ clinicalActive: !sceneState.clinicalActive });
+      onUpdateScene({
+        clinicalPhase:
+          sceneState.clinicalPhase === "baseline" || sceneState.clinicalPhase === "review"
+            ? "event"
+            : "baseline",
+      });
     } else if (chapter.world === "tactical") {
-      onUpdateScene({ tacticalNode: sceneState.tacticalNode === null ? 2 : null });
+      onUpdateScene({
+        tacticalPhase:
+          sceneState.tacticalPhase === "ready" || sceneState.tacticalPhase === "review"
+            ? "dispatch"
+            : "ready",
+      });
     } else if (chapter.world === "emergency") {
-      onUpdateScene({ emergencyActive: !sceneState.emergencyActive });
+      onUpdateScene({ emergencyStep: (sceneState.emergencyStep + 1) % 4 });
     } else if (chapter.world === "hover") {
       onUpdateScene({ hoverBoost: !sceneState.hoverBoost });
     } else if (chapter.world === "flybox") {
@@ -376,6 +440,7 @@ function ChapterSection({
       id={chapter.id}
       data-stage={index + 1}
       data-alignment={chapter.alignment}
+      data-scene-phase={scenePhase}
       aria-labelledby={`${chapter.id}-title`}
     >
       <WorldFallback world={chapter.world} />
@@ -404,12 +469,17 @@ function ChapterSection({
               className="scene-interaction"
               type="button"
               disabled={!interactive}
-              aria-pressed={interactionActive}
+              aria-pressed={chapter.world === "hover" || chapter.world === "flybox" ? interactionActive : undefined}
+              aria-busy={chapter.world === "clinical"
+                ? sceneState.clinicalPhase === "event" || sceneState.clinicalPhase === "response"
+                : chapter.world === "tactical"
+                  ? sceneState.tacticalPhase !== "ready" && sceneState.tacticalPhase !== "review"
+                  : undefined}
               aria-describedby={`${chapter.id}-interaction-status`}
               onClick={handleInteraction}
             >
               <i aria-hidden="true" />
-              {interactionActive ? chapter.interaction.resetLabel : chapter.interaction.label}
+              {interactionLabel}
             </button>
           ) : null}
           <span
@@ -480,8 +550,8 @@ function ContactSection({
         <p className="contact__eyebrow">Ready to build?</p>
         <h2 id="contact-title">Let’s build the Unreal / VR system they won’t forget.</h2>
         <p>
-          Tell me what people need to practice, how many users are involved and
-          what hardware must connect. I’ll help turn it into a production plan.
+          Bring the training goal. I’ll connect the Unreal experience, physical
+          hardware, instructor controls, multiplayer and live feedback into one system.
         </p>
         <a
           className="contact__primary"
@@ -504,7 +574,7 @@ function ContactSection({
           onClick={() => onAssemble(!assembled)}
         >
           <i aria-hidden="true" />
-          {assembled ? "System assembled" : "Play: assemble the system"}
+          {assembled ? "Training system connected" : "Connect the training system"}
           <span aria-hidden="true">{assembled ? "✓" : "+"}</span>
         </button>
       </article>
@@ -536,7 +606,7 @@ function supportsWebGL() {
 
 export default function App() {
   const reducedMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
-  const compact = useMediaQuery("(max-width: 860px)");
+  const compact = useMediaQuery("(max-width: 760px)");
   const { progress, activeStage } = useJourneyProgress();
   const pointer = useRef({ x: 0, y: 0 });
   const [webglReady, setWebglReady] = useState(false);
@@ -549,6 +619,41 @@ export default function App() {
   const updateScene = useCallback((patch: Partial<JourneySceneState>) => {
     setSceneState((current) => ({ ...current, ...patch }));
   }, []);
+
+  useEffect(() => {
+    if (motionPaused || !pageVisible) return;
+    if (sceneState.clinicalPhase !== "event" && sceneState.clinicalPhase !== "response") {
+      return;
+    }
+    const expected = sceneState.clinicalPhase;
+    const next = expected === "event" ? "response" : "review";
+    const timeout = window.setTimeout(() => {
+      setSceneState((current) => current.clinicalPhase === expected
+        ? { ...current, clinicalPhase: next }
+        : current);
+    }, expected === "event" ? 1050 : 2100);
+    return () => window.clearTimeout(timeout);
+  }, [motionPaused, pageVisible, sceneState.clinicalPhase]);
+
+  useEffect(() => {
+    if (motionPaused || !pageVisible) return;
+    const sequence = {
+      dispatch: { next: "feedback", delay: 900 },
+      feedback: { next: "telemetry", delay: 1200 },
+      telemetry: { next: "review", delay: 1450 },
+    } as const;
+    const transition = sceneState.tacticalPhase in sequence
+      ? sequence[sceneState.tacticalPhase as keyof typeof sequence]
+      : null;
+    if (!transition) return;
+    const expected = sceneState.tacticalPhase;
+    const timeout = window.setTimeout(() => {
+      setSceneState((current) => current.tacticalPhase === expected
+        ? { ...current, tacticalPhase: transition.next }
+        : current);
+    }, transition.delay);
+    return () => window.clearTimeout(timeout);
+  }, [motionPaused, pageVisible, sceneState.tacticalPhase]);
 
   useEffect(() => {
     const reveal = () => setCanvasRequested(true);
@@ -584,7 +689,9 @@ export default function App() {
 
   const canvasCapable = webglSupported && !reducedMotion && !webglFailed;
   const shouldRenderCanvas = canvasRequested && canvasCapable;
-  const sceneInteractive = shouldRenderCanvas && webglReady && !motionPaused;
+  // DOM controls remain useful before WebGL is ready and in the reduced-motion
+  // fallback. The canvas is a visual proof layer, not an interaction gate.
+  const sceneInteractive = !motionPaused;
   const handleJump = useCallback<JumpHandler>((event, id, stage) => {
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     const target = document.getElementById(id);

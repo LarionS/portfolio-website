@@ -1,6 +1,7 @@
 .DS_Store
 node_modules/
 dist/
+.fab-bridge/
 *.tsbuildinfo
 
 # Local audit/reference material is not part of the deployed portfolio.
@@ -26,6 +27,7 @@ assets/journey/**
 !assets/journey/worlds/*.webp
 !assets/journey/worlds/story-first/
 !assets/journey/worlds/story-first/*.webp
+!assets/journey/worlds/story-first/*-system-live.png
 !assets/journey/hover-the-edge/
 !assets/journey/hover-the-edge/hover-10s.jpg
 !assets/journey/hover-the-edge/hover-loop.mp4

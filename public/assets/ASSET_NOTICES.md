@@ -7,5 +7,12 @@
 - `models/hoverboard-original.glb` — original project-owned hoverboard generated
   procedurally in Blender from `scripts/blender/build_hoverboard.py`. It contains
   no external meshes, textures, logos, or third-party artwork.
+- `models/stations/*.glb` — edited, recolored web derivatives of CC0 character,
+  building, vehicle, and prop packs by Quaternius. Full provenance is retained in
+  `models/stations/SOURCES.md`.
+- `models/flybox-flight-character.glb` — CesiumMan from the Khronos glTF Sample
+  Assets repository, licensed CC BY 4.0 by Cesium. All source textures are
+  deliberately disabled at runtime and replaced with original site materials,
+  so the Cesium trademark/logo is never rendered.
 
-The clinical, connected-defense, and emergency-response environments are original abstract reconstructions. They contain no client interface, operational data, personnel, or confidential footage.
+The clinical, connected-defense, and emergency-response environments are original reconstructions assembled from commercial-safe meshes and custom scene systems. They contain no client interface, operational data, personnel, or confidential footage.

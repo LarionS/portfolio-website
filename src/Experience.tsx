@@ -1,4 +1,4 @@
-import { Suspense, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useMemo, useRef, useState } from "react";
 import type { MutableRefObject, ReactNode } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import {
@@ -11,14 +11,15 @@ import {
 import * as THREE from "three";
 import { chapters, mobileProducts } from "./content";
 import type { JourneySceneState } from "./sceneState";
-import {
-  ClinicalWorld,
-  DefenseWorld,
-  EmergencyWorld,
-} from "./three/TrainingWorlds";
-import { FlyboxWorld, HoverWorld, MobileWorld } from "./three/ProductWorlds";
 import { SimulationAtmosphere } from "./three/Atmosphere";
 import { SourcedSciFiHelmet } from "./three/SourcedAssets";
+
+const ClinicalSystemWorld = lazy(() => import("./three/SystemWorlds").then((module) => ({ default: module.ClinicalSystemWorld })));
+const ConnectedSystemWorld = lazy(() => import("./three/SystemWorlds").then((module) => ({ default: module.ConnectedSystemWorld })));
+const EmergencySystemWorld = lazy(() => import("./three/SystemWorlds").then((module) => ({ default: module.EmergencySystemWorld })));
+const HoverWorld = lazy(() => import("./three/ProductWorlds").then((module) => ({ default: module.HoverWorld })));
+const FlyboxWorld = lazy(() => import("./three/ProductWorlds").then((module) => ({ default: module.FlyboxWorld })));
+const MobileWorld = lazy(() => import("./three/ProductWorlds").then((module) => ({ default: module.MobileWorld })));
 
 type ExperienceProps = {
   progress: MutableRefObject<number>;
@@ -91,6 +92,97 @@ const MOBILE_SHOTS: CameraShot[] = [
   shot([0.5, 1.25, -212.2], [-2.6, -1.05, -228], 51, 0, [0, 0, 0]),
 ];
 
+type CameraEmphasis = {
+  position: readonly [number, number, number];
+  lookAt: readonly [number, number, number];
+};
+
+const NO_CAMERA_EMPHASIS: CameraEmphasis = {
+  position: [0, 0, 0],
+  lookAt: [0, 0, 0],
+};
+
+function getClinicalCameraEmphasis(
+  phase: JourneySceneState["clinicalPhase"],
+): CameraEmphasis {
+  if (phase === "event") {
+    return { position: [0.06, -0.04, -0.18], lookAt: [0.12, -0.05, -0.06] };
+  }
+  if (phase === "response") {
+    return { position: [-0.08, -0.1, -0.32], lookAt: [0.24, -0.12, -0.12] };
+  }
+  if (phase === "review") {
+    return { position: [0.12, 0.06, 0.08], lookAt: [0.38, 0.02, -0.04] };
+  }
+  return NO_CAMERA_EMPHASIS;
+}
+
+function getConnectedCameraEmphasis(
+  phase: JourneySceneState["tacticalPhase"],
+): CameraEmphasis {
+  if (phase === "dispatch") {
+    return { position: [-0.06, -0.04, -0.22], lookAt: [-0.04, -0.03, -0.12] };
+  }
+  if (phase === "feedback") {
+    return { position: [-0.22, -0.1, -0.4], lookAt: [-0.18, -0.09, -0.2] };
+  }
+  if (phase === "telemetry") {
+    return { position: [0.08, 0.03, 0.08], lookAt: [0.12, -0.04, 0.22] };
+  }
+  if (phase === "review") {
+    return { position: [0.02, 0.08, 0.14], lookAt: [0.14, 0.02, 0.16] };
+  }
+  return NO_CAMERA_EMPHASIS;
+}
+
+function getEmergencyCameraEmphasis(step: number): CameraEmphasis {
+  if (step === 1) {
+    return { position: [-0.14, -0.04, -0.16], lookAt: [-0.3, -0.06, -0.08] };
+  }
+  if (step === 2) {
+    return { position: [0, -0.1, -0.26], lookAt: [0.06, -0.11, -0.18] };
+  }
+  if (step >= 3) {
+    return { position: [0.1, 0.05, 0.16], lookAt: [0.32, -0.04, -0.12] };
+  }
+  return NO_CAMERA_EMPHASIS;
+}
+
+function stationEmphasisWeight(progress: number, index: number) {
+  const proximity = THREE.MathUtils.clamp(
+    1 - Math.abs(progress - index) / 0.58,
+    0,
+    1,
+  );
+  return THREE.MathUtils.smootherstep(proximity, 0, 1);
+}
+
+function applyCameraEmphasis(
+  targetPosition: THREE.Vector3,
+  targetLook: THREE.Vector3,
+  emphasis: CameraEmphasis,
+  weight: number,
+) {
+  targetPosition.x += emphasis.position[0] * weight;
+  targetPosition.y += emphasis.position[1] * weight;
+  targetPosition.z += emphasis.position[2] * weight;
+  targetLook.x += emphasis.lookAt[0] * weight;
+  targetLook.y += emphasis.lookAt[1] * weight;
+  targetLook.z += emphasis.lookAt[2] * weight;
+}
+
+function nextClinicalPhase(
+  phase: JourneySceneState["clinicalPhase"],
+): JourneySceneState["clinicalPhase"] {
+  return phase === "baseline" || phase === "review" ? "event" : "baseline";
+}
+
+function nextTacticalPhase(
+  phase: JourneySceneState["tacticalPhase"],
+): JourneySceneState["tacticalPhase"] {
+  return phase === "ready" || phase === "review" ? "dispatch" : "ready";
+}
+
 function sampleSegment(value: number) {
   const clamped = THREE.MathUtils.clamp(value, 0, DESKTOP_SHOTS.length - 1);
   const index = Math.min(DESKTOP_SHOTS.length - 2, Math.floor(clamped));
@@ -111,7 +203,8 @@ function CameraDirector({
   progress,
   pointer,
   mobile,
-}: Pick<ExperienceProps, "progress" | "pointer" | "mobile">) {
+  sceneState,
+}: Pick<ExperienceProps, "progress" | "pointer" | "mobile" | "sceneState">) {
   const targetPosition = useRef(new THREE.Vector3());
   const targetLook = useRef(new THREE.Vector3());
   const viewVector = useRef(new THREE.Vector3());
@@ -150,6 +243,26 @@ function CameraDirector({
       const aspectShift = THREE.MathUtils.lerp(current.aspectShift, next.aspectShift, blend);
       targetLook.current.x += (1.55 - aspect) * aspectShift;
     }
+
+    const emphasisScale = mobile ? 0.56 : 1;
+    applyCameraEmphasis(
+      targetPosition.current,
+      targetLook.current,
+      getClinicalCameraEmphasis(sceneState.clinicalPhase),
+      stationEmphasisWeight(progress.current, 1) * emphasisScale,
+    );
+    applyCameraEmphasis(
+      targetPosition.current,
+      targetLook.current,
+      getConnectedCameraEmphasis(sceneState.tacticalPhase),
+      stationEmphasisWeight(progress.current, 2) * emphasisScale,
+    );
+    applyCameraEmphasis(
+      targetPosition.current,
+      targetLook.current,
+      getEmergencyCameraEmphasis(sceneState.emergencyStep),
+      stationEmphasisWeight(progress.current, 3) * emphasisScale,
+    );
 
     const pointerScale = mobile ? 0.06 : 1;
     targetPosition.current.x += pointer.current.x * 0.18 * pointerScale;
@@ -433,22 +546,22 @@ function ContactWorld({
   const modules = useRef<(THREE.Group | null)[]>([]);
   const pulse = useRef<THREE.Mesh>(null);
   const pulseMaterial = useRef<THREE.MeshBasicMaterial>(null);
-  const core = useRef<THREE.Group>(null);
+  const trainee = useRef<THREE.Group>(null);
   const assemblyEnergy = useRef(assembled ? 1 : 0);
   const cyan = useMemo(() => glowColor("#72efff", 4.5), []);
   const sourcePositions = useMemo(
     () => [
-      new THREE.Vector3(0.25, 2.35, 0.15),
-      new THREE.Vector3(2.45, -1.55, 0.3),
-      new THREE.Vector3(5.4, 1.35, -0.25),
+      new THREE.Vector3(-0.15, 2.38, 0.22),
+      new THREE.Vector3(2.02, -1.42, 0.3),
+      new THREE.Vector3(5.85, 1.55, -0.08),
     ],
     [],
   );
   const assembledPositions = useMemo(
     () => [
-      new THREE.Vector3(2.25, 0.92, 0),
-      new THREE.Vector3(3.45, -0.72, 0),
-      new THREE.Vector3(4.05, 0.92, 0),
+      new THREE.Vector3(3.18, 2.12, 0.33),
+      new THREE.Vector3(3.18, 0.68, 0.27),
+      new THREE.Vector3(3.62, 0.72, 0.25),
     ],
     [],
   );
@@ -474,14 +587,33 @@ function ContactWorld({
         module.position.x += state.pointer.x * (moduleIndex - 1) * 0.16;
         module.position.y += state.pointer.y * (moduleIndex === 1 ? -0.12 : 0.1);
       }
-      module.rotation.y += delta * (0.14 + moduleIndex * 0.05);
-      module.rotation.z = Math.sin(state.clock.elapsedTime * 0.45 + moduleIndex) * 0.08 * (1 - assemblyEnergy.current);
+      module.rotation.x = THREE.MathUtils.damp(
+        module.rotation.x,
+        assembled ? 0 : Math.sin(state.clock.elapsedTime * 0.42 + moduleIndex) * 0.08,
+        6,
+        delta,
+      );
+      module.rotation.y = THREE.MathUtils.damp(
+        module.rotation.y,
+        assembled ? 0 : state.clock.elapsedTime * (0.08 + moduleIndex * 0.025),
+        3.5,
+        delta,
+      );
+      module.rotation.z = THREE.MathUtils.damp(
+        module.rotation.z,
+        assembled ? 0 : Math.sin(state.clock.elapsedTime * 0.45 + moduleIndex) * 0.08,
+        6,
+        delta,
+      );
     });
-    if (core.current) {
-      const targetScale = 0.35 + assemblyEnergy.current * 0.65;
-      const nextScale = THREE.MathUtils.damp(core.current.scale.x, targetScale, 7, delta);
-      core.current.scale.setScalar(nextScale);
-      core.current.rotation.y += delta * (assembled ? 0.22 : 0.06);
+    if (trainee.current) {
+      trainee.current.rotation.y = THREE.MathUtils.damp(
+        trainee.current.rotation.y,
+        assembled ? Math.sin(state.clock.elapsedTime * 0.5) * 0.025 : -0.1,
+        5,
+        delta,
+      );
+      trainee.current.position.y = Math.sin(state.clock.elapsedTime * 1.2) * 0.018;
     }
     if (pulse.current && pulseMaterial.current) {
       const pulsePhase = assembled ? (state.clock.elapsedTime * 0.5) % 1 : 0;
@@ -493,7 +625,7 @@ function ContactWorld({
   return (
     <group ref={group} position={WORLD_POSITIONS[7]}>
       <group
-        position={mobile ? [-2.8, 1.55, 0] : [-2, 0, 0]}
+        position={mobile ? [-2.58, 0.62, 0] : [-1.7, -0.05, 0]}
         scale={mobile ? 0.72 : 1}
         onClick={(event) => {
           event.stopPropagation();
@@ -506,47 +638,96 @@ function ContactWorld({
           document.body.style.cursor = "";
         }}
       >
-        <group ref={(value) => { modules.current[0] = value; }}>
-          <RoundedBox args={[1.7, 0.62, 0.5]} radius={0.18} smoothness={4}>
-            <meshPhysicalMaterial color="#1b2931" metalness={0.75} roughness={0.22} clearcoat={0.8} />
+        <group position={[-0.28, -1.28, 0.08]}>
+          <RoundedBox args={[1.92, 0.18, 1.08]} radius={0.09} smoothness={3}>
+            <meshStandardMaterial color="#182329" metalness={0.65} roughness={0.32} />
           </RoundedBox>
-          <mesh position={[0.48, 0, 0.31]}>
-            <circleGeometry args={[0.12, 24]} />
-            <meshBasicMaterial color={cyan} toneMapped={false} />
+          <group position={[0, 0.68, -0.16]} rotation={[-0.28, 0, 0]}>
+            <RoundedBox args={[1.62, 0.92, 0.12]} radius={0.08} smoothness={3}>
+              <meshStandardMaterial color="#142029" metalness={0.7} roughness={0.25} />
+            </RoundedBox>
+            <mesh position={[0, 0, 0.068]}>
+              <planeGeometry args={[1.42, 0.72]} />
+              <meshBasicMaterial color={assembled ? "#1d5260" : "#0b2028"} toneMapped={false} />
+            </mesh>
+            {[-0.42, 0, 0.42].map((x, statusIndex) => (
+              <mesh key={x} position={[x, 0, 0.076]}>
+                <circleGeometry args={[0.055, 16]} />
+                <meshBasicMaterial color={assembled ? "#72efff" : statusIndex === 0 ? "#72efff" : "#29414a"} toneMapped={false} />
+              </mesh>
+            ))}
+          </group>
+        </group>
+
+        <group ref={trainee} position={[3.18, -0.75, 0]}>
+          <mesh position={[0, 2.12, 0]}>
+            <sphereGeometry args={[0.3, 22, 16]} />
+            <meshStandardMaterial color="#9eadaf" roughness={0.68} />
+          </mesh>
+          <RoundedBox args={[0.72, 1.05, 0.38]} radius={0.22} smoothness={4} position={[0, 1.25, 0]}>
+            <meshStandardMaterial color="#233039" metalness={0.24} roughness={0.5} />
+          </RoundedBox>
+          {[-0.48, 0.48].map((x) => (
+            <mesh key={`arm-${x}`} position={[x, 1.25, 0]} rotation={[0, 0, x < 0 ? -0.12 : 0.12]}>
+              <capsuleGeometry args={[0.11, 0.72, 6, 14]} />
+              <meshStandardMaterial color="#596970" roughness={0.58} />
+            </mesh>
+          ))}
+          {[-0.22, 0.22].map((x) => (
+            <mesh key={`leg-${x}`} position={[x, 0.37, 0]}>
+              <capsuleGeometry args={[0.13, 0.72, 6, 14]} />
+              <meshStandardMaterial color="#1a242b" roughness={0.62} />
+            </mesh>
+          ))}
+          <mesh position={[0, -0.05, 0]}>
+            <cylinderGeometry args={[0.78, 0.92, 0.08, 36]} />
+            <meshStandardMaterial color="#11191e" emissive={assembled ? "#72efff" : "#0a1014"} emissiveIntensity={assembled ? 0.38 : 0.04} metalness={0.62} roughness={0.32} />
+          </mesh>
+        </group>
+
+        <group ref={(value) => { modules.current[0] = value; }}>
+          <RoundedBox args={[0.78, 0.34, 0.28]} radius={0.14} smoothness={4}>
+            <meshPhysicalMaterial color="#111a20" metalness={0.7} roughness={0.2} clearcoat={0.9} />
+          </RoundedBox>
+          <RoundedBox args={[0.64, 0.2, 0.025]} radius={0.07} smoothness={3} position={[0, 0, 0.16]}>
+            <meshStandardMaterial color="#071116" emissive="#72efff" emissiveIntensity={assembled ? 0.85 : 0.16} roughness={0.18} />
+          </RoundedBox>
+          <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0.02, -0.08]}>
+            <torusGeometry args={[0.36, 0.025, 8, 30, Math.PI * 1.35]} />
+            <meshStandardMaterial color="#52616a" metalness={0.6} roughness={0.34} />
           </mesh>
         </group>
         <group ref={(value) => { modules.current[1] = value; }}>
-          <mesh rotation={[Math.PI / 2, 0, 0]}>
-            <cylinderGeometry args={[0.58, 0.58, 0.45, 6]} />
-            <meshPhysicalMaterial color="#c8a7ff" metalness={0.62} roughness={0.24} clearcoat={0.8} />
-          </mesh>
-          <mesh position={[0, 0, 0.28]}>
-            <ringGeometry args={[0.24, 0.29, 6]} />
-            <meshBasicMaterial color={cyan} toneMapped={false} />
-          </mesh>
+          <RoundedBox args={[0.68, 0.72, 0.12]} radius={0.16} smoothness={4}>
+            <meshStandardMaterial color="#141e24" metalness={0.35} roughness={0.44} />
+          </RoundedBox>
+          {[-0.2, 0, 0.2].flatMap((x) =>
+            [-0.22, 0, 0.22].map((y) => (
+              <mesh key={`${x}-${y}`} position={[x, y, 0.075]}>
+                <circleGeometry args={[0.035, 12]} />
+                <meshBasicMaterial color="#72efff" transparent opacity={assembled ? 0.95 : 0.28} toneMapped={false} />
+              </mesh>
+            )),
+          )}
         </group>
         <group ref={(value) => { modules.current[2] = value; }}>
-          <mesh rotation={[0.2, 0.1, 0]}>
-            <torusKnotGeometry args={[0.46, 0.12, mobile ? 48 : 80, 10, 2, 3]} />
-            <meshPhysicalMaterial color="#f5c65c" metalness={0.72} roughness={0.2} clearcoat={0.9} />
+          <mesh rotation={[Math.PI / 2, 0, 0]}>
+            <torusGeometry args={[0.16, 0.038, 8, 28]} />
+            <meshStandardMaterial color="#1b272e" metalness={0.66} roughness={0.3} />
           </mesh>
+          <RoundedBox args={[0.22, 0.28, 0.065]} radius={0.055} smoothness={3} position={[0, 0, 0.05]}>
+            <meshStandardMaterial color="#071116" emissive="#72efff" emissiveIntensity={assembled ? 1.4 : 0.22} roughness={0.2} />
+          </RoundedBox>
         </group>
-        <group ref={core} position={[3.14, 0.08, 0]} scale={0.35}>
-          <mesh>
-            <dodecahedronGeometry args={[0.78, 1]} />
-            <meshPhysicalMaterial color="#07171c" metalness={0.72} roughness={0.16} clearcoat={1} />
-          </mesh>
-          <mesh scale={0.72}>
-            <icosahedronGeometry args={[0.78, 2]} />
-            <meshBasicMaterial color={cyan} wireframe transparent opacity={0.78} toneMapped={false} />
-          </mesh>
-        </group>
-        <mesh ref={pulse} position={[3.14, 0.08, -0.05]}>
+        <Line points={[[-0.28, -0.62, 0.1], [1.3, 0.25, 0.12], [3.18, 2.12, 0.31]]} color="#72efff" lineWidth={2} transparent opacity={assembled ? 0.75 : 0.08} dashed dashSize={0.15} gapSize={0.12} />
+        <Line points={[[-0.28, -0.62, 0.1], [1.5, -0.2, 0.12], [3.18, 0.68, 0.25]]} color="#72efff" lineWidth={2} transparent opacity={assembled ? 0.72 : 0.08} dashed dashSize={0.15} gapSize={0.12} />
+        <Line points={[[-0.28, -0.62, 0.1], [2.0, -0.1, 0.12], [3.62, 0.72, 0.25]]} color="#72efff" lineWidth={2} transparent opacity={assembled ? 0.72 : 0.08} dashed dashSize={0.15} gapSize={0.12} />
+        <mesh ref={pulse} position={[3.18, 0.68, -0.05]}>
           <ringGeometry args={[0.92, 0.96, 72]} />
           <meshBasicMaterial ref={pulseMaterial} color={cyan} transparent opacity={0} toneMapped={false} depthWrite={false} />
         </mesh>
       </group>
-      <pointLight position={[3.14, 0.08, 1.2]} color="#72efff" intensity={assembled ? (mobile ? 12 : 22) : 5} distance={13} />
+      <pointLight position={[1.48, 0.45, 1.2]} color="#72efff" intensity={assembled ? (mobile ? 12 : 22) : 4} distance={13} />
     </group>
   );
 }
@@ -565,7 +746,7 @@ function World({
 
   return (
     <>
-      <CameraDirector progress={progress} pointer={pointer} mobile={mobile} />
+      <CameraDirector progress={progress} pointer={pointer} mobile={mobile} sceneState={sceneState} />
       <color attach="background" args={["#030609"]} />
       <fog attach="fog" args={["#030609", mobile ? 21 : 22, mobile ? 58 : 72]} />
       <ambientLight intensity={mobile ? 0.4 : 0.12} color="#a9c8d5" />
@@ -580,9 +761,15 @@ function World({
       <SignalThread progress={progress} />
       <SimulationAtmosphere progress={progress} mobile={mobile} />
       <SceneGate progress={progress} index={0}><IntroWorld progress={progress} /></SceneGate>
-      <SceneGate progress={progress} index={1}><ClinicalWorld progress={progress} index={1} position={WORLD_POSITIONS[1]} mobile={mobile} active={sceneState.clinicalActive} onToggle={() => onUpdateScene({ clinicalActive: !sceneState.clinicalActive })} /></SceneGate>
-      <SceneGate progress={progress} index={2}><DefenseWorld progress={progress} index={2} position={WORLD_POSITIONS[2]} mobile={mobile} selectedNode={sceneState.tacticalNode} onSelectNode={(tacticalNode) => onUpdateScene({ tacticalNode })} /></SceneGate>
-      <SceneGate progress={progress} index={3}><EmergencyWorld progress={progress} index={3} position={WORLD_POSITIONS[3]} mobile={mobile} active={sceneState.emergencyActive} onToggle={() => onUpdateScene({ emergencyActive: !sceneState.emergencyActive })} /></SceneGate>
+      <SceneGate progress={progress} index={1}>
+        <Suspense fallback={null}><ClinicalSystemWorld progress={progress} index={1} position={WORLD_POSITIONS[1]} mobile={mobile} phase={sceneState.clinicalPhase} onAction={() => onUpdateScene({ clinicalPhase: nextClinicalPhase(sceneState.clinicalPhase) })} /></Suspense>
+      </SceneGate>
+      <SceneGate progress={progress} index={2}>
+        <Suspense fallback={null}><ConnectedSystemWorld progress={progress} index={2} position={WORLD_POSITIONS[2]} mobile={mobile} phase={sceneState.tacticalPhase} onAction={() => onUpdateScene({ tacticalPhase: nextTacticalPhase(sceneState.tacticalPhase) })} /></Suspense>
+      </SceneGate>
+      <SceneGate progress={progress} index={3}>
+        <Suspense fallback={null}><EmergencySystemWorld progress={progress} index={3} position={WORLD_POSITIONS[3]} mobile={mobile} step={sceneState.emergencyStep} onAdvance={() => onUpdateScene({ emergencyStep: sceneState.emergencyStep >= 3 ? 0 : sceneState.emergencyStep + 1 })} /></Suspense>
+      </SceneGate>
       <SceneGate progress={progress} index={4}>
         <Suspense fallback={null}><HoverWorld progress={progress} index={4} position={WORLD_POSITIONS[4]} mobile={mobile} videoUrl={hoverVideo} posterUrl={hoverPoster} active={sceneState.hoverBoost} onActiveChange={(hoverBoost: boolean) => onUpdateScene({ hoverBoost })} /></Suspense>
       </SceneGate>

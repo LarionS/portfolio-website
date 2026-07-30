@@ -675,9 +675,16 @@ main,
 }
 
 .chapter--clinical .scene-caption,
+.chapter--tactical .scene-caption,
 .chapter--emergency .scene-caption,
 .chapter--hover .scene-caption {
   width: min(27rem, 30vw);
+}
+
+.chapter--clinical .scene-caption,
+.chapter--tactical .scene-caption,
+.chapter--emergency .scene-caption {
+  width: min(24rem, 26vw);
 }
 
 .chapter--align-right .scene-caption {
@@ -793,7 +800,7 @@ main,
 
 .scene-interaction {
   display: inline-flex;
-  min-height: 2.5rem;
+  min-height: 2.75rem;
   align-items: center;
   gap: 0.5rem;
   padding: 0.48rem 0.68rem;
@@ -807,6 +814,16 @@ main,
   text-transform: uppercase;
   cursor: pointer;
   transition: color 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.scene-interaction[aria-busy="true"] {
+  border-color: rgba(var(--cyan-rgb), 0.55);
+  background: rgba(var(--cyan-rgb), 0.075);
+}
+
+.scene-interaction[aria-busy="true"] i {
+  box-shadow: 0 0 1.15rem rgba(var(--cyan-rgb), 0.95);
+  animation-duration: 0.72s;
 }
 
 .scene-interaction:hover {
@@ -1227,6 +1244,13 @@ main,
   filter: saturate(0.78) contrast(1.08);
 }
 
+.world-fallback--clinical img,
+.world-fallback--tactical img,
+.world-fallback--emergency img {
+  opacity: 0.76;
+  filter: saturate(0.9) contrast(1.05);
+}
+
 .no-webgl .world-fallback {
   display: block;
 }
@@ -1454,18 +1478,19 @@ main,
   }
 
   .chapter {
-    min-height: 150svh;
-    padding: 46svh 1.15rem 31svh;
+    min-height: 164svh;
+    padding: 62svh 1.15rem 30svh;
     overflow-x: clip;
   }
 
   .scene-caption {
-    top: 34svh;
+    top: 58svh;
     width: 100%;
-    padding: 1.3rem 2.7rem 7.2rem 0;
+    padding: 1rem 2.7rem 6.4rem 0;
   }
 
   .chapter--clinical .scene-caption,
+  .chapter--tactical .scene-caption,
   .chapter--emergency .scene-caption,
   .chapter--hover .scene-caption {
     width: 100%;
@@ -1534,7 +1559,7 @@ main,
 
   .scene-interaction {
     position: static;
-    min-height: 2.55rem;
+    min-height: 2.75rem;
     flex: 0 0 auto;
     background: rgba(3, 6, 9, 0.84);
     backdrop-filter: blur(12px);

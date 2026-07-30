@@ -7,10 +7,11 @@ import {
   useState,
 } from "react";
 import type { MutableRefObject } from "react";
-import { Line, RoundedBox } from "@react-three/drei";
+import { Line, RoundedBox, useAnimations, useGLTF } from "@react-three/drei";
 import { useFrame, useLoader } from "@react-three/fiber";
 import type { ThreeEvent } from "@react-three/fiber";
 import * as THREE from "three";
+import { clone as cloneSkeleton } from "three/examples/jsm/utils/SkeletonUtils.js";
 import { SourcedHoverboard } from "./SourcedAssets";
 
 type SharedWorldProps = {
@@ -367,6 +368,9 @@ function HoverBoardRig({
     }
 
     const proximity = proximityAt(progress, index);
+    // The camera-mounted board belongs to station 04. Keep it out of the
+    // emergency frame while the adjacent world is only preloaded.
+    cameraAnchor.current.visible = proximity > 0.46;
     const steer = proximity > 0.28 ? pointer.x : 0;
     const bob = Math.sin(clock.elapsedTime * 2.15) * 0.018;
     board.current.position.x = THREE.MathUtils.damp(
@@ -747,7 +751,7 @@ function Limb({
   );
 }
 
-function FlightBody({
+function AnimatedFlightBody({
   active,
   mobile,
 }: {
@@ -755,23 +759,84 @@ function FlightBody({
   mobile: boolean;
 }) {
   const rig = useRef<THREE.Group>(null);
+  const gltf = useGLTF("/assets/models/flybox-flight-character.glb");
+  const actor = useMemo(() => {
+    const copy = cloneSkeleton(gltf.scene) as THREE.Group;
+    let materialIndex = 0;
+    copy.traverse((child) => {
+      if (!(child instanceof THREE.Mesh)) return;
+      child.castShadow = true;
+      const sources = Array.isArray(child.material) ? child.material : [child.material];
+      const materials = sources.map((source) => {
+        const material = source.clone();
+        if (material instanceof THREE.MeshStandardMaterial) {
+          // The source sample carries a trademarked texture. Removing every
+          // texture is both a clean art-direction choice and guarantees the
+          // flight suit is completely logo-free at runtime.
+          material.map = null;
+          material.normalMap = null;
+          material.roughnessMap = null;
+          material.metalnessMap = null;
+          material.color.set(materialIndex++ % 3 === 0 ? "#f5c65c" : "#1a2530");
+          material.roughness = 0.5;
+          material.metalness = 0.16;
+        }
+        return material;
+      });
+      child.material = Array.isArray(child.material) ? materials : materials[0];
+    });
+    return copy;
+  }, [gltf.scene]);
+  const { actions } = useAnimations(gltf.animations, actor);
+
+  useEffect(() => {
+    const action = Object.values(actions)[0];
+    if (!action) return;
+    action.reset().fadeIn(0.25).play();
+    return () => {
+      action.fadeOut(0.18);
+      action.stop();
+    };
+  }, [actions]);
+
+  useEffect(() => {
+    const action = Object.values(actions)[0];
+    if (action) action.setEffectiveTimeScale(active ? 1.2 : 0.28);
+  }, [actions, active]);
+
+  useEffect(
+    () => () => {
+      actor.traverse((child) => {
+        if (!(child instanceof THREE.Mesh)) return;
+        const materials = Array.isArray(child.material) ? child.material : [child.material];
+        materials.forEach((material) => material.dispose());
+      });
+    },
+    [actor],
+  );
 
   useFrame((state, delta) => {
     if (!rig.current) return;
     rig.current.position.y = THREE.MathUtils.damp(
       rig.current.position.y,
-      (active ? 0.18 : 0) +
-        Math.sin(state.clock.elapsedTime * (active ? 2.2 : 1.1)) * 0.035,
+      (active ? 2.05 : 0.82) +
+        Math.sin(state.clock.elapsedTime * (active ? 2.6 : 1.1)) * (active ? 0.11 : 0.035),
       6,
       delta,
     );
     rig.current.rotation.z = THREE.MathUtils.damp(
       rig.current.rotation.z,
-      active ? state.pointer.x * -0.1 : -0.035,
+      active ? -1.16 + state.pointer.x * -0.09 : -0.96,
       6,
       delta,
     );
-    const targetScale = (mobile ? 0.36 : 0.46) * (active ? 1.08 : 1);
+    rig.current.rotation.x = THREE.MathUtils.damp(
+      rig.current.rotation.x,
+      active ? -0.16 + state.pointer.y * 0.04 : -0.08,
+      6,
+      delta,
+    );
+    const targetScale = (mobile ? 0.98 : 1.28) * (active ? 1.06 : 1);
     const nextScale = THREE.MathUtils.damp(
       rig.current.scale.x,
       targetScale,
@@ -784,23 +849,15 @@ function FlightBody({
   return (
     <group
       ref={rig}
-      scale={mobile ? 0.36 : 0.46}
-      rotation={[0, -0.12, -0.035]}
+      scale={mobile ? 0.98 : 1.28}
+      rotation={[-0.08, -0.22, -0.96]}
     >
-      <mesh rotation={[0, 0, Math.PI / 2]}>
-        <capsuleGeometry args={[0.23, 0.74, 6, 14]} />
-        <meshStandardMaterial color="#d7aa37" roughness={0.64} />
-      </mesh>
-      <mesh position={[0.73, -0.08, 0]}>
-        <sphereGeometry args={[0.24, 18, 14]} />
-        <meshStandardMaterial color="#b98665" roughness={0.82} />
-      </mesh>
+      <primitive object={actor} />
       <RoundedBox
-        args={[0.31, 0.15, 0.2]}
-        radius={0.055}
-        smoothness={3}
-        position={[0.8, -0.27, 0]}
-        rotation={[0, 0, -0.16]}
+        args={[0.42, 0.2, 0.24]}
+        radius={0.08}
+        smoothness={4}
+        position={[0, 1.57, 0.13]}
       >
         <meshPhysicalMaterial
           color="#101927"
@@ -809,42 +866,54 @@ function FlightBody({
           clearcoat={1}
         />
       </RoundedBox>
-      <Limb
-        from={[0.18, 0, 0.14]}
-        to={[0.9, -0.02, 0.58]}
-        radius={0.09}
-        color="#d7aa37"
-      />
-      <Limb
-        from={[0.18, 0, -0.14]}
-        to={[0.9, -0.02, -0.58]}
-        radius={0.09}
-        color="#d7aa37"
-      />
-      <Limb
-        from={[-0.3, 0, 0.12]}
-        to={[-1.12, -0.02, 0.34]}
-        radius={0.11}
-        color="#222a32"
-      />
-      <Limb
-        from={[-0.3, 0, -0.12]}
-        to={[-1.12, -0.02, -0.34]}
-        radius={0.11}
-        color="#222a32"
-      />
-      <RoundedBox
-        args={[0.52, 0.48, 0.2]}
-        radius={0.07}
-        smoothness={3}
-        position={[-0.12, 0.16, 0]}
-      >
-        <meshStandardMaterial
-          color="#171d25"
-          metalness={0.18}
-          roughness={0.55}
-        />
+    </group>
+  );
+}
+
+function WindTunnel({ active, mobile }: { active: boolean; mobile: boolean }) {
+  const airflow = useRef<THREE.Group>(null);
+  useFrame(({ clock }) => {
+    if (!airflow.current) return;
+    airflow.current.position.y = ((clock.elapsedTime * (active ? 2.4 : 0.45)) % 1) * 0.42;
+  });
+  const height = mobile ? 3.7 : 4.7;
+  return (
+    <group position={mobile ? [-2.18, -1.95, -0.25] : [-3.65, -2.0, -0.45]}>
+      <RoundedBox args={[2.45, 0.22, 2.35]} radius={0.1} smoothness={3} position={[0, 0, 0]}>
+        <meshStandardMaterial color="#182129" metalness={0.7} roughness={0.3} />
       </RoundedBox>
+      <group position={[0, 0.16, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <Fan position={[0, 0, 0]} scale={mobile ? 1.12 : 1.42} active={active} />
+      </group>
+      {[-0.94, 0.94].flatMap((x) =>
+        [-0.82, 0.82].map((z) => (
+          <mesh key={`${x}-${z}`} position={[x, height / 2, z]}>
+            <cylinderGeometry args={[0.035, 0.035, height, 10]} />
+            <meshStandardMaterial color="#51616a" metalness={0.72} roughness={0.3} />
+          </mesh>
+        )),
+      )}
+      <group ref={airflow}>
+        {[-0.62, -0.31, 0, 0.31, 0.62].map((x, streamIndex) => (
+          <Line
+            key={x}
+            points={Array.from({ length: 10 }, (_, pointIndex) => [
+              x + Math.sin(pointIndex * 0.8 + streamIndex) * 0.035,
+              0.34 + pointIndex * (height / 9),
+              Math.cos(pointIndex * 0.7 + streamIndex) * 0.18,
+            ] as Vec3)}
+            color={streamIndex % 2 ? GOLD : CYAN}
+            lineWidth={active ? 1.8 : 0.72}
+            transparent
+            opacity={active ? 0.72 : 0.18}
+            dashed
+            dashSize={0.18}
+            gapSize={0.16}
+          />
+        ))}
+      </group>
+      <AnimatedFlightBody active={active} mobile={mobile} />
+      <pointLight color={CYAN} intensity={active ? 8 : 2.2} distance={7} position={[0, 1.8, 1.1]} />
     </group>
   );
 }
@@ -927,9 +996,9 @@ export function FlyboxWorld({
     active,
   );
   const posterTexture = useLoader(THREE.TextureLoader, posterUrl);
-  const width = mobile ? 6.45 : 10.9;
+  const width = mobile ? 6.15 : 8.9;
   const height = width * (9 / 16);
-  const centerX = mobile ? 0.42 : 3.45;
+  const centerX = mobile ? 0.72 : 3.55;
 
   useEffect(() => {
     posterTexture.colorSpace = THREE.SRGBColorSpace;
@@ -990,49 +1059,8 @@ export function FlyboxWorld({
             onToggle={() => onActiveChange(!active)}
           />
         </group>
-        <AirflowField
-          mobile={mobile}
-          active={active}
-          halfWidth={width / 2}
-          height={height}
-        />
-        {[-1, 1].map((side) => (
-          <RoundedBox
-            key={side}
-            args={[0.075, height * 0.72, 0.13]}
-            radius={0.03}
-            smoothness={2}
-            position={[side * (width / 2 + 0.18), 0, -1.55]}
-          >
-            <meshStandardMaterial
-              color="#46535d"
-              emissive={active ? CYAN : "#111820"}
-              emissiveIntensity={active ? 0.72 : 0.08}
-              metalness={0.8}
-              roughness={0.25}
-            />
-          </RoundedBox>
-        ))}
-        <Fan
-          position={[-width / 2 - 0.46, -height * 0.35, -1.18]}
-          scale={mobile ? 0.58 : 0.78}
-          active={active}
-        />
-        <Fan
-          position={[width / 2 + 0.46, -height * 0.35, -1.18]}
-          scale={mobile ? 0.58 : 0.78}
-          active={active}
-        />
-        <group
-          position={[
-            mobile ? 1.65 : width * 0.27,
-            -height * 0.38,
-            -0.78,
-          ]}
-        >
-          <FlightBody active={active} mobile={mobile} />
-        </group>
       </group>
+      <WindTunnel active={active} mobile={mobile} />
       <pointLight
         color={GOLD}
         intensity={active ? (mobile ? 7 : 11) : (mobile ? 2.8 : 4.6)}
@@ -1303,7 +1331,6 @@ function PhysicalPhone({
         hovered.current = false;
       }}
     >
-      <DomainSculpture index={phoneIndex} />
       <RoundedBox
         args={[2.18, 4.72, 0.25]}
         radius={0.24}
@@ -1501,21 +1528,6 @@ export function MobileWorld({
           onFocus={onFocus}
           mobile={mobile}
         />
-      ))}
-      {[2.1, 3.65].map((radius, ringIndex) => (
-        <mesh
-          key={radius}
-          position={[0, -2.63, -0.75]}
-          rotation={[-Math.PI / 2, 0, 0]}
-        >
-          <ringGeometry args={[radius - 0.018, radius + 0.018, 80]} />
-          <meshBasicMaterial
-            color={ringIndex === 0 ? "#c8a7ff" : CYAN}
-            transparent
-            opacity={ringIndex === 0 ? 0.25 : 0.11}
-            side={THREE.DoubleSide}
-          />
-        </mesh>
       ))}
       <pointLight
         color="#c8a7ff"
