@@ -6,6 +6,7 @@ import * as THREE from "three";
 type SimulationAtmosphereProps = {
   progress: MutableRefObject<number>;
   mobile: boolean;
+  profile: "full" | "lean";
 };
 
 const JOURNEY_COLORS = [
@@ -176,7 +177,7 @@ function sampleJourneyColor(progress: number, target: THREE.Color) {
   target.copy(JOURNEY_COLORS[index]).lerp(JOURNEY_COLORS[nextIndex], blend);
 }
 
-export function SimulationAtmosphere({ progress, mobile }: SimulationAtmosphereProps) {
+export function SimulationAtmosphere({ progress, mobile, profile }: SimulationAtmosphereProps) {
   const floor = useRef<THREE.Mesh>(null);
   const hazeAnchor = useRef<THREE.Group>(null);
   const signalAnchor = useRef<THREE.Group>(null);
@@ -196,11 +197,11 @@ export function SimulationAtmosphere({ progress, mobile }: SimulationAtmosphereP
     () => ({
       uTime: { value: 0 },
       uProgress: { value: 0 },
-      uOpacity: { value: mobile ? 0.006 : 0.009 },
+      uOpacity: { value: mobile ? 0.006 : profile === "lean" ? 0.0065 : 0.009 },
       uAccent: { value: new THREE.Color("#74ecff") },
       uSecondary: { value: new THREE.Color("#244f6a") },
     }),
-    [mobile],
+    [mobile, profile],
   );
 
   const signalUniforms = useMemo(
@@ -214,7 +215,7 @@ export function SimulationAtmosphere({ progress, mobile }: SimulationAtmosphereP
   );
 
   const haze = useMemo(() => {
-    const count = mobile ? 2 : 4;
+    const count = mobile || profile === "lean" ? 2 : 4;
     const geometry = new THREE.PlaneGeometry(1, 1);
     const material = new THREE.ShaderMaterial({
       uniforms: hazeUniforms,
@@ -245,7 +246,7 @@ export function SimulationAtmosphere({ progress, mobile }: SimulationAtmosphereP
     mesh.frustumCulled = false;
     mesh.renderOrder = -20;
     return { geometry, material, mesh };
-  }, [hazeUniforms, mobile]);
+  }, [hazeUniforms, mobile, profile]);
 
   useEffect(
     () => () => {
@@ -256,7 +257,7 @@ export function SimulationAtmosphere({ progress, mobile }: SimulationAtmosphereP
   );
 
   const signalAttributes = useMemo(() => {
-    const count = mobile ? 9 : 18;
+    const count = mobile ? 9 : profile === "lean" ? 12 : 18;
     const positions = new Float32Array(count * 3);
     const offsets = new Float32Array(count);
     const lanes = new Float32Array(count);
@@ -273,7 +274,7 @@ export function SimulationAtmosphere({ progress, mobile }: SimulationAtmosphereP
     }
 
     return { positions, offsets, lanes };
-  }, [mobile]);
+  }, [mobile, profile]);
 
   const secondaryTarget = useMemo(() => new THREE.Color(), []);
 
@@ -295,7 +296,10 @@ export function SimulationAtmosphere({ progress, mobile }: SimulationAtmosphereP
     hazeUniforms.uTime.value = time;
     hazeUniforms.uProgress.value = journeyProgress;
     signalUniforms.uTime.value = time;
-    signalUniforms.uPixelRatio.value = Math.min(gl.getPixelRatio(), mobile ? 1.2 : 1.6);
+    signalUniforms.uPixelRatio.value = Math.min(
+      gl.getPixelRatio(),
+      mobile || profile === "lean" ? 1.2 : 1.6,
+    );
 
     if (floor.current) {
       floor.current.position.x = camera.position.x;

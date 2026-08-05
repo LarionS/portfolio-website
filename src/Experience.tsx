@@ -1,10 +1,19 @@
-import { lazy, Suspense, useMemo, useRef, useState } from "react";
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import type { MutableRefObject, ReactNode } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import {
   Environment,
   Float,
   Line,
+  PerformanceMonitor,
   RoundedBox,
   Sparkles,
 } from "@react-three/drei";
@@ -30,6 +39,94 @@ type ExperienceProps = {
   onUpdateScene: (patch: Partial<JourneySceneState>) => void;
   onReady: () => void;
 };
+
+type RenderProfile = "full" | "lean";
+
+const FULL_SCENE_PIXEL_BUDGET = 4_500_000;
+const MOBILE_SCENE_PIXEL_BUDGET = 2_200_000;
+
+function getBudgetedDpr(mobile: boolean) {
+  if (typeof window === "undefined") return 1;
+  const viewportPixels = Math.max(1, window.innerWidth * window.innerHeight);
+  const pixelBudget = mobile ? MOBILE_SCENE_PIXEL_BUDGET : FULL_SCENE_PIXEL_BUDGET;
+  const budgeted = Math.sqrt(pixelBudget / viewportPixels);
+  const deviceDpr = window.devicePixelRatio || 1;
+  return THREE.MathUtils.clamp(
+    Math.min(deviceDpr, budgeted, mobile ? 1 : 1.15),
+    mobile ? 0.75 : 0.68,
+    mobile ? 1 : 1.15,
+  );
+}
+
+function isSoftwareRenderer(gl: THREE.WebGLRenderer) {
+  const context = gl.getContext();
+  const debugInfo = context.getExtension("WEBGL_debug_renderer_info");
+  if (!debugInfo) return false;
+  const renderer = String(
+    context.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) ?? "",
+  ).toLowerCase();
+  return /swiftshader|llvmpipe|software|microsoft basic render/.test(renderer);
+}
+
+function DevelopmentDiagnostics() {
+  const samples = useRef<number[]>([]);
+  const reportedRenderer = useRef(false);
+  const worldPosition = useMemo(() => new THREE.Vector3(), []);
+  const enabled = import.meta.env.DEV
+    && typeof window !== "undefined"
+    && new URLSearchParams(window.location.search).has("perf");
+
+  useFrame(({ gl, scene }, delta) => {
+    if (!enabled) return;
+    samples.current.push(delta * 1000);
+
+    if (!reportedRenderer.current) {
+      reportedRenderer.current = true;
+      const context = gl.getContext();
+      const debugInfo = context.getExtension("WEBGL_debug_renderer_info");
+      const renderer = debugInfo
+        ? context.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL)
+        : "renderer unavailable";
+      console.info(`[playframe-perf] renderer=${String(renderer)}`);
+    }
+
+    if (samples.current.length < 180) return;
+    const ordered = samples.current.splice(0).sort((a, b) => a - b);
+    const average = ordered.reduce((total, value) => total + value, 0) / ordered.length;
+    const p95 = ordered[Math.floor(ordered.length * 0.95)] ?? average;
+    let visibleMeshes = 0;
+    let materialSlots = 0;
+    const drawSources = new Map<string, number>();
+    const stationSlots = Array.from({ length: WORLD_POSITIONS.length }, () => 0);
+    scene.traverseVisible((object) => {
+      if (!(object instanceof THREE.Mesh)) return;
+      visibleMeshes += 1;
+      const slots = Array.isArray(object.material) ? object.material.length : 1;
+      materialSlots += slots;
+      const source = object.name || object.geometry.type || object.type;
+      drawSources.set(source, (drawSources.get(source) ?? 0) + slots);
+      object.getWorldPosition(worldPosition);
+      let nearest = 0;
+      let distance = Number.POSITIVE_INFINITY;
+      WORLD_POSITIONS.forEach((position, index) => {
+        const next = Math.abs(worldPosition.z - position[2]);
+        if (next < distance) {
+          nearest = index;
+          distance = next;
+        }
+      });
+      stationSlots[nearest] += Array.isArray(object.material) ? object.material.length : 1;
+    });
+    console.info(
+      `[playframe-perf] fps=${(1000 / average).toFixed(1)} p95=${p95.toFixed(1)}ms calls=${gl.info.render.calls} triangles=${gl.info.render.triangles} meshes=${visibleMeshes} materials=${materialSlots} stations=${stationSlots.join(",")}`,
+    );
+    console.info(
+      `[playframe-perf] top=${[...drawSources.entries()].sort((a, b) => b[1] - a[1]).slice(0, 12).map(([name, slots]) => `${name}:${slots}`).join(",")}`,
+    );
+  });
+
+  return null;
+}
 
 const WORLD_POSITIONS: [number, number, number][] = [
   [3.4, -0.45, 0],
@@ -319,11 +416,17 @@ function SceneGate({
   index: number;
   children: ReactNode;
 }) {
-  const activeRef = useRef(Math.abs(progress.current - index) < 1.65);
+  // A journey transition used to render both adjoining worlds for almost its
+  // entire duration. That doubled React frame callbacks and WebGL submissions
+  // on the browser's single render thread. Switch the authored world at the
+  // midpoint instead; the shared spine/atmosphere keeps the camera move
+  // continuous while exactly one expensive station is alive at a time.
+  const isNearestStation = () => Math.round(progress.current) === index;
+  const activeRef = useRef(isNearestStation());
   const [active, setActive] = useState(activeRef.current);
 
   useFrame(() => {
-    const next = Math.abs(progress.current - index) < 1.65;
+    const next = isNearestStation();
     if (next === activeRef.current) return;
     activeRef.current = next;
     setActive(next);
@@ -332,7 +435,13 @@ function SceneGate({
   return active ? children : null;
 }
 
-function SignalThread({ progress }: { progress: MutableRefObject<number> }) {
+function SignalThread({
+  progress,
+  profile,
+}: {
+  progress: MutableRefObject<number>;
+  profile: RenderProfile;
+}) {
   const pulseRefs = useRef<(THREE.Mesh | null)[]>([]);
   const pulseMaterialRefs = useRef<(THREE.MeshBasicMaterial | null)[]>([]);
   const threadMaterial = useRef<THREE.MeshBasicMaterial>(null);
@@ -385,7 +494,7 @@ function SignalThread({ progress }: { progress: MutableRefObject<number> }) {
       <mesh geometry={geometry}>
         <meshBasicMaterial ref={threadMaterial} color={cyan} transparent opacity={0.075} toneMapped={false} />
       </mesh>
-      {Array.from({ length: 4 }, (_, index) => (
+      {Array.from({ length: profile === "lean" ? 2 : 4 }, (_, index) => (
         <mesh
           key={index}
           ref={(mesh) => {
@@ -736,9 +845,10 @@ function World({
   progress,
   pointer,
   mobile,
+  profile,
   sceneState,
   onUpdateScene,
-}: Omit<ExperienceProps, "visible" | "onReady">) {
+}: Omit<ExperienceProps, "visible" | "onReady"> & { profile: RenderProfile }) {
   const hoverVideo = chapters.find((chapter) => chapter.world === "hover")?.video ?? "";
   const hoverPoster = chapters.find((chapter) => chapter.world === "hover")?.poster ?? "";
   const flyboxVideo = chapters.find((chapter) => chapter.world === "flybox")?.video ?? "";
@@ -752,14 +862,14 @@ function World({
       <ambientLight intensity={mobile ? 0.4 : 0.12} color="#a9c8d5" />
       <hemisphereLight intensity={mobile ? 0.46 : 0.22} color="#b6dcea" groundColor="#030507" />
       <directionalLight position={[6, 12, 8]} intensity={mobile ? 0.78 : 0.58} color="#dceeff" />
-      {!mobile ? (
+      {!mobile && profile === "full" ? (
         <Suspense fallback={null}>
           <Environment files="/assets/environment/empty-warehouse-01-1k.hdr" environmentIntensity={0.62} />
         </Suspense>
       ) : null}
       <FacilitySpine />
-      <SignalThread progress={progress} />
-      <SimulationAtmosphere progress={progress} mobile={mobile} />
+      <SignalThread progress={progress} profile={profile} />
+      <SimulationAtmosphere progress={progress} mobile={mobile} profile={profile} />
       <SceneGate progress={progress} index={0}><IntroWorld progress={progress} /></SceneGate>
       <SceneGate progress={progress} index={1}>
         <Suspense fallback={null}><ClinicalSystemWorld progress={progress} index={1} position={WORLD_POSITIONS[1]} mobile={mobile} phase={sceneState.clinicalPhase} onAction={() => onUpdateScene({ clinicalPhase: nextClinicalPhase(sceneState.clinicalPhase) })} /></Suspense>
@@ -795,11 +905,44 @@ export default function Experience({
 }: ExperienceProps) {
   const shots = mobile ? MOBILE_SHOTS : DESKTOP_SHOTS;
   const initialShot = shots[Math.max(0, Math.min(7, Math.round(progress.current)))];
+  const [profile, setProfile] = useState<RenderProfile>("full");
+  const [adaptiveScale, setAdaptiveScale] = useState(1);
+  const [budgetedDpr, setBudgetedDpr] = useState(() => getBudgetedDpr(mobile));
+
+  useEffect(() => {
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const next = getBudgetedDpr(mobile);
+      setBudgetedDpr((current) => Math.abs(current - next) > 0.025 ? next : current);
+    };
+    const requestUpdate = () => {
+      if (!frame) frame = window.requestAnimationFrame(update);
+    };
+    window.addEventListener("resize", requestUpdate, { passive: true });
+    update();
+    return () => {
+      window.removeEventListener("resize", requestUpdate);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, [mobile]);
+
+  const handlePerformanceDecline = useCallback(() => {
+    setProfile("lean");
+    setAdaptiveScale((current) => Math.min(current, 0.78));
+  }, []);
+
+  const handlePerformanceFallback = useCallback(() => {
+    setProfile("lean");
+    setAdaptiveScale(0.64);
+  }, []);
+
+  const effectiveDpr = Math.max(0.55, budgetedDpr * adaptiveScale);
 
   return (
     <div className="canvas-stage" aria-hidden="true">
       <Canvas
-        dpr={[1, mobile ? 1 : 1.35]}
+        dpr={effectiveDpr}
         camera={{ position: initialShot.position.toArray(), fov: initialShot.fov, near: 0.08, far: 74 }}
         gl={{
           antialias: !mobile,
@@ -813,10 +956,30 @@ export default function Experience({
           gl.toneMapping = THREE.ACESFilmicToneMapping;
           gl.toneMappingExposure = mobile ? 1.08 : 0.88;
           gl.outputColorSpace = THREE.SRGBColorSpace;
+          if (isSoftwareRenderer(gl)) {
+            setProfile("lean");
+            setAdaptiveScale(0.58);
+          }
           onReady();
         }}
       >
-        <World progress={progress} pointer={pointer} mobile={mobile} sceneState={sceneState} onUpdateScene={onUpdateScene} />
+        <PerformanceMonitor
+          ms={500}
+          iterations={6}
+          threshold={0.75}
+          flipflops={1}
+          onDecline={handlePerformanceDecline}
+          onFallback={handlePerformanceFallback}
+        />
+        {import.meta.env.DEV ? <DevelopmentDiagnostics /> : null}
+        <World
+          progress={progress}
+          pointer={pointer}
+          mobile={mobile}
+          profile={profile}
+          sceneState={sceneState}
+          onUpdateScene={onUpdateScene}
+        />
       </Canvas>
     </div>
   );

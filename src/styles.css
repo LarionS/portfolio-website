@@ -125,6 +125,7 @@ summary {
   position: fixed;
   z-index: 0;
   inset: 0;
+  contain: strict;
   pointer-events: auto;
   opacity: 0;
   transition: opacity 1.2s ease;
@@ -1258,6 +1259,55 @@ main,
 .world-fallback--mobile img {
   object-fit: contain;
   padding: 2rem;
+}
+
+/* Live backdrop blurs force Chromium to repeatedly sample the changing WebGL
+   layer beneath them. On Windows that can serialize compositor work and make a
+   high-end GPU look idle. These opaque equivalents keep the same hierarchy and
+   atmosphere without the per-frame blur pass. */
+.experience.webgl-ready::before {
+  opacity: 0.1;
+  mask-image: none;
+}
+
+.experience.webgl-ready::after {
+  box-shadow: none;
+  background: radial-gradient(circle at 52% 46%, transparent 48%, rgba(0, 0, 0, 0.56) 100%);
+}
+
+.webgl-ready main,
+.webgl-ready .site-footer {
+  text-shadow: none;
+}
+
+.webgl-ready .site-header,
+.webgl-ready .motion-toggle,
+.webgl-ready .hero__proof,
+.webgl-ready .scene-caption__proof li,
+.webgl-ready .scene-detail p,
+.webgl-ready .contact__primary,
+.webgl-ready .contact__ignite,
+.webgl-ready .journey-rail,
+.webgl-ready .scene-interaction,
+.webgl-ready .scene-detail summary,
+.webgl-ready .project-link {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.webgl-ready .site-header {
+  background: linear-gradient(to bottom, rgba(3, 6, 9, 0.96), rgba(3, 6, 9, 0.68));
+}
+
+.webgl-ready .hero__proof,
+.webgl-ready .scene-caption__proof li,
+.webgl-ready .motion-toggle,
+.webgl-ready .contact__ignite {
+  background-color: rgba(3, 6, 9, 0.84);
+}
+
+.webgl-ready .scene-caption::before {
+  filter: none;
 }
 
 @media (max-width: 1050px) {

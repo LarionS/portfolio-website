@@ -68,6 +68,7 @@ type WebModelProps = {
   emissive?: string;
   emissiveIntensity?: number;
   hideMaterial?: string;
+  collapseMaterials?: string;
 };
 
 function WebModel({
@@ -79,6 +80,7 @@ function WebModel({
   emissive,
   emissiveIntensity = 0,
   hideMaterial,
+  collapseMaterials,
 }: WebModelProps) {
   const gltf = useGLTF(url);
   const model = useMemo(() => {
@@ -86,10 +88,24 @@ function WebModel({
     // skeleton. Reusing the asset then leaves hair, helmets, and other weighted
     // pieces floating at the bind pose. SkeletonUtils creates independent rigs.
     const copy = cloneSkeleton(gltf.scene);
+    const collapsedMaterial = collapseMaterials
+      ? new THREE.MeshStandardMaterial({
+          color: collapseMaterials,
+          metalness: 0.42,
+          roughness: 0.4,
+        })
+      : null;
     copy.traverse((child) => {
       if (!(child instanceof THREE.Mesh)) return;
       child.castShadow = true;
       child.receiveShadow = true;
+      if (collapsedMaterial) {
+        // GLTF multi-material groups require one WebGL draw per material. For
+        // small monochrome hardware, a single material preserves the form and
+        // turns four submissions into one on Windows/ANGLE.
+        child.material = collapsedMaterial;
+        return;
+      }
       const materials = Array.isArray(child.material) ? child.material : [child.material];
       const clones = materials.map((source) => {
         const material = source.clone();
@@ -107,14 +123,14 @@ function WebModel({
       child.material = Array.isArray(child.material) ? clones : clones[0];
     });
     return copy;
-  }, [emissive, emissiveIntensity, gltf.scene, hideMaterial, opacity]);
+  }, [collapseMaterials, emissive, emissiveIntensity, gltf.scene, hideMaterial, opacity]);
 
   useEffect(
     () => () => {
       model.traverse((child) => {
         if (!(child instanceof THREE.Mesh)) return;
         const materials = Array.isArray(child.material) ? child.material : [child.material];
-        materials.forEach((material) => material.dispose());
+        new Set(materials).forEach((material) => material.dispose());
       });
     },
     [model],
@@ -667,8 +683,8 @@ function ClinicalPatient({ phase }: { phase: ClinicalPhase }) {
             color="#9ce9ec"
             transparent
             opacity={0.58}
-            transmission={0.22}
             roughness={0.22}
+            clearcoat={0.65}
           />
         </RoundedBox>
       </group>
@@ -834,10 +850,10 @@ function ObservationBooth({ phase }: { phase: ClinicalPhase }) {
         <meshPhysicalMaterial
           color="#3b6670"
           roughness={0.08}
-          transmission={0.48}
           transparent
-          opacity={0.34}
+          opacity={0.22}
           metalness={0.06}
+          clearcoat={0.82}
           depthWrite={false}
         />
       </RoundedBox>
@@ -984,19 +1000,32 @@ function Watch({ active }: { active: boolean }) {
 }
 
 function HapticVest({ active }: { active: boolean }) {
+  const dotTransforms = useMemo(() => {
+    const transforms: THREE.Matrix4[] = [];
+    for (const x of [-0.16, 0, 0.16]) {
+      for (const y of [-0.14, 0, 0.14]) {
+        transforms.push(new THREE.Matrix4().makeTranslation(x, y, 0.04));
+      }
+    }
+    return transforms;
+  }, []);
+  const dots = useRef<THREE.InstancedMesh>(null);
+
+  useEffect(() => {
+    if (!dots.current) return;
+    dotTransforms.forEach((matrix, index) => dots.current?.setMatrixAt(index, matrix));
+    dots.current.instanceMatrix.needsUpdate = true;
+  }, [dotTransforms]);
+
   return (
     <group position={[0, 1.02, 0.205]}>
       <RoundedBox args={[0.52, 0.5, 0.055]} radius={0.09} smoothness={3}>
         <meshStandardMaterial color="#1a2428" metalness={0.36} roughness={0.46} />
       </RoundedBox>
-      {[-0.16, 0, 0.16].flatMap((x) =>
-        [-0.14, 0, 0.14].map((y) => (
-          <mesh position={[x, y, 0.04]} key={`${x}-${y}`}>
-            <circleGeometry args={[0.03, 12]} />
-            <meshBasicMaterial color={active ? CONNECTED : "#3a4740"} transparent opacity={active ? 0.95 : 0.28} toneMapped={false} />
-          </mesh>
-        )),
-      )}
+      <instancedMesh ref={dots} args={[undefined, undefined, dotTransforms.length]}>
+        <circleGeometry args={[0.03, 10]} />
+        <meshBasicMaterial color={active ? CONNECTED : "#3a4740"} transparent opacity={active ? 0.95 : 0.28} toneMapped={false} />
+      </instancedMesh>
     </group>
   );
 }
@@ -1004,7 +1033,7 @@ function HapticVest({ active }: { active: boolean }) {
 function TrainingDevice({ active }: { active: boolean }) {
   return (
     <group position={[0.42, 0.93, 0.34]} rotation={[0.02, Math.PI * 0.5, -0.4]}>
-      <WebModel url={STATION_MODEL.tacticalController} scale={0.56} />
+      <WebModel url={STATION_MODEL.tacticalController} scale={0.56} collapseMaterials="#172126" />
       <mesh position={[0.32, 0.04, 0.16]}>
         <circleGeometry args={[0.035, 12]} />
         <meshBasicMaterial color={active ? CONNECTED : "#59665f"} toneMapped={false} />
@@ -1117,7 +1146,7 @@ function VirtualVolume({ phase, mobile }: { phase: TacticalPhase; mobile: boolea
   return (
     <group position={[0, 1.34, -5.1]} ref={group}>
       <RoundedBox args={[7.75, 3.35, 0.14]} radius={0.16} smoothness={4}>
-        <meshPhysicalMaterial color="#173029" transmission={0.42} transparent opacity={0.18} roughness={0.12} metalness={0.12} depthWrite={false} />
+        <meshPhysicalMaterial color="#173029" transparent opacity={0.16} roughness={0.12} metalness={0.12} clearcoat={0.72} depthWrite={false} />
       </RoundedBox>
       <WebModel
         url={STATION_MODEL.tacticalStructure}

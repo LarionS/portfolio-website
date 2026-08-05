@@ -112,9 +112,9 @@ function useManagedVideo(
       4.5,
       Math.min(delta, 0.05),
     );
-    if (resource.video.readyState >= 2 && resource.video.videoWidth > 0) {
-      resource.texture.needsUpdate = true;
-    }
+    // VideoTexture already marks itself dirty through requestVideoFrameCallback.
+    // Forcing needsUpdate here uploaded the same 1080p frame again on every
+    // display refresh, which can serialize the browser's render and video paths.
   });
 
   useEffect(() => {
@@ -1368,8 +1368,7 @@ function PhysicalPhone({
         <meshPhysicalMaterial
           color="#d8f3ff"
           transparent
-          opacity={0.09}
-          transmission={0.18}
+          opacity={0.075}
           roughness={0.03}
           metalness={0.08}
           clearcoat={1}
