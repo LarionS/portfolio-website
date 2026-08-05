@@ -328,7 +328,7 @@ The following no-cost acquisitions were completed on 2026-07-27. No cart, checko
 ### Local Piryon project assets
 
 - Location: `/Users/larion/Perforce/Larion_Macbook/depot/Piryon/Content`
-- Reason: Excellent reference material exists for beds, hospital equipment, a watch, vest, patient, fire/smoke, and characters, but provenance and client confidentiality are not yet proven. Do not ship these assets unless Larion explicitly clears them.
+- Reason: Excellent reference material exists for beds, hospital equipment, a watch, vest, patient, fire/smoke, and characters, but provenance and client confidentiality are not yet proven. Do not ship these assets unless Playframe explicitly clears them.
 
 ---
 

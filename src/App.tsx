@@ -153,10 +153,10 @@ function Header({ activeStage, onJump }: { activeStage: number; onJump: JumpHand
   const chapterNumber = Math.max(0, Math.min(6, activeStage));
   return (
     <header className="site-header">
-      <a className="wordmark" href="#top" aria-label="Larion Siments, home" onClick={(event) => onJump(event, "top", 0)}>
-        <span className="wordmark__mark">LS</span>
+      <a className="wordmark" href="#top" aria-label="Playframe, home" onClick={(event) => onJump(event, "top", 0)}>
+        <span className="wordmark__mark">PF</span>
         <span className="wordmark__text">
-          <b>Larion Siments</b>
+          <b>Playframe</b>
           <small>Unreal / VR systems</small>
         </span>
       </a>
@@ -253,13 +253,13 @@ function Hero({ onJump }: { onJump: JumpHandler }) {
     <section className="hero" id="top" data-stage="0" aria-labelledby="hero-title">
       <WorldFallback world="clinical" />
       <article className="hero__content">
-        <p className="hero__eyebrow">Larion Siments · Production Unreal Engine + VR systems</p>
+        <p className="hero__eyebrow">Playframe · Production Unreal Engine + VR systems</p>
         <h1 id="hero-title">
           Immersive training.
           <span>Engineered for reality.</span>
         </h1>
         <p className="hero__lede">
-          I design and ship Unreal Engine and VR systems for hospitals, defense teams
+          We design and ship Unreal Engine and VR systems for hospitals, defense teams
           and emergency services—multiplayer, instructor-controlled and connected to real hardware.
         </p>
         <ul className="hero__proof" aria-label="Core production capabilities">
@@ -533,22 +533,24 @@ function ChapterSection({
 
 function ContactSection({
   assembled,
+  connected,
 }: {
   assembled: boolean;
+  connected: boolean;
 }) {
   return (
     <section
       className="contact"
       id="contact"
       data-stage="7"
-      data-assembled={assembled || undefined}
+      data-assembled={connected || undefined}
       aria-labelledby="contact-title"
     >
       <article className="contact__content">
         <p className="contact__eyebrow">Ready to build?</p>
         <h2 id="contact-title">Let’s build the Unreal / VR system they won’t forget.</h2>
         <p>
-          Bring the training goal. I’ll connect the Unreal experience, physical
+          Bring the training goal. We’ll connect the Unreal experience, physical
           hardware, instructor controls, multiplayer and live feedback into one system.
         </p>
         <a
@@ -556,7 +558,7 @@ function ContactSection({
           href={contact.emailHref}
         >
           <span>Direct project enquiry</span>
-          <strong>Email Larion directly</strong>
+          <strong>Email Playframe directly</strong>
           <small>{contact.email}</small>
           <i aria-hidden="true">↗</i>
         </a>
@@ -565,13 +567,17 @@ function ContactSection({
         </a>
         <div
           className="contact__ignite"
-          data-connected={assembled || undefined}
+          data-connected={connected || undefined}
           role="status"
           aria-live="polite"
         >
           <i aria-hidden="true" />
-          {assembled ? "Training system connected" : "System standing by"}
-          <span aria-hidden="true">{assembled ? "✓" : "…"}</span>
+          {connected
+            ? "Training system connected"
+            : assembled
+              ? "Connecting training system"
+              : "System standing by"}
+          <span aria-hidden="true">{connected ? "✓" : "…"}</span>
         </div>
       </article>
     </section>
@@ -581,7 +587,7 @@ function ContactSection({
 function Footer({ onJump }: { onJump: JumpHandler }) {
   return (
     <footer className="site-footer">
-      <p>© {new Date().getFullYear()} Larion Siments</p>
+      <p>© {new Date().getFullYear()} Playframe</p>
       <p>
         Healthcare, defense and emergency-service scenes are original reconstructions.
         No client interfaces, data, personnel or operational material are shown.
@@ -631,6 +637,7 @@ export default function App() {
   const [canvasRequested, setCanvasRequested] = useState(false);
   const [webglSupported] = useState(supportsWebGL);
   const [sceneState, setSceneState] = useState<JourneySceneState>(INITIAL_SCENE_STATE);
+  const [contactConnected, setContactConnected] = useState(false);
   const updateScene = useCallback((patch: Partial<JourneySceneState>) => {
     setSceneState((current) => ({ ...current, ...patch }));
   }, []);
@@ -703,6 +710,18 @@ export default function App() {
       window.removeEventListener("resize", requestUpdate);
     };
   }, []);
+
+  useEffect(() => {
+    if (!sceneState.contactAssembled) {
+      setContactConnected(false);
+      return;
+    }
+    const timeout = window.setTimeout(
+      () => setContactConnected(true),
+      reducedMotion ? 120 : 1100,
+    );
+    return () => window.clearTimeout(timeout);
+  }, [reducedMotion, sceneState.contactAssembled]);
 
   useEffect(() => {
     const handlePointer = (event: PointerEvent) => {
@@ -803,7 +822,10 @@ export default function App() {
             onUpdateScene={updateScene}
           />
         ))}
-        <ContactSection assembled={sceneState.contactAssembled} />
+        <ContactSection
+          assembled={sceneState.contactAssembled}
+          connected={contactConnected}
+        />
       </main>
       <Footer onJump={handleJump} />
     </div>

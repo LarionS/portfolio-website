@@ -651,7 +651,11 @@ function ContactWorld({
   const pulse = useRef<THREE.Mesh>(null);
   const pulseMaterial = useRef<THREE.MeshBasicMaterial>(null);
   const trainee = useRef<THREE.Group>(null);
-  const assemblyEnergy = useRef(assembled ? 1 : 0);
+  const completionLight = useRef<THREE.PointLight>(null);
+  // Always begin at the three source modules. This also makes a direct load at
+  // the bottom of the page play the assembly instead of mounting completed.
+  const assemblyEnergy = useRef(0);
+  const completionPulse = useRef(0);
   const cyan = useMemo(() => glowColor("#72efff", 4.5), []);
   const sourcePositions = useMemo(
     () => [
@@ -672,6 +676,7 @@ function ContactWorld({
 
   useFrame((state, delta) => {
     if (!group.current) return;
+    const frameDelta = Math.min(delta, 0.05);
     const proximity = THREE.MathUtils.clamp(1 - Math.abs(progress.current - 7) / 0.92, 0, 1);
     group.current.visible = proximity > 0.015;
     const scale = 0.82 + proximity * 0.18;
@@ -680,7 +685,7 @@ function ContactWorld({
       assemblyEnergy.current,
       assembled ? 1 : 0,
       assembled ? 6.5 : 4.2,
-      delta,
+      frameDelta,
     );
     modules.current.forEach((module, moduleIndex) => {
       if (!module) return;
@@ -695,34 +700,57 @@ function ContactWorld({
         module.rotation.x,
         assembled ? 0 : Math.sin(state.clock.elapsedTime * 0.42 + moduleIndex) * 0.08,
         6,
-        delta,
+        frameDelta,
       );
       module.rotation.y = THREE.MathUtils.damp(
         module.rotation.y,
-        assembled ? 0 : state.clock.elapsedTime * (0.08 + moduleIndex * 0.025),
+        assembled ? 0 : Math.sin(state.clock.elapsedTime * 0.32 + moduleIndex * 1.7) * 0.18,
         3.5,
-        delta,
+        frameDelta,
       );
       module.rotation.z = THREE.MathUtils.damp(
         module.rotation.z,
         assembled ? 0 : Math.sin(state.clock.elapsedTime * 0.45 + moduleIndex) * 0.08,
         6,
-        delta,
+        frameDelta,
       );
     });
     if (trainee.current) {
       trainee.current.rotation.y = THREE.MathUtils.damp(
         trainee.current.rotation.y,
-        assembled ? Math.sin(state.clock.elapsedTime * 0.5) * 0.025 : -0.1,
+        assembled ? 0 : -0.1 + Math.sin(state.clock.elapsedTime * 0.5) * 0.015,
         5,
-        delta,
+        frameDelta,
       );
-      trainee.current.position.y = Math.sin(state.clock.elapsedTime * 1.2) * 0.018;
+      trainee.current.position.y = THREE.MathUtils.damp(
+        trainee.current.position.y,
+        assembled ? 0 : Math.sin(state.clock.elapsedTime * 1.2) * 0.012,
+        6,
+        frameDelta,
+      );
     }
     if (pulse.current && pulseMaterial.current) {
-      const pulsePhase = assembled ? (state.clock.elapsedTime * 0.5) % 1 : 0;
+      if (!assembled) {
+        completionPulse.current = 0;
+      } else if (assemblyEnergy.current > 0.68) {
+        completionPulse.current = Math.min(1, completionPulse.current + frameDelta * 0.8);
+      }
+      const pulsePhase = completionPulse.current;
+      const pulseEnvelope = pulsePhase > 0 && pulsePhase < 1
+        ? Math.sin(pulsePhase * Math.PI)
+        : 0;
       pulse.current.scale.setScalar(1 + pulsePhase * 3.2);
-      pulseMaterial.current.opacity = assembled ? (1 - pulsePhase) * 0.36 : 0;
+      pulse.current.visible = pulseEnvelope > 0.001;
+      pulseMaterial.current.opacity = pulseEnvelope * 0.32;
+    }
+    if (completionLight.current) {
+      const targetIntensity = 4 + assemblyEnergy.current * (mobile ? 8 : 18);
+      completionLight.current.intensity = THREE.MathUtils.damp(
+        completionLight.current.intensity,
+        targetIntensity,
+        7,
+        frameDelta,
+      );
     }
   });
 
@@ -753,7 +781,7 @@ function ContactWorld({
           </group>
         </group>
 
-        <group ref={trainee} position={[3.18, -0.75, 0]}>
+        <group ref={trainee} position={[3.18, 0, 0]}>
           <mesh position={[0, 2.12, 0]}>
             <sphereGeometry args={[0.3, 22, 16]} />
             <meshStandardMaterial color="#9eadaf" roughness={0.68} />
@@ -779,7 +807,7 @@ function ContactWorld({
           </mesh>
         </group>
 
-        <group ref={(value) => { modules.current[0] = value; }}>
+        <group ref={(value) => { modules.current[0] = value; }} position={[-0.15, 2.38, 0.22]}>
           <RoundedBox args={[0.78, 0.34, 0.28]} radius={0.14} smoothness={4}>
             <meshPhysicalMaterial color="#111a20" metalness={0.7} roughness={0.2} clearcoat={0.9} />
           </RoundedBox>
@@ -791,7 +819,7 @@ function ContactWorld({
             <meshStandardMaterial color="#52616a" metalness={0.6} roughness={0.34} />
           </mesh>
         </group>
-        <group ref={(value) => { modules.current[1] = value; }}>
+        <group ref={(value) => { modules.current[1] = value; }} position={[2.02, -1.42, 0.3]}>
           <RoundedBox args={[0.68, 0.72, 0.12]} radius={0.16} smoothness={4}>
             <meshStandardMaterial color="#141e24" metalness={0.35} roughness={0.44} />
           </RoundedBox>
@@ -804,7 +832,7 @@ function ContactWorld({
             )),
           )}
         </group>
-        <group ref={(value) => { modules.current[2] = value; }}>
+        <group ref={(value) => { modules.current[2] = value; }} position={[5.85, 1.55, -0.08]}>
           <mesh rotation={[Math.PI / 2, 0, 0]}>
             <torusGeometry args={[0.16, 0.038, 8, 28]} />
             <meshStandardMaterial color="#1b272e" metalness={0.66} roughness={0.3} />
@@ -816,12 +844,12 @@ function ContactWorld({
         <Line points={[[-0.28, -0.62, 0.1], [1.3, 0.25, 0.12], [3.18, 2.12, 0.31]]} color="#72efff" lineWidth={2} transparent opacity={assembled ? 0.75 : 0.08} dashed dashSize={0.15} gapSize={0.12} />
         <Line points={[[-0.28, -0.62, 0.1], [1.5, 0.2, 0.12], [3.18, 1.28, 0.25]]} color="#72efff" lineWidth={2} transparent opacity={assembled ? 0.72 : 0.08} dashed dashSize={0.15} gapSize={0.12} />
         <Line points={[[-0.28, -0.62, 0.1], [2.0, -0.1, 0.12], [3.62, 0.72, 0.25]]} color="#72efff" lineWidth={2} transparent opacity={assembled ? 0.72 : 0.08} dashed dashSize={0.15} gapSize={0.12} />
-        <mesh ref={pulse} position={[3.18, 1.28, -0.05]}>
+        <mesh ref={pulse} position={[3.18, 1.28, 0.46]} renderOrder={4} visible={false}>
           <ringGeometry args={[0.92, 0.96, 72]} />
-          <meshBasicMaterial ref={pulseMaterial} color={cyan} transparent opacity={0} toneMapped={false} depthWrite={false} />
+          <meshBasicMaterial ref={pulseMaterial} color={cyan} transparent opacity={0} toneMapped={false} depthTest={false} depthWrite={false} />
         </mesh>
       </group>
-      <pointLight position={[1.48, 0.45, 1.2]} color="#72efff" intensity={assembled ? (mobile ? 12 : 22) : 4} distance={13} />
+      <pointLight ref={completionLight} position={[1.48, 0.45, 1.2]} color="#72efff" intensity={4} distance={13} />
     </group>
   );
 }

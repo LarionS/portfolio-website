@@ -11,7 +11,7 @@
 
 This document is the new source of truth for the next website pass.
 
-The current experience has a strong overall direction, but stations 01–03 do not yet prove the work they describe. They present polished concept images, text, and reactive graphics inside a Three.js canvas, but the visitor is still looking at illustrated claims. The desired experience is different: the visitor should enter a credible spatial situation, perform one meaningful action, watch that action propagate through a working system, and leave with a clear understanding of what Larion builds.
+The current experience has a strong overall direction, but stations 01–03 do not yet prove the work they describe. They present polished concept images, text, and reactive graphics inside a Three.js canvas, but the visitor is still looking at illustrated claims. The desired experience is different: the visitor should enter a credible spatial situation, perform one meaningful action, watch that action propagate through a working system, and leave with a clear understanding of what Playframe builds.
 
 The rebuild is not a request for more effects, more neon, more text, or more detailed background images. It is a change in the storytelling model:
 
@@ -30,7 +30,7 @@ The useful foundation of the current website may remain, but completion marks in
 
 ## 2. Locked strategic decisions
 
-These decisions should not be reopened during production unless Larion explicitly changes them:
+These decisions should not be reopened during production unless Playframe explicitly changes them:
 
 1. The hero direction is approved and should be preserved, with only integration-level refinement.
 2. Unreal Engine, VR, simulation, training, and connected experiences are the dominant market message.
@@ -54,13 +54,13 @@ These decisions should not be reopened during production unless Larion explicitl
 
 The visitor should leave with one clear belief:
 
-> Larion designs and engineers production-grade Unreal and VR systems where software, people, hardware, instructor control, and live data work together.
+> Playframe designs and engineers production-grade Unreal and VR systems where software, people, hardware, instructor control, and live data work together.
 
 This is more precise than “creative developer,” “XR studio,” or “immersive experiences.” It explains why the work is difficult and why a prospective client should call.
 
 ### 3.2 Supporting belief
 
-The visitor should also understand that Larion can carry the surrounding product:
+The visitor should also understand that Playframe can carry the surrounding product:
 
 - Instructor and operator interfaces
 - Multiplayer and networking
@@ -86,7 +86,7 @@ The website should answer these questions in order:
 
 The hero and first station together must establish:
 
-- Larion builds working systems, not isolated 3D scenes.
+- Playframe builds working systems, not isolated 3D scenes.
 - Unreal/VR training is a central capability.
 - The work includes the immersive world and the control, data, and review layers around it.
 - Confidentiality prevents literal screenshots of some projects, but does not prevent credible proof of the underlying capability.
@@ -269,7 +269,7 @@ This is a confirmation, not a second paragraph. Mechanics show what was built; t
 | 04 Hover The Edge | Shipped creative proof | Original embodied VR gameplay can be designed and released |
 | 05 FlyboxVR | Physical integration proof | Human posture and a physical installation become convincing virtual flight |
 | 06 Applications | Product proof | The surrounding dashboards and apps receive the same product discipline |
-| 07 CTA | Conversion | Bring the difficult brief; Larion can shape it into one working experience |
+| 07 CTA | Conversion | Bring the difficult brief; Playframe can shape it into one working experience |
 
 ### 6.2 Escalation
 
@@ -304,7 +304,7 @@ This motif provides continuity but must never become a glowing ribbon pasted ove
 
 ### 7.1 Commercial job
 
-This station must prove that Larion creates consequential, controllable, measurable, and replayable clinical training. It must not read as:
+This station must prove that Playframe creates consequential, controllable, measurable, and replayable clinical training. It must not read as:
 
 - A hospital advertisement
 - A generic emergency-room visualization
@@ -819,7 +819,7 @@ Reject the station if:
 
 ### 9.1 Commercial job
 
-This station must prove that Larion can build a shared scenario where police, fire, and medical roles affect one another inside the same controllable incident.
+This station must prove that Playframe can build a shared scenario where police, fire, and medical roles affect one another inside the same controllable incident.
 
 It must be clearly different from station 02:
 
@@ -836,7 +836,7 @@ After one interaction, the visitor should be able to say:
 
 **Tier C — Category concept by default.**
 
-This station may be upgraded to a Tier B capability reconstruction only after the exact delivered capability claim is verified and the disclosure is rewritten accordingly. Until then, implementation and copy must treat the incident as an original example of the kind of multi-role training Larion can build.
+This station may be upgraded to a Tier B capability reconstruction only after the exact delivered capability claim is verified and the disclosure is rewritten accordingly. Until then, implementation and copy must treat the incident as an original example of the kind of multi-role training Playframe can build.
 
 No existing media should be used. Create a wholly original fictional incident. Do not reproduce:
 
@@ -1137,7 +1137,7 @@ Real participant footage first, body/input relationship second, airflow/tunnel p
 
 #### Required takeaway
 
-> Bring the difficult brief: people, hardware, environment, and outcome. Larion can shape them into one working experience.
+> Bring the difficult brief: people, hardware, environment, and outcome. Playframe can shape them into one working experience.
 
 #### Interaction
 
@@ -1371,7 +1371,7 @@ Every meaningful visual or claim must be classified:
 |---|---|---|
 | A — Direct evidence | Approved real footage, interface, screenshot, or release link | Present as real proof |
 | B — Capability reconstruction | Original scene based on genuine delivered capability | Disclose quietly and precisely |
-| C — Category concept | Original example of what Larion can build | Never present as literal client work |
+| C — Category concept | Original example of what Playframe can build | Never present as literal client work |
 
 Rules:
 
@@ -1733,7 +1733,7 @@ Targets:
 
 After the journey, ask:
 
-1. What does Larion build?
+1. What does Playframe build?
 2. What makes the work technically difficult?
 3. What did the instructor control?
 4. How did hardware/data participate?
@@ -2004,7 +2004,7 @@ The rebuild is done only when all of the following are true:
 12. Every confidential reconstruction is accurately disclosed.
 13. Real footage and real interfaces remain the dominant proof in 04–06.
 14. The finale inspires action and allows immediate contact.
-15. A target visitor can retell what Larion builds, what makes it difficult, and why they should call.
+15. A target visitor can retell what Playframe builds, what makes it difficult, and why they should call.
 
 ---
 

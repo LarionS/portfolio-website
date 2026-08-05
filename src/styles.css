@@ -1149,13 +1149,17 @@ main,
 .contact[data-assembled="true"] .contact__primary i {
   color: #031013;
   background: var(--cyan);
-  animation: contactLaunch 1.8s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  animation: contactLaunch 900ms cubic-bezier(0.16, 1, 0.3, 1) 1;
 }
 
 @keyframes contactLaunch {
-  50% {
+  45% {
     transform: translate(0.16rem, -0.16rem);
     box-shadow: 0 0 1.5rem rgba(var(--cyan-rgb), 0.45);
+  }
+  100% {
+    transform: translate(0, 0);
+    box-shadow: none;
   }
 }
 

@@ -1,6 +1,6 @@
-# Larion — Immersive Systems Portfolio
+# Playframe — Immersive Systems Portfolio
 
-A guided, six-chapter portfolio journey for Larion's Unreal Engine, VR, connected-training, physical-experience, and mobile-product work.
+A guided, six-chapter portfolio journey for Playframe's Unreal Engine, VR, connected-training, physical-experience, and mobile-product work.
 
 ## Tech
 
