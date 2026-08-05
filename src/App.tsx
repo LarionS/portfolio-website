@@ -600,6 +600,25 @@ function supportsWebGL() {
   }
 }
 
+function FilmPreloader({ activeStage }: { activeStage: number }) {
+  const nextFilm = chapters.find(
+    (chapter, index) => index + 1 === activeStage + 1 && chapter.video,
+  );
+  if (!nextFilm?.video) return null;
+
+  return (
+    <div hidden aria-hidden="true">
+      <video
+        key={nextFilm.video}
+        src={nextFilm.video}
+        preload="auto"
+        muted
+        playsInline
+      />
+    </div>
+  );
+}
+
 export default function App() {
   const reducedMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
   const compact = useMediaQuery("(max-width: 760px)");
@@ -740,6 +759,7 @@ export default function App() {
     <div className={pageClass} data-active-stage={activeStage}>
       <a className="skip-link" href="#main">Skip to selected work</a>
       <Header activeStage={activeStage} onJump={handleJump} />
+      <FilmPreloader activeStage={activeStage} />
 
       {shouldRenderCanvas ? (
         <CanvasBoundary onError={() => setWebglFailed(true)}>

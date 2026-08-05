@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 import type { MutableRefObject, ReactNode } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 import {
   Environment,
   Float,
@@ -410,23 +410,20 @@ function CameraDirector({
 function SceneGate({
   progress,
   index,
-  mountRadius = 0.5,
   children,
 }: {
   progress: MutableRefObject<number>;
   index: number;
-  mountRadius?: number;
   children: ReactNode;
 }) {
-  // Keep one expensive visible station alive at a time. Film stations can opt
-  // into a wider mount radius so their media buffers before the screen appears;
-  // their root stays culled until its authored visibility range begins.
-  const shouldMount = () => Math.abs(progress.current - index) <= mountRadius;
-  const activeRef = useRef(shouldMount());
+  // Exactly one expensive station is mounted at a time. Media preloading lives
+  // in the DOM layer so it cannot introduce overlapping Three.js worlds.
+  const isNearestStation = () => Math.round(progress.current) === index;
+  const activeRef = useRef(isNearestStation());
   const [active, setActive] = useState(activeRef.current);
 
   useFrame(() => {
-    const next = shouldMount();
+    const next = isNearestStation();
     if (next === activeRef.current) return;
     activeRef.current = next;
     setActive(next);
@@ -868,10 +865,10 @@ function World({
       <SceneGate progress={progress} index={3}>
         <Suspense fallback={null}><EmergencySystemWorld progress={progress} index={3} position={WORLD_POSITIONS[3]} mobile={mobile} step={sceneState.emergencyStep} onAdvance={() => onUpdateScene({ emergencyStep: sceneState.emergencyStep >= 3 ? 0 : sceneState.emergencyStep + 1 })} /></Suspense>
       </SceneGate>
-      <SceneGate progress={progress} index={4} mountRadius={1.25}>
+      <SceneGate progress={progress} index={4}>
         <Suspense fallback={null}><HoverWorld progress={progress} index={4} position={WORLD_POSITIONS[4]} mobile={mobile} videoUrl={hoverVideo} posterUrl={hoverPoster} active={sceneState.hoverBoost} onActiveChange={(hoverBoost: boolean) => onUpdateScene({ hoverBoost })} /></Suspense>
       </SceneGate>
-      <SceneGate progress={progress} index={5} mountRadius={1.25}>
+      <SceneGate progress={progress} index={5}>
         <Suspense fallback={null}><FlyboxWorld progress={progress} index={5} position={WORLD_POSITIONS[5]} mobile={mobile} videoUrl={flyboxVideo} posterUrl={flyboxPoster} active={sceneState.flyboxActive} onActiveChange={(flyboxActive: boolean) => onUpdateScene({ flyboxActive })} /></Suspense>
       </SceneGate>
       <SceneGate progress={progress} index={6}>
@@ -880,31 +877,6 @@ function World({
       <SceneGate progress={progress} index={7}><ContactWorld progress={progress} mobile={mobile} assembled={sceneState.contactAssembled} /></SceneGate>
     </>
   );
-}
-
-const FRAME_INTERVAL = 1000 / 60;
-
-function StableFrameLoop({ running }: { running: boolean }) {
-  const advance = useThree((state) => state.advance);
-
-  useEffect(() => {
-    if (!running) return;
-    let frame = 0;
-    let lastFrame = performance.now() - FRAME_INTERVAL;
-
-    const tick = (now: number) => {
-      frame = window.requestAnimationFrame(tick);
-      const elapsed = now - lastFrame;
-      if (elapsed < FRAME_INTERVAL - 1) return;
-      lastFrame = now - (elapsed % FRAME_INTERVAL);
-      advance(now, true);
-    };
-
-    frame = window.requestAnimationFrame(tick);
-    return () => window.cancelAnimationFrame(frame);
-  }, [advance, running]);
-
-  return null;
 }
 
 export default function Experience({
@@ -963,7 +935,7 @@ export default function Experience({
           powerPreference: "high-performance",
         }}
         shadows={false}
-        frameloop="never"
+        frameloop={visible ? "always" : "never"}
         style={{ touchAction: "pan-y" }}
         onCreated={({ gl }) => {
           gl.toneMapping = THREE.ACESFilmicToneMapping;
@@ -976,7 +948,6 @@ export default function Experience({
           onReady();
         }}
       >
-        <StableFrameLoop running={visible} />
         <PerformanceMonitor
           ms={500}
           iterations={6}
