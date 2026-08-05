@@ -33,11 +33,13 @@ assets/journey/**
 !assets/journey/hover-the-edge/hover-loop.mp4
 !assets/journey/hover-the-edge/hover-story-v2-poster.jpg
 !assets/journey/hover-the-edge/hover-story-v2.mp4
+!assets/journey/hover-the-edge/hover-story-v2-web.mp4
 !assets/journey/flybox/
 !assets/journey/flybox/flybox-08s.jpg
 !assets/journey/flybox/flybox-loop.mp4
 !assets/journey/flybox/flybox-story-v2-poster.jpg
 !assets/journey/flybox/flybox-story-v2.mp4
+!assets/journey/flybox/flybox-story-v2-web.mp4
 !assets/journey/apps/
 !assets/journey/apps/lighthouse-feed-stories.webp
 !assets/journey/apps/lighthouse-feed-stories-3d.webp
@@ -48,4 +50,5 @@ assets/journey/**
 !assets/journey/apps/bitesync-settings-he.webp
 !assets/journey/apps/bitesync-settings-he-3d.webp
 !assets/journey/apps/bitesync-settings-de.webp
+!assets/journey/apps/bitesync-health-chat.webp
 !assets/journey/apps/bitesync-icon.webp

@@ -18,7 +18,7 @@
 
 html {
   background: var(--page);
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
   scroll-padding-top: 4.5rem;
 }
 
@@ -1097,7 +1097,6 @@ main,
 }
 
 .contact__ignite {
-  appearance: none;
   display: inline-flex;
   min-height: 2.75rem;
   align-items: center;
@@ -1113,8 +1112,6 @@ main,
   font-size: 0.57rem;
   letter-spacing: 0.09em;
   text-transform: uppercase;
-  pointer-events: auto;
-  cursor: pointer;
   transition: color 220ms ease, border-color 220ms ease, background 220ms ease, transform 220ms ease;
 }
 
@@ -1137,8 +1134,7 @@ main,
   color: var(--cyan);
 }
 
-.contact__ignite:hover,
-.contact__ignite[aria-pressed="true"] {
+.contact__ignite[data-connected="true"] {
   transform: translateY(-2px);
   border-color: rgba(var(--cyan-rgb), 0.72);
   color: var(--ink);

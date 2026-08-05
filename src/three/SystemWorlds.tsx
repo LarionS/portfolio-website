@@ -41,7 +41,6 @@ const FIRE = "#ff7a3c";
 const MEDICAL = "#ff5f78";
 
 const STATION_MODEL = {
-  clinicalDoctor: "/assets/models/stations/clinical-doctor.glb?v=3",
   clinicalInstructor: "/assets/models/stations/clinical-instructor.glb?v=2",
   clinicalPatient: "/assets/models/stations/clinical-patient.glb?v=4",
   clinicalHospital: "/assets/models/stations/clinical-hospital.glb",
@@ -430,7 +429,6 @@ function ClinicalPractitioner({
   compact?: boolean;
 }) {
   const root = useRef<THREE.Group>(null);
-  const modelScale = (kind === "doctor" ? 0.56 : 0.54) * (compact ? 0.82 : 1);
 
   useFrame(({ clock }, delta) => {
     if (!root.current) return;
@@ -457,20 +455,13 @@ function ClinicalPractitioner({
 
   return (
     <group ref={root}>
-      {kind === "instructor" ? (
-        <ArticulatedPerson accent={CLINICAL} response={response} compact={compact} />
-      ) : (
-        <WebModel url={STATION_MODEL.clinicalDoctor} scale={modelScale} />
-      )}
-      {hmd ? (
-        <group
-          position={[0, 1.53 * (compact ? 0.82 : 1), -0.2]}
-          rotation={[0, Math.PI, 0]}
-          scale={0.57 * (compact ? 0.82 : 1)}
-        >
-          <CleanHeadset accent={CLINICAL} />
-        </group>
-      ) : null}
+      <ArticulatedPerson
+        accent={CLINICAL}
+        hmd={hmd}
+        response={response}
+        role={kind === "doctor" ? "medical" : undefined}
+        compact={compact}
+      />
     </group>
   );
 }
@@ -757,7 +748,7 @@ function ClinicalBed({ phase }: { phase: ClinicalPhase }) {
       <RoundedBox args={[0.68, 0.2, 1.18]} radius={0.11} smoothness={3} position={[-1.78, 0.27, 0]} rotation={[0, 0, -0.08]}>
         <meshStandardMaterial color="#edf2ef" roughness={0.74} />
       </RoundedBox>
-      <group position={[-0.18, 0.36, 0]}>
+      <group position={[-0.18, 0.06, 0]}>
         <ClinicalPatient phase={phase} />
       </group>
       {[-0.9, 0.9].map((z) => (
@@ -1529,13 +1520,13 @@ function AmbulanceUnit({ active, mobile }: { active: boolean; mobile: boolean })
       beacon.current.intensity = THREE.MathUtils.damp(beacon.current.intensity, flash, 12, delta);
     }
     if (root.current) {
-      root.current.position.x = THREE.MathUtils.damp(root.current.position.x, active ? -0.24 : 0, 3.5, delta);
-      root.current.position.z = THREE.MathUtils.damp(root.current.position.z, active ? 0 : 2.15, 3.2, delta);
+      root.current.position.x = THREE.MathUtils.damp(root.current.position.x, active ? 1.1 : 0, 3.5, delta);
+      root.current.position.z = THREE.MathUtils.damp(root.current.position.z, active ? 0.3 : 2.4, 3.2, delta);
     }
   });
 
   return (
-    <group ref={root} position={[0, 0, 2.15]}>
+    <group ref={root} position={[0, 0, 2.4]}>
       <WebModel
         url={STATION_MODEL.ambulance}
         position={[4.35, -1.93, -3.42]}

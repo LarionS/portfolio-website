@@ -533,10 +533,8 @@ function ChapterSection({
 
 function ContactSection({
   assembled,
-  onAssemble,
 }: {
   assembled: boolean;
-  onAssemble: (assembled: boolean) => void;
 }) {
   return (
     <section
@@ -556,8 +554,6 @@ function ContactSection({
         <a
           className="contact__primary"
           href={contact.emailHref}
-          onPointerEnter={() => onAssemble(true)}
-          onFocus={() => onAssemble(true)}
         >
           <span>Direct project enquiry</span>
           <strong>Email Larion directly</strong>
@@ -567,16 +563,16 @@ function ContactSection({
         <a className="contact__secondary" href={contact.whatsapp} target="_blank" rel="noreferrer">
           Talk on WhatsApp <span aria-hidden="true">↗</span>
         </a>
-        <button
+        <div
           className="contact__ignite"
-          type="button"
-          aria-pressed={assembled}
-          onClick={() => onAssemble(!assembled)}
+          data-connected={assembled || undefined}
+          role="status"
+          aria-live="polite"
         >
           <i aria-hidden="true" />
-          {assembled ? "Training system connected" : "Connect the training system"}
-          <span aria-hidden="true">{assembled ? "✓" : "+"}</span>
-        </button>
+          {assembled ? "Training system connected" : "System standing by"}
+          <span aria-hidden="true">{assembled ? "✓" : "…"}</span>
+        </div>
       </article>
     </section>
   );
@@ -663,6 +659,30 @@ export default function App() {
     }
     const timeoutId = setTimeout(reveal, 120);
     return () => clearTimeout(timeoutId);
+  }, []);
+
+  useEffect(() => {
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const root = document.documentElement;
+      const remaining = root.scrollHeight - window.innerHeight - window.scrollY;
+      if (remaining > Math.max(24, window.innerHeight * 0.08)) return;
+      setSceneState((current) => current.contactAssembled
+        ? current
+        : { ...current, contactAssembled: true });
+    };
+    const requestUpdate = () => {
+      if (!frame) frame = window.requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", requestUpdate, { passive: true });
+    window.addEventListener("resize", requestUpdate, { passive: true });
+    return () => {
+      if (frame) window.cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", requestUpdate);
+      window.removeEventListener("resize", requestUpdate);
+    };
   }, []);
 
   useEffect(() => {
@@ -763,10 +783,7 @@ export default function App() {
             onUpdateScene={updateScene}
           />
         ))}
-        <ContactSection
-          assembled={sceneState.contactAssembled}
-          onAssemble={(contactAssembled) => updateScene({ contactAssembled })}
-        />
+        <ContactSection assembled={sceneState.contactAssembled} />
       </main>
       <Footer onJump={handleJump} />
     </div>

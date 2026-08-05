@@ -59,7 +59,7 @@ function useManagedVideo(
     video.loop = true;
     video.muted = true;
     video.playsInline = true;
-    video.preload = "none";
+    video.preload = "auto";
     video.controls = false;
     video.disablePictureInPicture = true;
     video.setAttribute("playsinline", "");
@@ -104,7 +104,7 @@ function useManagedVideo(
 
   useFrame((_, delta) => {
     requestPlayback(
-      proximityAt(progress, index) > 0.56 && !document.hidden,
+      Math.abs(progress.current - index) < 0.94 && !document.hidden,
     );
     resource.video.playbackRate = THREE.MathUtils.damp(
       resource.video.playbackRate || 1,
@@ -135,6 +135,10 @@ function useManagedVideo(
     resource.video.addEventListener("playing", handlePlaying);
     resource.video.addEventListener("timeupdate", handleReady);
     document.addEventListener("visibilitychange", handleVisibility);
+    if (url && !resource.video.src) {
+      resource.video.src = url;
+      resource.video.load();
+    }
 
     return () => {
       resource.video.removeEventListener("playing", handlePlaying);
@@ -148,7 +152,7 @@ function useManagedVideo(
       resource.video.load();
       resource.texture.dispose();
     };
-  }, [requestPlayback, resource]);
+  }, [requestPlayback, resource, url]);
 
   return { texture: resource.texture, ready };
 }

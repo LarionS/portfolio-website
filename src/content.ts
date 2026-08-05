@@ -1,10 +1,10 @@
 import hoverPoster from "../assets/journey/hover-the-edge/hover-story-v2-poster.jpg";
-import hoverVideo from "../assets/journey/hover-the-edge/hover-story-v2.mp4";
+import hoverVideo from "../assets/journey/hover-the-edge/hover-story-v2-web.mp4";
 import flyboxPoster from "../assets/journey/flybox/flybox-story-v2-poster.jpg";
-import flyboxVideo from "../assets/journey/flybox/flybox-story-v2.mp4";
-import lighthouseScreen from "../assets/journey/apps/lighthouse-feed-stories-3d.webp";
-import moneyNestScreen from "../assets/journey/apps/moneynest-home-3d.webp";
-import biteSyncScreen from "../assets/journey/apps/bitesync-settings-de.webp";
+import flyboxVideo from "../assets/journey/flybox/flybox-story-v2-web.mp4";
+import lighthouseScreen from "../assets/journey/apps/lighthouse-feed-stories.webp";
+import moneyNestScreen from "../assets/journey/apps/moneynest-home.webp";
+import biteSyncScreen from "../assets/journey/apps/bitesync-health-chat.webp";
 
 export type WorldKind =
   | "clinical"

@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 import type { MutableRefObject, ReactNode } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import {
   Environment,
   Float,
@@ -286,9 +286,9 @@ function sampleSegment(value: number) {
   const fraction = clamped - index;
   return {
     index,
-    // Thirty percent of either end is a true hold; the camera travels only
-    // through the authored middle beat.
-    blend: THREE.MathUtils.smoothstep(fraction, 0.3, 0.7),
+    // Preserve every pixel of wheel/trackpad input. Camera damping below gives
+    // the journey its authored ease without creating unresponsive dead zones.
+    blend: fraction,
   };
 }
 
@@ -410,23 +410,23 @@ function CameraDirector({
 function SceneGate({
   progress,
   index,
+  mountRadius = 0.5,
   children,
 }: {
   progress: MutableRefObject<number>;
   index: number;
+  mountRadius?: number;
   children: ReactNode;
 }) {
-  // A journey transition used to render both adjoining worlds for almost its
-  // entire duration. That doubled React frame callbacks and WebGL submissions
-  // on the browser's single render thread. Switch the authored world at the
-  // midpoint instead; the shared spine/atmosphere keeps the camera move
-  // continuous while exactly one expensive station is alive at a time.
-  const isNearestStation = () => Math.round(progress.current) === index;
-  const activeRef = useRef(isNearestStation());
+  // Keep one expensive visible station alive at a time. Film stations can opt
+  // into a wider mount radius so their media buffers before the screen appears;
+  // their root stays culled until its authored visibility range begins.
+  const shouldMount = () => Math.abs(progress.current - index) <= mountRadius;
+  const activeRef = useRef(shouldMount());
   const [active, setActive] = useState(activeRef.current);
 
   useFrame(() => {
-    const next = isNearestStation();
+    const next = shouldMount();
     if (next === activeRef.current) return;
     activeRef.current = next;
     setActive(next);
@@ -644,12 +644,10 @@ function ContactWorld({
   progress,
   mobile,
   assembled,
-  onToggle,
 }: {
   progress: MutableRefObject<number>;
   mobile: boolean;
   assembled: boolean;
-  onToggle: () => void;
 }) {
   const group = useRef<THREE.Group>(null);
   const modules = useRef<(THREE.Group | null)[]>([]);
@@ -669,7 +667,7 @@ function ContactWorld({
   const assembledPositions = useMemo(
     () => [
       new THREE.Vector3(3.18, 2.12, 0.33),
-      new THREE.Vector3(3.18, 0.68, 0.27),
+      new THREE.Vector3(3.18, 1.28, 0.27),
       new THREE.Vector3(3.62, 0.72, 0.25),
     ],
     [],
@@ -736,16 +734,6 @@ function ContactWorld({
       <group
         position={mobile ? [-2.58, 0.62, 0] : [-1.7, -0.05, 0]}
         scale={mobile ? 0.72 : 1}
-        onClick={(event) => {
-          event.stopPropagation();
-          onToggle();
-        }}
-        onPointerEnter={() => {
-          document.body.style.cursor = "pointer";
-        }}
-        onPointerLeave={() => {
-          document.body.style.cursor = "";
-        }}
       >
         <group position={[-0.28, -1.28, 0.08]}>
           <RoundedBox args={[1.92, 0.18, 1.08]} radius={0.09} smoothness={3}>
@@ -829,9 +817,9 @@ function ContactWorld({
           </RoundedBox>
         </group>
         <Line points={[[-0.28, -0.62, 0.1], [1.3, 0.25, 0.12], [3.18, 2.12, 0.31]]} color="#72efff" lineWidth={2} transparent opacity={assembled ? 0.75 : 0.08} dashed dashSize={0.15} gapSize={0.12} />
-        <Line points={[[-0.28, -0.62, 0.1], [1.5, -0.2, 0.12], [3.18, 0.68, 0.25]]} color="#72efff" lineWidth={2} transparent opacity={assembled ? 0.72 : 0.08} dashed dashSize={0.15} gapSize={0.12} />
+        <Line points={[[-0.28, -0.62, 0.1], [1.5, 0.2, 0.12], [3.18, 1.28, 0.25]]} color="#72efff" lineWidth={2} transparent opacity={assembled ? 0.72 : 0.08} dashed dashSize={0.15} gapSize={0.12} />
         <Line points={[[-0.28, -0.62, 0.1], [2.0, -0.1, 0.12], [3.62, 0.72, 0.25]]} color="#72efff" lineWidth={2} transparent opacity={assembled ? 0.72 : 0.08} dashed dashSize={0.15} gapSize={0.12} />
-        <mesh ref={pulse} position={[3.18, 0.68, -0.05]}>
+        <mesh ref={pulse} position={[3.18, 1.28, -0.05]}>
           <ringGeometry args={[0.92, 0.96, 72]} />
           <meshBasicMaterial ref={pulseMaterial} color={cyan} transparent opacity={0} toneMapped={false} depthWrite={false} />
         </mesh>
@@ -880,18 +868,43 @@ function World({
       <SceneGate progress={progress} index={3}>
         <Suspense fallback={null}><EmergencySystemWorld progress={progress} index={3} position={WORLD_POSITIONS[3]} mobile={mobile} step={sceneState.emergencyStep} onAdvance={() => onUpdateScene({ emergencyStep: sceneState.emergencyStep >= 3 ? 0 : sceneState.emergencyStep + 1 })} /></Suspense>
       </SceneGate>
-      <SceneGate progress={progress} index={4}>
+      <SceneGate progress={progress} index={4} mountRadius={1.25}>
         <Suspense fallback={null}><HoverWorld progress={progress} index={4} position={WORLD_POSITIONS[4]} mobile={mobile} videoUrl={hoverVideo} posterUrl={hoverPoster} active={sceneState.hoverBoost} onActiveChange={(hoverBoost: boolean) => onUpdateScene({ hoverBoost })} /></Suspense>
       </SceneGate>
-      <SceneGate progress={progress} index={5}>
+      <SceneGate progress={progress} index={5} mountRadius={1.25}>
         <Suspense fallback={null}><FlyboxWorld progress={progress} index={5} position={WORLD_POSITIONS[5]} mobile={mobile} videoUrl={flyboxVideo} posterUrl={flyboxPoster} active={sceneState.flyboxActive} onActiveChange={(flyboxActive: boolean) => onUpdateScene({ flyboxActive })} /></Suspense>
       </SceneGate>
       <SceneGate progress={progress} index={6}>
         <Suspense fallback={null}><MobileWorld progress={progress} index={6} position={WORLD_POSITIONS[6]} mobile={mobile} screens={mobileProducts.map((product) => product.screen)} focused={sceneState.mobileFocus} onFocus={(mobileFocus: number) => onUpdateScene({ mobileFocus })} /></Suspense>
       </SceneGate>
-      <SceneGate progress={progress} index={7}><ContactWorld progress={progress} mobile={mobile} assembled={sceneState.contactAssembled} onToggle={() => onUpdateScene({ contactAssembled: !sceneState.contactAssembled })} /></SceneGate>
+      <SceneGate progress={progress} index={7}><ContactWorld progress={progress} mobile={mobile} assembled={sceneState.contactAssembled} /></SceneGate>
     </>
   );
+}
+
+const FRAME_INTERVAL = 1000 / 60;
+
+function StableFrameLoop({ running }: { running: boolean }) {
+  const advance = useThree((state) => state.advance);
+
+  useEffect(() => {
+    if (!running) return;
+    let frame = 0;
+    let lastFrame = performance.now() - FRAME_INTERVAL;
+
+    const tick = (now: number) => {
+      frame = window.requestAnimationFrame(tick);
+      const elapsed = now - lastFrame;
+      if (elapsed < FRAME_INTERVAL - 1) return;
+      lastFrame = now - (elapsed % FRAME_INTERVAL);
+      advance(now, true);
+    };
+
+    frame = window.requestAnimationFrame(tick);
+    return () => window.cancelAnimationFrame(frame);
+  }, [advance, running]);
+
+  return null;
 }
 
 export default function Experience({
@@ -950,7 +963,7 @@ export default function Experience({
           powerPreference: "high-performance",
         }}
         shadows={false}
-        frameloop={visible ? "always" : "never"}
+        frameloop="never"
         style={{ touchAction: "pan-y" }}
         onCreated={({ gl }) => {
           gl.toneMapping = THREE.ACESFilmicToneMapping;
@@ -963,6 +976,7 @@ export default function Experience({
           onReady();
         }}
       >
+        <StableFrameLoop running={visible} />
         <PerformanceMonitor
           ms={500}
           iterations={6}
