@@ -31,7 +31,7 @@ import biteSync from "../assets/journey/apps/bitesync-health-chat.webp";
 
 const contact = {
   email: "mailto:Larion1@gmail.com?subject=New%20Playframe%20project",
-  whatsapp: "https://wa.me/972922470654",
+  whatsapp: "https://wa.me/972504931021",
 };
 
 const ease = [0.22, 1, 0.36, 1] as const;
