@@ -12,7 +12,7 @@ type SimulationAtmosphereProps = {
 const JOURNEY_COLORS = [
   new THREE.Color("#74ecff"),
   new THREE.Color("#74ecff"),
-  new THREE.Color("#d7ff4f"),
+  new THREE.Color("#5d76ff"),
   new THREE.Color("#ff7a3c"),
   new THREE.Color("#71fff0"),
   new THREE.Color("#f5c65c"),

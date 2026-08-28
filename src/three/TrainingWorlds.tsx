@@ -32,7 +32,7 @@ export type EmergencyWorldProps = TrainingWorldProps & {
 };
 
 const CLINICAL = "#74ecff";
-const DEFENSE = "#d7ff4f";
+const DEFENSE = "#5d76ff";
 const EMERGENCY = "#ff713f";
 const GRAPHITE = "#080d12";
 const DARK_METAL = "#101820";
@@ -1121,7 +1121,7 @@ function InstructorConsole({
           <group position={[-0.82 + (unitIndex % 3) * 0.82, 0.24 - Math.floor(unitIndex / 3) * 0.48, 0.13]} key={unitIndex}>
             <RoundedBox args={[0.62, 0.28, 0.02]} radius={0.025} smoothness={2}>
               <meshStandardMaterial
-                color={unitIndex === selectedNode ? "#d7ff4f" : "#253029"}
+                color={unitIndex === selectedNode ? "#5d76ff" : "#253029"}
                 emissive={unitIndex === selectedNode ? DEFENSE : "#101410"}
                 emissiveIntensity={unitIndex === selectedNode ? 0.9 : 0.08}
                 roughness={0.42}

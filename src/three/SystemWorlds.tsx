@@ -34,7 +34,7 @@ type EmergencySystemWorldProps = SharedWorldProps & {
 };
 
 const CLINICAL = "#72efff";
-const CONNECTED = "#d7ff4f";
+const CONNECTED = "#5d76ff";
 const RETURN = "#79ddff";
 const POLICE = "#4db8ff";
 const FIRE = "#ff7a3c";

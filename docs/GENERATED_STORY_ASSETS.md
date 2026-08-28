@@ -36,7 +36,7 @@ Scene/backdrop: premium purpose-built indoor training facility with a visible gl
 Subject: six adult VR trainees in a coordinated formation, each clearly distinct and connected by restrained light paths; foreground instructor operating both a PC dashboard and tablet; one trainee’s wrist wearable visibly emits a pulse trace; another uses a generic tracked training rifle; tactile haptic vest panels glow subtly at impact points; telemetry paths visibly return from the team to the instructor
 Style/medium: photorealistic cinematic technology campaign still, sophisticated and believable, near-future but grounded
 Composition/framing: wide 16:9 architectural scene, instructor in near foreground at one side, all six trainees readable in middle depth, data/biometric return loop visually closes the composition; one cohesive space, not a collage or split-screen
-Lighting/mood: low-key graphite and military olive with disciplined lime telemetry accents, crisp rim light, controlled contrast
+Lighting/mood: low-key graphite and military olive with disciplined ultramarine telemetry accents, crisp rim light, controlled contrast
 Materials/textures: real training floor, matte protective equipment, glass, fabric haptic vest, physical controllers
 Constraints: fictional/unbranded training system, no military insignia, no national symbols, no readable text, no logos, no floating UI cards, no combat violence, no watermark; cross-device cause-and-effect must be visually obvious
 Avoid: lone soldier portrait, generic shooter screenshot, cyberpunk neon, explosions, toy weapons, empty dark image
