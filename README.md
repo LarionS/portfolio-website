@@ -16,7 +16,11 @@ npm install
 npm run dev
 ```
 
-Create a production build with `npm run build`.
+Create a production build with `npm run build`, then run `npm test`.
+
+## VR template collection
+
+The homepage showcases five VR vehicle templates. `/templates/` contains the catalogue, with an individual page for each product. These pages are pre-rendered at build time for direct visits, search indexing and link previews. Edit `src/templates.json` for content and public demo/Fab links. See [collection documentation](docs/VR_TEMPLATE_COLLECTION.md) for media sources and maintenance.
 
 ## Deploy
 

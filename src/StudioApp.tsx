@@ -16,6 +16,8 @@ import flyboxVideo from "../assets/journey/flybox/flybox-story-v2-web.mp4";
 import lighthouse from "../assets/journey/apps/lighthouse-feed-stories.webp";
 import moneyNest from "../assets/journey/apps/moneynest-home.webp";
 import biteSync from "../assets/journey/apps/bitesync-health-chat.webp";
+import { TemplateShowcase } from "./Templates";
+import "./templates.css";
 
 const EMAIL = "Larion1@gmail.com";
 const WHATSAPP = "https://wa.me/972504931021";
@@ -60,12 +62,12 @@ function Header() {
     <header className={`site-header${scrolled ? " is-scrolled" : ""}`}>
       <a href="#top" aria-label="Playframe home"><Brand /></a>
       <span className="header-studio">Independent studio.<br />Unreal possibilities.</span>
-      <nav className="desktop-nav" aria-label="Main navigation"><a href="#work">Selected work <span>01</span></a><a href="#expertise">Our expertise <span>02</span></a><a className="nav-contact" href="#contact">Let’s talk <ArrowUpRight aria-hidden="true" /></a></nav>
+      <nav className="desktop-nav" aria-label="Main navigation"><a href="/templates/">VR templates <span>05</span></a><a href="#work">Selected work <span>01</span></a><a href="#expertise">Our expertise <span>02</span></a><a className="nav-contact" href="#contact">Let’s talk <ArrowUpRight aria-hidden="true" /></a></nav>
       <button className="mobile-menu-button" type="button" aria-label="Open navigation" aria-expanded={menuOpen} aria-controls="mobile-menu" onClick={() => { menu.current?.showModal(); setMenuOpen(true); }}><List /></button>
     </header>
     <dialog id="mobile-menu" className="menu-dialog" ref={menu} onClose={() => setMenuOpen(false)}>
       <div className="menu-inner"><div className="menu-top"><Brand /><button className="icon-button" type="button" onClick={close} aria-label="Close navigation"><X /></button></div>
-        <nav aria-label="Mobile navigation"><a href="#work" onClick={close}><span>01</span>Selected work<ArrowUpRight /></a><a href="#expertise" onClick={close}><span>02</span>Our expertise<ArrowUpRight /></a><a href="#contact" onClick={close}><span>03</span>Let’s talk<ArrowUpRight /></a></nav>
+        <nav aria-label="Mobile navigation"><a href="/templates/" onClick={close}><span>05</span>VR templates<ArrowUpRight /></a><a href="#work" onClick={close}><span>01</span>Selected work<ArrowUpRight /></a><a href="#expertise" onClick={close}><span>02</span>Our expertise<ArrowUpRight /></a><a href="#contact" onClick={close}><span>03</span>Let’s talk<ArrowUpRight /></a></nav>
         <a className="menu-email" href={`mailto:${EMAIL}`}>{EMAIL}</a>
       </div>
     </dialog>
@@ -78,7 +80,7 @@ function Hero() {
     <motion.div className="hero-image" initial={reduced ? false : { scale: 1.035 }} animate={{ scale: 1 }} transition={{ duration: 1.8, ease }}><Picture src={hero} small={heroSmall} alt="Original visualization of a VR participant wearing a haptic vest, between a physical training stage and a virtual architectural world" eager /></motion.div>
     <div className="hero-shade" />
     <div className="hero-content"><motion.div initial={reduced ? false : { opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.85, delay: 0.12, ease }}>
-      <Label light>Unreal Engine / VR / Connected systems</Label><h2>Virtual worlds.<br />Real-world impact.</h2><p>We build immersive training and interactive experiences that connect people, software and the physical world.</p><a className="hero-link" href="#work">Explore our work <span><ArrowDown weight="bold" aria-hidden="true" /></span></a>
+      <Label light>Unreal Engine / VR / Connected systems</Label><h2>Virtual worlds.<br />Real-world impact.</h2><p>We build immersive training and interactive experiences that connect people, software and the physical world.</p><div className="hero-actions"><a className="hero-link" href="#work">Explore our work <span><ArrowDown weight="bold" aria-hidden="true" /></span></a><a className="hero-template-link" href="/templates/">Explore VR templates <ArrowUpRight aria-hidden="true" /></a></div>
     </motion.div></div>
     <div className="hero-bottom"><motion.h1 id="hero-title" initial={reduced ? false : { opacity: 0, y: 35 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.25, ease }}>PLAYFRAME</motion.h1><div className="hero-baseline"><span>From the first frame. To the real world.</span><span>Original studio visualization</span><a href="#work" aria-label="Scroll to selected work">Scroll to explore <ArrowDown aria-hidden="true" /></a></div></div>
   </section>;
@@ -205,5 +207,5 @@ function FilmDialog({ film, onClose }: { film: Film | null; onClose: () => void 
 }
 export default function StudioApp() {
   const [project, setProject] = useState<Project | null>(null); const [film, setFilm] = useState<Film | null>(null);
-  return <><Header /><main id="main"><Hero /><Work onSelect={setProject} /><SystemSection /><Experiences onFilm={setFilm} filmOpen={Boolean(film)} /><Products /><Studio /></main><Contact /><ProjectDialog project={project} onClose={() => setProject(null)} /><FilmDialog film={film} onClose={() => setFilm(null)} /></>;
+  return <><Header /><main id="main"><Hero /><TemplateShowcase /><Work onSelect={setProject} /><SystemSection /><Experiences onFilm={setFilm} filmOpen={Boolean(film)} /><Products /><Studio /></main><Contact /><ProjectDialog project={project} onClose={() => setProject(null)} /><FilmDialog film={film} onClose={() => setFilm(null)} /></>;
 }

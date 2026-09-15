@@ -6,7 +6,7 @@
   "scripts": {
     "test": "node --test tests/*.test.mjs",
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && vite build --ssr src/templates-render.tsx --outDir .ssr && node scripts/prerender-templates.mjs",
     "preview": "vite preview",
     "typecheck": "tsc -b"
   },
