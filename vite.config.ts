@@ -7,7 +7,7 @@ export default defineConfig(({ isSsrBuild }) => ({
     configureServer(server) {
       server.middlewares.use((req, _res, next) => {
         const request = req as typeof req & { url?: string };
-        if (request.url?.split("?")[0].match(/^\/templates(?:\/[^/.]+)?\/?$/)) request.url = "/templates.html";
+        if (request.url?.split("?")[0].match(/^\/(?:templates|guides)(?:\/[^/.]+)?\/?$/)) request.url = "/templates.html";
         next();
       });
     },

@@ -140,3 +140,37 @@
  .template-film {padding-block:50px;}
 }
 @media(prefers-reduced-motion:reduce) { .cinema-background {animation:none;} }
+
+/* Practical field notes */
+.guide-heading {padding-block:80px 55px;background:var(--ink);color:var(--paper);}
+.guide-heading h1 {font-size:clamp(55px,7vw,100px);line-height:.98;letter-spacing:-.06em;font-weight:480;margin-top:28px;}
+.guide-heading > p:not(.cinema-eyebrow) {font-size:20px;line-height:1.6;max-width:750px;margin-top:30px;color:#c2cce0;}
+.guide-heading > span {display:block;font:10px var(--mono);margin-top:30px;color:#a9b8d2;}
+.guide-image {background:var(--ink);color:#bac7dc;padding-bottom:25px;}
+.guide-image img {width:100%;height:auto;max-height:660px;object-fit:contain;}
+.guide-image figcaption {font:10px/1.6 var(--mono);padding-top:15px;}
+.guide-body {display:grid;grid-template-columns:240px minmax(0,760px);justify-content:space-between;gap:70px;padding-block:70px 100px;}
+.guide-body aside {display:flex;flex-direction:column;gap:18px;align-self:start;position:sticky;top:40px;font:11px/1.6 var(--mono);}
+.guide-body aside > span {color:#65718b;margin-bottom:15px;}
+.guide-body aside a:hover {color:#3651c1;}
+.guide-body article {font-size:17px;line-height:1.8;color:#515c70;}
+.guide-body article p {margin-bottom:20px;}
+.guide-lead {font-size:22px;line-height:1.6;color:var(--ink);}
+.guide-body article section {padding-top:40px;scroll-margin-top:30px;}
+.guide-body h2 {font-size:34px;line-height:1.15;font-weight:500;letter-spacing:-.04em;color:var(--ink);margin-bottom:25px;}
+.guide-body li {margin-bottom:12px;padding-left:6px;}
+.guide-body strong {color:#222c40;font-weight:600;}
+.guide-body article a:not(.vehicle-button):not(.text-link) {text-decoration:underline;text-underline-offset:3px;color:#324eaf;}
+.guide-body code {font:12px/1.8 var(--mono);background:#e3e8f1;padding:3px 5px;overflow-wrap:anywhere;}
+.guide-table {overflow:auto;margin-block:25px;}
+.guide-table table {border-collapse:collapse;width:100%;font-size:15px;line-height:1.6;}
+.guide-table th,.guide-table td {text-align:left;vertical-align:top;padding:16px 15px;border-bottom:1px solid var(--line);}
+.guide-table th {color:#263552;background:#e7ecf4;}
+.guide-body .guide-next {border-top:1px solid var(--line);margin-top:40px;padding-top:40px;}
+.guide-next .text-link {display:flex;margin-top:15px;}
+.guide-body .guide-source {font-size:12px;line-height:1.7;margin-top:35px;}
+.guide-teaser {display:flex;align-items:center;justify-content:space-between;gap:40px;padding-block:70px;background:#e7ecf5;}
+.guide-teaser h2 {font-size:clamp(32px,4vw,54px);letter-spacing:-.04em;font-weight:500;margin-block:18px;}
+.guide-teaser p:not(.eyebrow) {font-size:17px;line-height:1.6;color:var(--muted);}
+.guide-teaser .text-link {flex-shrink:0;}
+@media(max-width:760px){.guide-heading{padding-block:50px 35px}.guide-heading>p:not(.cinema-eyebrow){font-size:17px}.guide-body{display:block;padding-block:40px 55px}.guide-body aside{position:static;margin-bottom:40px;gap:13px}.guide-body article{font-size:16px}.guide-lead{font-size:20px}.guide-body h2{font-size:29px}.guide-table th,.guide-table td{padding:12px 8px;font-size:13px}.guide-teaser{display:block;padding-block:45px}.guide-teaser .text-link{margin-top:20px}}
