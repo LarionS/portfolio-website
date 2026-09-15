@@ -16,7 +16,7 @@ All public uploads passed YouTube copyright and Community Guidelines checks. Eve
 | --- | --- | --- |
 | Car | https://youtu.be/JnTo5XPL8ko | https://youtube.com/shorts/8ujy8p0r0hg |
 | Helicopter | https://youtu.be/5PqqxCEhoAw | https://youtube.com/shorts/X6CTz2UU4p4 |
-| Boat | https://youtu.be/KtkBk-s5Tfg | https://youtube.com/shorts/1w408qhTVUw |
+| Boat | https://youtu.be/gC7DcqAs-vs | https://youtube.com/shorts/1w408qhTVUw |
 | Jet ski | https://youtu.be/p5Cd5F0QjrI | — |
 
 - Channel: Playframe Vault, UCmFhlNOR4c1TQw2OYluPFSg.
@@ -47,3 +47,7 @@ All public uploads passed YouTube copyright and Community Guidelines checks. Eve
 2. Compare clip retention and visits by UTM campaign. Use Fab/demo clicks as interest signals, not purchase counts: checkout occurs on Fab.
 3. Create the next practical guide around helicopter collective/cyclic setup or boat buoyancy, informed by observed interest.
 4. Keep future clips focused on one physical interaction per video. Add a clear route from the channel profile to the collection.
+
+## Boat trailer correction
+- Source: VRBoat/Trailer_Edit_20260914/VRBoat_Trailer_1.0.1_Fab_Edited.mp4 (63.5 seconds), SHA256 51e3f401a4cf42568dd1ab8451e319914e3962bfc17582d2bd55588c2c73bf51.
+- Replaces the old 70.5-second website source and YouTube trailer KtkBk-s5Tfg. Distinct website filename prevents stale cached media.
