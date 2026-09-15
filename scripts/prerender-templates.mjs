@@ -10,8 +10,8 @@ const paths = ['/'];
 for (const item of [null, ...templates]) {
   const path = item ? `/templates/${item.slug}/` : '/templates/';
   const title = item ? `${item.name} for Unreal Engine | Playframe` : 'VR Vehicle Templates for Unreal Engine | Playframe';
-  const description = item ? item.summary : 'Explore five Unreal Engine 5.8 VR vehicle templates: boat, helicopter, car, jet ski and motorcycle. See actual product galleries, try demos and read the guides.';
-  const image = `${origin}/assets/templates/${item?.image || 'boat-hero'}.webp`;
+  const description = item ? item.summary : 'Explore five Unreal Engine 5.8 VR vehicle templates: car, helicopter, boat, jet ski and motorcycle. See actual product galleries, try demos and read the guides.';
+  const image = `${origin}/assets/templates/${item?.image || 'car-hero'}.webp`;
   const schema = item ? {
     '@context':'https://schema.org','@type':'SoftwareApplication',name:item.name,url:origin+path,
     description:item.summary,applicationCategory:'DeveloperApplication',operatingSystem:'Windows, Android',

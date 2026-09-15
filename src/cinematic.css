@@ -1,0 +1,142 @@
+.cinema-hero { position:relative; isolation:isolate; min-height:950px; height:min(1100px, max(850px, 100svh)); color:#fff; background:var(--ink); display:flex; flex-direction:column; justify-content:space-between; overflow:hidden; }
+.cinema-background { position:absolute; inset:0; z-index:-2; animation:cinema-enter .65s ease both; }
+.campaign-image { width:100%; height:100%; object-fit:cover; object-position:72% center; }
+.cinema-copy { padding-top:180px; padding-bottom:60px; }
+.cinema-eyebrow { font:500 11px/1.6 var(--mono); letter-spacing:.075em; text-transform:uppercase; color:#d1dcf0; }
+.cinema-eyebrow span { margin-inline:12px; color:#9eaeca; }
+.cinema-copy h1,.cinema-copy h2 { font-size:clamp(74px,9vw,138px); font-weight:470; letter-spacing:-.064em; line-height:.96; margin-top:38px; max-width:980px; text-shadow:0 2px 30px #07091330; }
+.cinema-description { font:400 16px/1.8 var(--mono); letter-spacing:-.03em; margin-top:28px; max-width:640px; }
+.cinema-actions { display:flex; align-items:center; gap:30px; margin-top:32px; }
+.cinema-button { display:inline-flex; align-items:center; justify-content:space-between; gap:32px; background:var(--paper); color:var(--ink); min-height:54px; padding:16px 22px; font-size:16px; font-weight:560; transition:background .2s; }
+.cinema-button:hover { background:#bccaff; }
+.cinema-button svg { width:20px; height:20px; }
+.cinema-play { display:inline-flex; gap:13px; align-items:center; font:13px/1.6 var(--mono); min-height:48px; }
+.cinema-play svg { width:34px; height:34px; border:1px solid #d8e2f090; border-radius:50%; padding:8px; }
+.cinema-bottom { padding-bottom:27px; background:#07091366; }
+.cinema-art-note { font:10px/1.6 var(--mono); color:#c5cfde; padding-block:14px 20px; }
+.cinema-tabs { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:18px; max-width:1150px; }
+.cinema-tabs button { padding:0 0 12px; color:#fff; border-bottom:3px solid #ffffff38; text-align:left; opacity:.74; transition:opacity .2s,border-color .2s; }
+.cinema-tabs button[aria-selected=true],.cinema-tabs button:hover { opacity:1; border-color:var(--blue); }
+.cinema-tabs img { width:100%; height:clamp(68px,6.5vw,98px); object-fit:cover; object-position:70% center; border:1px solid #ffffff40; }
+.cinema-tabs button[aria-selected=true] img { border-color:#fff; }
+.cinema-tabs span { display:flex; align-items:center; gap:13px; font:12px/1.5 var(--mono); padding-top:9px; }
+.cinema-tabs small { font-size:9px; opacity:.65; }
+.cinema-baseline { display:flex; justify-content:space-between; align-items:center; padding-top:18px; gap:20px; font:10px/1.5 var(--mono); color:#c1cada; }
+.cinema-baseline a { display:flex; gap:15px; align-items:center; color:white; min-height:30px; }
+.cinema-home { height:auto; min-height:900px; }
+.cinema-home .cinema-copy { padding-top:100px; }
+.template-header.cinema-header { position:absolute; top:0; left:0; width:100%; z-index:5; color:#fff; border:0; padding-block:27px; }
+.cinema-header nav a[aria-current] { color:#fff; }
+.cinema-header .template-header-fab { border:1px solid #ffffff80; padding:10px 18px; }
+.cinema-gameplay { padding-block:85px 75px; background:var(--paper); }
+.cinema-editorial-heading { display:flex; align-items:end; justify-content:space-between; gap:50px; margin-bottom:40px; }
+.cinema-editorial-heading h2 { font-size:clamp(58px,7.3vw,112px); line-height:.94; font-weight:520; letter-spacing:-.065em; }
+.cinema-editorial-heading > div { max-width:390px; padding-bottom:5px; }
+.cinema-editorial-heading p { font-size:18px; line-height:1.6; color:var(--muted); }
+.cinema-editorial-heading > div > span { display:block; font:10px/1.6 var(--mono); color:#4b5e83; text-transform:uppercase; margin-top:21px; }
+.cinema-film { position:relative; background:var(--ink); }
+.cinema-film video,.cinema-film > a > img { width:100%; aspect-ratio:16/8; object-fit:contain; max-height:740px; }
+.cinema-film-toggle { position:absolute; left:25px; bottom:70px; display:inline-flex; align-items:center; gap:12px; min-height:44px; padding:12px 17px; color:white; background:#070913c9; font:12px var(--mono); border:1px solid #ffffff70; }
+.cinema-film-toggle svg { width:19px; height:19px; }
+.cinema-film-foot { display:flex; justify-content:space-between; align-items:start; gap:25px; margin-top:16px; }
+.cinema-film-foot p { max-width:730px; font:11px/1.7 var(--mono); color:var(--muted); }
+.cinema-film-foot a { white-space:nowrap; display:flex; align-items:center; gap:16px; font-size:14px; min-height:30px; }
+.cinema-text-tabs { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:28px; margin-top:44px; }
+.cinema-text-tabs button { display:flex; gap:20px; padding:16px 0; border-bottom:1px solid #c6cedc; font:12px var(--mono); text-align:left; }
+.cinema-text-tabs small { font-size:10px; color:#71809b; }
+.cinema-text-tabs [aria-selected=true] { color:#324bba; border-bottom:3px solid var(--blue); }
+.cinema-credit { margin-top:20px; color:var(--muted); font-size:11px; line-height:1.6; }
+.cinema-credit a { text-decoration:underline; }
+.collection-title { display:flex; justify-content:space-between; align-items:end; gap:30px; padding-block:60px 45px; background:var(--ink); color:var(--paper); }
+.collection-title h2 { font-size:clamp(42px,5vw,74px); line-height:1; font-weight:480; letter-spacing:-.055em; }
+.collection-title p { font:11px/1.8 var(--mono); max-width:300px; color:#abb8cf; }
+.catalogue-grid { display:block; padding:0; background:var(--ink); }
+.catalogue-card,.catalogue-featured { display:grid; grid-template-columns:1.65fr 1fr; grid-column:auto; background:var(--ink); color:var(--paper); border-top:1px solid #ffffff25; }
+.catalogue-card:nth-child(even) { grid-template-columns:1fr 1.65fr; }
+.catalogue-card:nth-child(even) .catalogue-image { order:2; }
+.catalogue-card .catalogue-image { min-height:400px; aspect-ratio:auto; }
+.catalogue-card .catalogue-image > img { width:100%; height:100%; object-fit:cover; }
+.catalogue-card-copy,.catalogue-featured .catalogue-card-copy { align-self:center; padding:clamp(28px,4vw,64px); }
+.catalogue-card h2 { font-size:clamp(31px,3.1vw,50px); }
+.catalogue-card .vehicle-category,.catalogue-card-copy > p { color:#acbbd3; }
+.catalogue-card .template-tags { display:none; }
+.catalogue-card .text-link { margin-top:24px; }
+.catalogue-image-arrow { display:none; }
+.catalogue-image .vehicle-media-label { top:auto; bottom:15px; left:20px; right:auto; background:#070913b0; }
+.template-principles { background:var(--paper); padding-block:95px; border-bottom:1px solid var(--line); }
+.product-campaign { position:relative; isolation:isolate; min-height:850px; color:#fff; background:var(--ink); display:flex; flex-direction:column; justify-content:end; }
+.product-campaign > img { position:absolute; inset:0; z-index:-2; }
+.product-campaign-copy { padding-top:155px; padding-bottom:65px; max-width:820px; }
+.product-collection-link { display:block; font:11px var(--mono); margin-bottom:60px; color:#c0cce0; }
+.product-campaign h1 { font-size:clamp(65px,7.2vw,108px); line-height:.95; font-weight:470; letter-spacing:-.065em; margin-top:25px; }
+.product-campaign-copy > p:not(.cinema-eyebrow) { margin-top:28px; font-size:18px; line-height:1.6; max-width:500px; }
+.product-price-note { display:block; font:10px var(--mono); color:#c0cbe0; margin-top:18px; }
+.product-art-note { padding-block:16px; font:10px/1.6 var(--mono); color:#c2ccdc; background:#07091366; }
+.template-overview { padding-block:90px 50px; }
+.template-gallery { background:#e9edf4; }
+.template-gallery-grid { gap:40px; }
+.template-film { background:var(--ink); color:var(--paper); padding-block:85px; }
+.template-film .template-media-note,.template-film-caption { color:#bac6db; }
+.template-downloads { border-top:1px solid #ffffff25; }
+@keyframes cinema-enter { from {opacity:.5;transform:scale(1.015)} to {opacity:1;transform:scale(1)} }
+@media(min-width:1700px) { .cinema-copy {padding-top:185px;} }
+@media(max-width:900px) { .cinema-editorial-heading {gap:25px;} .cinema-editorial-heading p {font-size:16px;} .cinema-tabs span {gap:7px;} .cinema-tabs small {display:none;} }
+@media(max-width:760px) {
+ .cinema-hero {min-height:800px;height:100svh;max-height:950px;}
+ .cinema-background .campaign-image {object-position:64% center;filter:brightness(.75);}
+ .cinema-copy {padding-top:140px;padding-bottom:60px;}
+ .cinema-copy h1,.cinema-copy h2 {font-size:clamp(52px,11.8vw,83px);margin-top:25px;line-height:.98;}
+ .cinema-eyebrow {font-size:9px;letter-spacing:.035em;}
+ .cinema-eyebrow span {margin-inline:5px;}
+ .cinema-description {font-size:11px;line-height:1.8;margin-top:22px;max-width:345px;}
+ .cinema-actions {gap:16px;flex-wrap:wrap;margin-top:25px;}
+ .cinema-button {font-size:14px;padding:14px 17px;gap:22px;min-height:48px;}
+ .cinema-play {font-size:10px;gap:8px;}
+ .cinema-play svg {width:29px;height:29px;padding:7px;}
+ .cinema-bottom {padding-bottom:18px;}
+ .cinema-art-note {font-size:8px;padding-block:12px;}
+ .cinema-tabs {gap:8px;}
+ .cinema-tabs img {height:46px;}
+ .cinema-tabs span {font:9px/1.5 var(--mono);padding-top:8px;}
+ .cinema-tabs button {padding-bottom:10px;}
+ .cinema-baseline {font-size:8px;align-items:start;gap:15px;padding-top:13px;}
+ .cinema-baseline > span {max-width:140px;}
+ .cinema-baseline a {font-size:8px;gap:7px;min-height:24px;}
+ .template-header.cinema-header {padding-block:19px;}
+ .cinema-home {min-height:750px;height:auto;}
+ .cinema-home .cinema-copy {padding-top:70px;}
+ .cinema-gameplay {padding-block:55px;}
+ .cinema-editorial-heading {display:block;margin-bottom:28px;}
+ .cinema-editorial-heading h2 {font-size:clamp(52px,12vw,76px);}
+ .cinema-editorial-heading > div {margin-top:25px;}
+ .cinema-editorial-heading p {font-size:16px;}
+ .cinema-editorial-heading > div > span {font-size:9px;margin-top:15px;}
+ .cinema-film {margin-inline:calc(-1 * var(--gutter));}
+ .cinema-film video,.cinema-film > a > img {aspect-ratio:16/10;}
+ .cinema-film-toggle {left:15px;bottom:52px;font-size:10px;padding:9px 12px;min-height:38px;}
+ .cinema-film-foot {display:block;}
+ .cinema-film-foot p {font-size:9px;}
+ .cinema-film-foot a {font-size:12px;margin-top:8px;}
+ .cinema-text-tabs {gap:9px;margin-top:24px;}
+ .cinema-text-tabs button {font-size:9px;display:block;line-height:1.6;}
+ .cinema-text-tabs small {display:block;margin-bottom:7px;}
+ .collection-title {display:block;padding-block:45px 30px;}
+ .collection-title p {margin-top:20px;}
+ .catalogue-card,.catalogue-featured,.catalogue-card:nth-child(even) {display:flex;flex-direction:column;}
+ .catalogue-card:nth-child(even) .catalogue-image {order:0;}
+ .catalogue-card .catalogue-image {min-height:0;aspect-ratio:16/10;}
+ .catalogue-card-copy,.catalogue-featured .catalogue-card-copy {padding:28px var(--gutter) 42px;align-self:stretch;}
+ .catalogue-card h2 {font-size:34px;}
+ .catalogue-card .vehicle-media-label {font-size:8px;}
+ .template-principles {padding-block:50px;}
+ .product-campaign {min-height:800px;}
+ .product-campaign > img {object-position:65% center;filter:brightness(.6);}
+ .product-campaign-copy {padding-top:125px;padding-bottom:45px;}
+ .product-collection-link {margin-bottom:90px;font-size:10px;}
+ .product-campaign h1 {font-size:clamp(54px,12vw,80px);}
+ .product-campaign-copy > p:not(.cinema-eyebrow) {font-size:16px;}
+ .product-art-note {font-size:8px;}
+ .template-overview {padding-block:50px 30px;}
+ .template-film {padding-block:50px;}
+}
+@media(prefers-reduced-motion:reduce) { .cinema-background {animation:none;} }

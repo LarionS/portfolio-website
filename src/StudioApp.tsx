@@ -18,6 +18,7 @@ import moneyNest from "../assets/journey/apps/moneynest-home.webp";
 import biteSync from "../assets/journey/apps/bitesync-health-chat.webp";
 import { TemplateShowcase } from "./Templates";
 import "./templates.css";
+import "./cinematic.css";
 
 const EMAIL = "Larion1@gmail.com";
 const WHATSAPP = "https://wa.me/972504931021";

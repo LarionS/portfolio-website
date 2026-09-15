@@ -1,35 +1,77 @@
 [
   {
-    "slug": "vr-boat-template",
-    "name": "VR Boat Template",
-    "shortName": "Boat",
-    "category": "On the water",
-    "tagline": "Your world. Your wake.",
-    "summary": "A hands-on speedboat with a grabbable wheel, throttle and key ignition. Bring your next Unreal world to the water.",
-    "description": "Start with a detailed sport runabout, an articulated outboard and an island-and-ocean demo. Tune the hull's buoyancy, change the presentation, or build your own interactions around the live marine dashboard.",
-    "image": "boat-hero",
-    "imageAlt": "The included blue and white sport runabout on the demo ocean in Unreal Engine",
-    "gallery": [{"image":"boat-cockpit","alt":"Controller-driven hands at the boat wheel, throttle and live instrument dashboard","caption":"A helm you can reach out and use. Captured with scripted controller input."}],
-    "highlights": ["Grabbable helm", "Hull buoyancy", "Island demo"],
+    "slug": "vr-car-template",
+    "name": "VR Car Template",
+    "shortName": "Car",
+    "category": "On the road",
+    "tagline": "Get behind your next idea.",
+    "summary": "Physical steering-wheel grips, animated hands and two selectable physics modes in a customizable sports car.",
+    "description": "Build a seated driving experience for PCVR and Quest 3. Start with the included sports car, then adjust the handling, presentation and cockpit to suit your project through Blueprints and Data Assets.",
+    "image": "car-hero",
+    "imageAlt": "The included sports car with blue paint in the Unreal Engine driving demo",
+    "gallery": [
+      {
+        "image": "car-cockpit",
+        "alt": "Controller-driven hands gripping the steering wheel in the sports car cockpit",
+        "caption": "Physical wheel grips, animated hands and a live dashboard."
+      }
+    ],
+    "highlights": [
+      "Two physics modes",
+      "Physical wheel grips",
+      "Paint & handling controls"
+    ],
     "features": [
-      {"title":"Reach for the controls.","body":"Two-hand steering, regrabbing and handover, a forward/neutral/reverse lever, and an OFF/ON/START key with detent haptics."},
-      {"title":"More than a floating mesh.","body":"Distributed hull buoyancy, outboard steering and trim, fuel, navigation lights, horn and a simple bilge-water model."},
-      {"title":"Make the boat your own.","body":"Child Blueprints and handling, comfort and presentation Data Assets let you change paint, sound, seat calibration and compatible skeletal meshes without editing C++."},
-      {"title":"A complete starting point.","body":"Includes the runabout, separate marine dashboard, four boat LODs, island/ocean and overview maps, editable Blender and FBX sources, and an illustrated guide."}
+      {
+        "title": "Choose the driving feel.",
+        "body": "Switch at runtime between Chaos Vehicles and custom four-wheel suspension/tire physics. One simulation drives the chassis at a time."
+      },
+      {
+        "title": "A cockpit you can use.",
+        "body": "Animated hands grip the steering rim. OpenXR controls, seated recentering, tracking-loss safety, cockpit and chase cameras support the driving experience."
+      },
+      {
+        "title": "Build in the details.",
+        "body": "Animated doors, switchable lights, a speed/gear/RPM/nitrous dashboard, rechargeable boost and three jump-test lanes are included."
+      },
+      {
+        "title": "Make it fit your project.",
+        "body": "Tune paint, audio, suspension, torque, braking, wheel placement, replacement meshes, camera position and grip alignment. Source is included for deeper changes."
+      }
     ],
-    "requirements": ["Unreal Engine 5.8; checked with 5.8.2. Windows development, Win64 and Android arm64 runtime targets.","Requires Enhanced Input, XRBase, OpenXR, Water (Experimental), Interchange Assets and ACLPlugin. See the guide for editor dependencies and renderer setup.","Single-player gameplay model; network replication is not included. Try the demos and choose rendering settings and LODs for your device."],
-    "fab": "https://www.fab.com/listings/8044d9a2-6e70-4b0e-9684-0cfe86638c4c",
+    "requirements": [
+      "Unreal Engine 5.8. PCVR and Quest 3 standalone support; desktop and gamepad controls are also included.",
+      "Chaos Vehicles is required in both physics modes and is marked Experimental in Unreal Engine 5.8.2. Enhanced Input, XRBase, OpenXR and other built-in dependencies are listed in the guide.",
+      "The supplied game mode configures default input automatically. MetaXR, optical hand tracking and eye tracking plugins are not required."
+    ],
+    "fab": "https://www.fab.com/listings/bd39c4cf-beda-4c08-8f62-87baec9216b7",
     "downloads": [
-      {"label":"Windows demo","detail":"Packaged desktop / PCVR demo","url":"https://drive.google.com/file/d/1i8tidIuedqYjNRcrgEq_J3K8V-PLzxLp/view"},
-      {"label":"Quest demo","detail":"Android demo download","url":"https://drive.google.com/file/d/1YWuU2Eaj8FX03vFc8JUQexqMwgfKD3i8/view"},
-      {"label":"Illustrated guide","detail":"Setup, controls and customization","url":"https://drive.google.com/file/d/1AyowucKCn6PtSwBKStsmYqeavqWBBzpq/view"},
-      {"label":"Example project","detail":"Purchased plugin required separately","url":"https://drive.google.com/file/d/1EaPXAxVBqLieoukQcbHCLlk6-2azJ3Cs/view"}
+      {
+        "label": "Windows demo",
+        "detail": "Desktop and PCVR demo ZIP",
+        "url": "https://drive.google.com/file/d/1R2ZIQaKqywBtExX0sOnTWFPW_4jZF5lq/view"
+      },
+      {
+        "label": "Quest 3 demo",
+        "detail": "Standalone demo ZIP",
+        "url": "https://drive.google.com/file/d/1UOM31-jUFFaWLW9HzqQHlT2s48b6Nd3D/view"
+      },
+      {
+        "label": "Customization guide",
+        "detail": "Setup, controls and editor workflows",
+        "url": "https://drive.google.com/file/d/1UH5C71CRkPyH5RU9J0d41gd9NAmk5-yE/view"
+      },
+      {
+        "label": "Example project",
+        "detail": "Purchased plugin required separately",
+        "url": "https://drive.google.com/file/d/1q14rjeDXc4SAvHG9YOFSUmvx5w8tXd49/view"
+      }
     ],
-    "video": "/assets/templates/boat-trailer.webm",
-    "videoLink": "",
-    "videoLabel": "Watch the boat in action",
-    "mediaNote": "Actual Unreal Engine capture of included content. Gameplay and hand motion use scripted inputs; the standalone dashboard demonstration uses example telemetry.",
-    "musicCredit": true
+    "video": "/assets/templates/car-trailer.webm",
+    "videoLink": "https://www.fab.com/listings/bd39c4cf-beda-4c08-8f62-87baec9216b7",
+    "videoLabel": "Watch the car in action",
+    "mediaNote": "Actual Unreal Engine capture from the published product. Hands are controller-driven animations, not optical hand tracking.",
+    "musicCredit": false
   },
   {
     "slug": "vr-helicopter-template",
@@ -42,125 +84,299 @@
     "image": "helicopter-hero",
     "imageAlt": "The included blue Compact Scout helicopter parked beside hangars at the demo airport",
     "gallery": [
-      {"image":"helicopter-cockpit","alt":"Pilot view of the Compact Scout helicopter cockpit and instruments","caption":"Physical flight controls and instruments connected to runtime data."},
-      {"image":"helicopter-airfield","alt":"The included regional airport demo environment","caption":"An 8 × 6 km airport, a 2 km runway and four helipads."}
+      {
+        "image": "helicopter-cockpit",
+        "alt": "Pilot view of the Compact Scout helicopter cockpit and instruments",
+        "caption": "Physical flight controls and instruments connected to runtime data."
+      },
+      {
+        "image": "helicopter-airfield",
+        "alt": "The included regional airport demo environment",
+        "caption": "An 8 × 6 km airport, a 2 km runway and four helipads."
+      }
     ],
-    "highlights": ["Physical flight controls", "Live cockpit", "Airport included"],
+    "highlights": [
+      "Physical flight controls",
+      "Live cockpit",
+      "Airport included"
+    ],
     "features": [
-      {"title":"Fly with your hands.","body":"Grab the cyclic and collective, twist the throttle and control yaw. Controller-driven hands, grip haptics and seated recentering are included, with desktop and gamepad fallbacks."},
-      {"title":"Bring the cockpit to life.","body":"A 60-channel cockpit connects engine and electrical switches, lights, analog needles, the PFD, compass and COM tuning to runtime data."},
-      {"title":"Shape the flight.","body":"Tune flight response, wind, mass, thrust, sound, paint and grip offsets through child Blueprints and Flight/Presentation Data Assets. Runtime C++ source is included."},
-      {"title":"Give your world a runway.","body":"The supplied airport includes a terminal, hangars, parked aircraft, helipads and hover, route and rooftop-landing exercises."}
+      {
+        "title": "Fly with your hands.",
+        "body": "Grab the cyclic and collective, twist the throttle and control yaw. Controller-driven hands, grip haptics and seated recentering are included, with desktop and gamepad fallbacks."
+      },
+      {
+        "title": "Bring the cockpit to life.",
+        "body": "A 60-channel cockpit connects engine and electrical switches, lights, analog needles, the PFD, compass and COM tuning to runtime data."
+      },
+      {
+        "title": "Shape the flight.",
+        "body": "Tune flight response, wind, mass, thrust, sound, paint and grip offsets through child Blueprints and Flight/Presentation Data Assets. Runtime C++ source is included."
+      },
+      {
+        "title": "Give your world a runway.",
+        "body": "The supplied airport includes a terminal, hangars, parked aircraft, helipads and hover, route and rooftop-landing exercises."
+      }
     ],
-    "requirements": ["Unreal Engine 5.8, validated on 5.8.2. Windows x64 development; Win64 and Android runtime builds. PCVR and Meta Quest 3 are listed as tested.","A working OpenXR runtime is needed for PCVR. Built-in dependencies and Windows/Quest rendering presets are documented in the guide; MetaXR is not required.","Local single-player game simulation. No network replication, certified flight training or voice-radio backend. Controller hand contact is approximate and canopy reflections are baked."],
+    "requirements": [
+      "Unreal Engine 5.8, validated on 5.8.2. Windows x64 development; Win64 and Android runtime builds. PCVR and Meta Quest 3 are listed as tested.",
+      "A working OpenXR runtime is needed for PCVR. Built-in dependencies and Windows/Quest rendering presets are documented in the guide; MetaXR is not required.",
+      "Local single-player game simulation. No network replication, certified flight training or voice-radio backend. Controller hand contact is approximate and canopy reflections are baked."
+    ],
     "fab": "https://www.fab.com/listings/3c64e8df-7488-414f-90b0-22dff60e5280",
     "downloads": [
-      {"label":"Windows demo","detail":"Desktop and PCVR","url":"https://drive.google.com/file/d/1eh9WEO5sWYOFkv02OwTntxylqUfS7YUy/view"},
-      {"label":"Quest demo","detail":"Standalone headset demo","url":"https://drive.google.com/file/d/1wQL4gvB89ccXT2wljqpDmKHtN_I7sUgf/view"},
-      {"label":"Illustrated guide","detail":"PDF setup and customization guide","url":"https://drive.google.com/file/d/1nKEWoJCKCyn4RQ3jQ-aPjEkCFm7Y12zW/view"},
-      {"label":"Offline documentation","detail":"Downloadable guide ZIP","url":"https://drive.google.com/file/d/12eCHjSPtbF4VTs9olhfBe7KCPMOCKE42/view"},
-      {"label":"Example project","detail":"Purchased plugin required separately","url":"https://drive.google.com/file/d/1UDcLjZhbpFAp3amEBMbVPDjR2FH9TcNI/view"}
+      {
+        "label": "Windows demo",
+        "detail": "Desktop and PCVR",
+        "url": "https://drive.google.com/file/d/1eh9WEO5sWYOFkv02OwTntxylqUfS7YUy/view"
+      },
+      {
+        "label": "Quest demo",
+        "detail": "Standalone headset demo",
+        "url": "https://drive.google.com/file/d/1wQL4gvB89ccXT2wljqpDmKHtN_I7sUgf/view"
+      },
+      {
+        "label": "Illustrated guide",
+        "detail": "PDF setup and customization guide",
+        "url": "https://drive.google.com/file/d/1nKEWoJCKCyn4RQ3jQ-aPjEkCFm7Y12zW/view"
+      },
+      {
+        "label": "Offline documentation",
+        "detail": "Downloadable guide ZIP",
+        "url": "https://drive.google.com/file/d/12eCHjSPtbF4VTs9olhfBe7KCPMOCKE42/view"
+      },
+      {
+        "label": "Example project",
+        "detail": "Purchased plugin required separately",
+        "url": "https://drive.google.com/file/d/1UDcLjZhbpFAp3amEBMbVPDjR2FH9TcNI/view"
+      }
     ],
-    "video":"/assets/templates/helicopter-trailer.webm",
-    "videoLink":"",
-    "videoLabel":"Explore the helicopter",
-    "mediaNote":"Actual in-engine views of the included helicopter and airport. The gallery shows the product's demo environment.",
-    "musicCredit":false
+    "video": "/assets/templates/helicopter-trailer.webm",
+    "videoLink": "",
+    "videoLabel": "Explore the helicopter",
+    "mediaNote": "Actual in-engine views of the included helicopter and airport. The gallery shows the product's demo environment.",
+    "musicCredit": false
   },
   {
-    "slug":"vr-car-template",
-    "name":"VR Car Template",
-    "shortName":"Car",
-    "category":"On the road",
-    "tagline":"Get behind your next idea.",
-    "summary":"Physical steering-wheel grips, animated hands and two selectable physics modes in a customizable sports car.",
-    "description":"Build a seated driving experience for PCVR and Quest 3. Start with the included sports car, then adjust the handling, presentation and cockpit to suit your project through Blueprints and Data Assets.",
-    "image":"car-hero",
-    "imageAlt":"The included sports car with blue paint in the Unreal Engine driving demo",
-    "gallery":[{"image":"car-cockpit","alt":"Controller-driven hands gripping the steering wheel in the sports car cockpit","caption":"Physical wheel grips, animated hands and a live dashboard."}],
-    "highlights":["Two physics modes","Physical wheel grips","Paint & handling controls"],
-    "features":[
-      {"title":"Choose the driving feel.","body":"Switch at runtime between Chaos Vehicles and custom four-wheel suspension/tire physics. One simulation drives the chassis at a time."},
-      {"title":"A cockpit you can use.","body":"Animated hands grip the steering rim. OpenXR controls, seated recentering, tracking-loss safety, cockpit and chase cameras support the driving experience."},
-      {"title":"Build in the details.","body":"Animated doors, switchable lights, a speed/gear/RPM/nitrous dashboard, rechargeable boost and three jump-test lanes are included."},
-      {"title":"Make it fit your project.","body":"Tune paint, audio, suspension, torque, braking, wheel placement, replacement meshes, camera position and grip alignment. Source is included for deeper changes."}
+    "slug": "vr-boat-template",
+    "name": "VR Boat Template",
+    "shortName": "Boat",
+    "category": "On the water",
+    "tagline": "Your world. Your wake.",
+    "summary": "A hands-on speedboat with a grabbable wheel, throttle and key ignition. Bring your next Unreal world to the water.",
+    "description": "Start with a detailed sport runabout, an articulated outboard and an island-and-ocean demo. Tune the hull's buoyancy, change the presentation, or build your own interactions around the live marine dashboard.",
+    "image": "boat-hero",
+    "imageAlt": "The included blue and white sport runabout on the demo ocean in Unreal Engine",
+    "gallery": [
+      {
+        "image": "boat-cockpit",
+        "alt": "Controller-driven hands at the boat wheel, throttle and live instrument dashboard",
+        "caption": "A helm you can reach out and use. Captured with scripted controller input."
+      }
     ],
-    "requirements":["Unreal Engine 5.8. PCVR and Quest 3 standalone support; desktop and gamepad controls are also included.","Chaos Vehicles is required in both physics modes and is marked Experimental in Unreal Engine 5.8.2. Enhanced Input, XRBase, OpenXR and other built-in dependencies are listed in the guide.","The supplied game mode configures default input automatically. MetaXR, optical hand tracking and eye tracking plugins are not required."],
-    "fab":"https://www.fab.com/listings/bd39c4cf-beda-4c08-8f62-87baec9216b7",
-    "downloads":[
-      {"label":"Windows demo","detail":"Desktop and PCVR demo ZIP","url":"https://drive.google.com/file/d/1R2ZIQaKqywBtExX0sOnTWFPW_4jZF5lq/view"},
-      {"label":"Quest 3 demo","detail":"Standalone demo ZIP","url":"https://drive.google.com/file/d/1UOM31-jUFFaWLW9HzqQHlT2s48b6Nd3D/view"},
-      {"label":"Customization guide","detail":"Setup, controls and editor workflows","url":"https://drive.google.com/file/d/1UH5C71CRkPyH5RU9J0d41gd9NAmk5-yE/view"},
-      {"label":"Example project","detail":"Purchased plugin required separately","url":"https://drive.google.com/file/d/1q14rjeDXc4SAvHG9YOFSUmvx5w8tXd49/view"}
+    "highlights": [
+      "Grabbable helm",
+      "Hull buoyancy",
+      "Island demo"
     ],
-    "video":"",
-    "videoLink":"https://www.fab.com/listings/bd39c4cf-beda-4c08-8f62-87baec9216b7",
-    "videoLabel":"Watch the trailer on Fab",
-    "mediaNote":"Actual Unreal Engine screenshots from the published product gallery.",
-    "musicCredit":false
+    "features": [
+      {
+        "title": "Reach for the controls.",
+        "body": "Two-hand steering, regrabbing and handover, a forward/neutral/reverse lever, and an OFF/ON/START key with detent haptics."
+      },
+      {
+        "title": "More than a floating mesh.",
+        "body": "Distributed hull buoyancy, outboard steering and trim, fuel, navigation lights, horn and a simple bilge-water model."
+      },
+      {
+        "title": "Make the boat your own.",
+        "body": "Child Blueprints and handling, comfort and presentation Data Assets let you change paint, sound, seat calibration and compatible skeletal meshes without editing C++."
+      },
+      {
+        "title": "A complete starting point.",
+        "body": "Includes the runabout, separate marine dashboard, four boat LODs, island/ocean and overview maps, editable Blender and FBX sources, and an illustrated guide."
+      }
+    ],
+    "requirements": [
+      "Unreal Engine 5.8; checked with 5.8.2. Windows development, Win64 and Android arm64 runtime targets.",
+      "Requires Enhanced Input, XRBase, OpenXR, Water (Experimental), Interchange Assets and ACLPlugin. See the guide for editor dependencies and renderer setup.",
+      "Single-player gameplay model; network replication is not included. Try the demos and choose rendering settings and LODs for your device."
+    ],
+    "fab": "https://www.fab.com/listings/8044d9a2-6e70-4b0e-9684-0cfe86638c4c",
+    "downloads": [
+      {
+        "label": "Windows demo",
+        "detail": "Packaged desktop / PCVR demo",
+        "url": "https://drive.google.com/file/d/1i8tidIuedqYjNRcrgEq_J3K8V-PLzxLp/view"
+      },
+      {
+        "label": "Quest demo",
+        "detail": "Android demo download",
+        "url": "https://drive.google.com/file/d/1YWuU2Eaj8FX03vFc8JUQexqMwgfKD3i8/view"
+      },
+      {
+        "label": "Illustrated guide",
+        "detail": "Setup, controls and customization",
+        "url": "https://drive.google.com/file/d/1AyowucKCn6PtSwBKStsmYqeavqWBBzpq/view"
+      },
+      {
+        "label": "Example project",
+        "detail": "Purchased plugin required separately",
+        "url": "https://drive.google.com/file/d/1EaPXAxVBqLieoukQcbHCLlk6-2azJ3Cs/view"
+      }
+    ],
+    "video": "/assets/templates/boat-trailer.webm",
+    "videoLink": "",
+    "videoLabel": "Watch the boat in action",
+    "mediaNote": "Actual Unreal Engine capture of included content. Gameplay and hand motion use scripted inputs; the standalone dashboard demonstration uses example telemetry.",
+    "musicCredit": true
   },
   {
-    "slug":"vr-jet-ski-template",
-    "name":"VR Jet Ski Template",
-    "shortName":"Jet ski",
-    "category":"Across the waves",
-    "tagline":"A new way to make waves.",
-    "summary":"OpenXR handlebars, water physics and a live digital dashboard in a rideable personal watercraft.",
-    "description":"Bring the editable ReferenceCraft vehicle into your Unreal Engine project. Start on the supplied island-and-ocean map, then customize the craft, water response and interaction for your own experience.",
-    "image":"jet-ski-hero",
-    "imageAlt":"The included red ReferenceCraft jet ski shown in the published product gallery",
-    "gallery":[{"image":"jet-ski-cockpit","alt":"First-person view of the jet ski handlebars and digital dashboard on the ocean","caption":"Handlebar interaction and a live digital instrument screen."}],
-    "highlights":["OpenXR handlebars","Water physics","Editable craft"],
-    "features":[
-      {"title":"Grab on and ride.","body":"Controller grips and triggers drive handlebar steering, throttle, braking, reverse, engine toggle and rider recentering."},
-      {"title":"Find your sea legs.","body":"Tune propulsion, throttle response, steering, stability and sea states through editor settings and Blueprint nodes."},
-      {"title":"Read the ride.","body":"The included digital screen displays speed, drive state, engine and water-contact information. Change the dashboard or connect it to your own presentation."},
-      {"title":"Make it your craft.","body":"Change paint and audio, use four supplied mesh LODs, or follow the documented replacement-mesh, grip, rig and collision workflow. Includes Blueprint vehicle and C++ source."}
+    "slug": "vr-jet-ski-template",
+    "name": "VR Jet Ski Template",
+    "shortName": "Jet ski",
+    "category": "Across the waves",
+    "tagline": "A new way to make waves.",
+    "summary": "OpenXR handlebars, water physics and a live digital dashboard in a rideable personal watercraft.",
+    "description": "Bring the editable ReferenceCraft vehicle into your Unreal Engine project. Start on the supplied island-and-ocean map, then customize the craft, water response and interaction for your own experience.",
+    "image": "jet-ski-hero",
+    "imageAlt": "The included red ReferenceCraft jet ski shown in the published product gallery",
+    "gallery": [
+      {
+        "image": "jet-ski-cockpit",
+        "alt": "First-person view of the jet ski handlebars and digital dashboard on the ocean",
+        "caption": "Handlebar interaction and a live digital instrument screen."
+      }
     ],
-    "requirements":["Unreal Engine 5.8. Windows x64 development; Win64 and Android arm64 runtime. Quest demo tested on Quest 3.","Requires Enhanced Input, XRBase, OpenXR and the Unreal Water plugin.","Performance and controller compatibility depend on the target setup. Compiled demos run without an Unreal Engine installation; the editable example requires the purchased plugin."],
-    "fab":"https://www.fab.com/listings/ac64953c-add6-43ac-a6e1-1ce94f2bfb80",
-    "downloads":[
-      {"label":"Windows demo","detail":"Desktop and PCVR with animated hands","url":"https://drive.google.com/file/d/1n2K5qrKXNgSX8wQBUm_7SWlLybyyNyYl/view"},
-      {"label":"Quest demo","detail":"Standalone headset demo","url":"https://drive.google.com/file/d/1ujxBx030BXrbVUC4ky_inapQJ88KdBPI/view"},
-      {"label":"Developer guide","detail":"Installation, integration and customization","url":"https://drive.google.com/file/d/1OSDc3mPfOe20dGMRQjQ2JVbdQyzmE4qr/view"},
-      {"label":"Offline documentation","detail":"Downloadable HTML guide","url":"https://drive.google.com/file/d/1FoHfoHwu1Z6CDWvzWMe_0vLbfzp9b9Ws/view"},
-      {"label":"Example project","detail":"Purchased plugin required separately","url":"https://drive.google.com/file/d/1ORoez5mo4cRkJU43AxRqGcskYx5rtwFK/view"}
+    "highlights": [
+      "OpenXR handlebars",
+      "Water physics",
+      "Editable craft"
     ],
-    "video":"",
-    "videoLink":"https://www.fab.com/listings/ac64953c-add6-43ac-a6e1-1ce94f2bfb80",
-    "videoLabel":"Watch the trailer on Fab",
-    "mediaNote":"Published product imagery and an actual first-person Unreal Engine screenshot.",
-    "musicCredit":false
+    "features": [
+      {
+        "title": "Grab on and ride.",
+        "body": "Controller grips and triggers drive handlebar steering, throttle, braking, reverse, engine toggle and rider recentering."
+      },
+      {
+        "title": "Find your sea legs.",
+        "body": "Tune propulsion, throttle response, steering, stability and sea states through editor settings and Blueprint nodes."
+      },
+      {
+        "title": "Read the ride.",
+        "body": "The included digital screen displays speed, drive state, engine and water-contact information. Change the dashboard or connect it to your own presentation."
+      },
+      {
+        "title": "Make it your craft.",
+        "body": "Change paint and audio, use four supplied mesh LODs, or follow the documented replacement-mesh, grip, rig and collision workflow. Includes Blueprint vehicle and C++ source."
+      }
+    ],
+    "requirements": [
+      "Unreal Engine 5.8. Windows x64 development; Win64 and Android arm64 runtime. Quest demo tested on Quest 3.",
+      "Requires Enhanced Input, XRBase, OpenXR and the Unreal Water plugin.",
+      "Performance and controller compatibility depend on the target setup. Compiled demos run without an Unreal Engine installation; the editable example requires the purchased plugin."
+    ],
+    "fab": "https://www.fab.com/listings/ac64953c-add6-43ac-a6e1-1ce94f2bfb80",
+    "downloads": [
+      {
+        "label": "Windows demo",
+        "detail": "Desktop and PCVR with animated hands",
+        "url": "https://drive.google.com/file/d/1n2K5qrKXNgSX8wQBUm_7SWlLybyyNyYl/view"
+      },
+      {
+        "label": "Quest demo",
+        "detail": "Standalone headset demo",
+        "url": "https://drive.google.com/file/d/1ujxBx030BXrbVUC4ky_inapQJ88KdBPI/view"
+      },
+      {
+        "label": "Developer guide",
+        "detail": "Installation, integration and customization",
+        "url": "https://drive.google.com/file/d/1OSDc3mPfOe20dGMRQjQ2JVbdQyzmE4qr/view"
+      },
+      {
+        "label": "Offline documentation",
+        "detail": "Downloadable HTML guide",
+        "url": "https://drive.google.com/file/d/1FoHfoHwu1Z6CDWvzWMe_0vLbfzp9b9Ws/view"
+      },
+      {
+        "label": "Example project",
+        "detail": "Purchased plugin required separately",
+        "url": "https://drive.google.com/file/d/1ORoez5mo4cRkJU43AxRqGcskYx5rtwFK/view"
+      }
+    ],
+    "video": "",
+    "videoLink": "https://www.fab.com/listings/ac64953c-add6-43ac-a6e1-1ce94f2bfb80",
+    "videoLabel": "Watch the trailer on Fab",
+    "mediaNote": "Published product imagery and an actual first-person Unreal Engine screenshot.",
+    "musicCredit": false
   },
   {
-    "slug":"vr-motorcycle-template",
-    "name":"VR Motorcycle Template v2",
-    "shortName":"Motorcycle",
-    "category":"Into the corner",
-    "tagline":"Lean into your next build.",
-    "summary":"Two-hand tracked handlebars and rider lean, with native motorcycle physics and a ready-to-ride Blueprint pawn.",
-    "description":"Build a motorcycle experience with speed-aware steering, suspension, tire forces and balance assistance. The v2 code plugin exposes its handling through a behavior Data Asset, with a demo course to test each change.",
-    "image":"motorcycle-hero",
-    "imageAlt":"The motorcycle riding along the included demo course in Unreal Engine",
-    "gallery":[{"image":"motorcycle-cockpit","alt":"First-person motorcycle view on the included physics test circuit","caption":"A demo course for steering, suspension, grip and jump testing."}],
-    "highlights":["Tracked handlebars","Rider lean","Native bike physics"],
-    "features":[
-      {"title":"Follow the rider.","body":"Two-hand handlebar steering and body lean combine with immediate reversal response and speed-aware stability. Desktop fallback controls are included."},
-      {"title":"Tune the ride.","body":"A Chaos-based component handles suspension, tire forces, braking, counter-steering, balance assistance, airborne pitch and a six-speed automatic powertrain."},
-      {"title":"See and hear the response.","body":"A native-backed UMG dashboard shows speed, gear and RPM, with engine, wind, tire and impact audio."},
-      {"title":"Build beyond the demo.","body":"Use the input adapter with custom pawns, follow the mesh-replacement workflow, and test changes on a course with spline roads, guardrails, cones and ramps."}
+    "slug": "vr-motorcycle-template",
+    "name": "VR Motorcycle Template v2",
+    "shortName": "Motorcycle",
+    "category": "Into the corner",
+    "tagline": "Lean into your next build.",
+    "summary": "Two-hand tracked handlebars and rider lean, with native motorcycle physics and a ready-to-ride Blueprint pawn.",
+    "description": "Build a motorcycle experience with speed-aware steering, suspension, tire forces and balance assistance. The v2 code plugin exposes its handling through a behavior Data Asset, with a demo course to test each change.",
+    "image": "motorcycle-hero",
+    "imageAlt": "The motorcycle riding along the included demo course in Unreal Engine",
+    "gallery": [
+      {
+        "image": "motorcycle-cockpit",
+        "alt": "First-person motorcycle view on the included physics test circuit",
+        "caption": "A demo course for steering, suspension, grip and jump testing."
+      }
     ],
-    "requirements":["Unreal Engine 5.8; tested on Win64 and Meta Quest/Android.","Requires OpenXR, XRBase and Enhanced Input. Read the guide for input integration and Android ASTC packaging.","This is the v2 native code plugin, replacing the earlier Blueprint-only VR Motorcycle Template. The public demo linked here is the Quest APK."],
-    "fab":"https://www.fab.com/listings/8e4fa0ce-5c09-4110-92f7-1b867b584f29",
-    "downloads":[
-      {"label":"Quest demo APK","detail":"Standalone headset demo","url":"https://drive.google.com/file/d/1i9W7XTMbhInVn_XQwzKa4jacwJdcnZVZ/view"},
-      {"label":"Developer guide","detail":"Handling, integration and mesh replacement","url":"https://drive.google.com/file/d/10gy64k1yyaAy9--e4Aur-Zh57N12IqvB/view"},
-      {"label":"Example project","detail":"See the guide for setup requirements","url":"https://drive.google.com/file/d/12l20eQweeRKmUf_egsG712JywVSsMUx8/view"}
+    "highlights": [
+      "Tracked handlebars",
+      "Rider lean",
+      "Native bike physics"
     ],
-    "video":"",
-    "videoLink":"https://www.youtube.com/watch?v=YkkQzs77rUk",
-    "videoLabel":"Watch the showcase & quickstart",
-    "mediaNote":"Actual Unreal Engine screenshots from the published v2 product gallery.",
-    "musicCredit":false
+    "features": [
+      {
+        "title": "Follow the rider.",
+        "body": "Two-hand handlebar steering and body lean combine with immediate reversal response and speed-aware stability. Desktop fallback controls are included."
+      },
+      {
+        "title": "Tune the ride.",
+        "body": "A Chaos-based component handles suspension, tire forces, braking, counter-steering, balance assistance, airborne pitch and a six-speed automatic powertrain."
+      },
+      {
+        "title": "See and hear the response.",
+        "body": "A native-backed UMG dashboard shows speed, gear and RPM, with engine, wind, tire and impact audio."
+      },
+      {
+        "title": "Build beyond the demo.",
+        "body": "Use the input adapter with custom pawns, follow the mesh-replacement workflow, and test changes on a course with spline roads, guardrails, cones and ramps."
+      }
+    ],
+    "requirements": [
+      "Unreal Engine 5.8; tested on Win64 and Meta Quest/Android.",
+      "Requires OpenXR, XRBase and Enhanced Input. Read the guide for input integration and Android ASTC packaging.",
+      "This is the v2 native code plugin, replacing the earlier Blueprint-only VR Motorcycle Template. The public demo linked here is the Quest APK."
+    ],
+    "fab": "https://www.fab.com/listings/8e4fa0ce-5c09-4110-92f7-1b867b584f29",
+    "downloads": [
+      {
+        "label": "Quest demo APK",
+        "detail": "Standalone headset demo",
+        "url": "https://drive.google.com/file/d/1i9W7XTMbhInVn_XQwzKa4jacwJdcnZVZ/view"
+      },
+      {
+        "label": "Developer guide",
+        "detail": "Handling, integration and mesh replacement",
+        "url": "https://drive.google.com/file/d/10gy64k1yyaAy9--e4Aur-Zh57N12IqvB/view"
+      },
+      {
+        "label": "Example project",
+        "detail": "See the guide for setup requirements",
+        "url": "https://drive.google.com/file/d/12l20eQweeRKmUf_egsG712JywVSsMUx8/view"
+      }
+    ],
+    "video": "",
+    "videoLink": "https://www.youtube.com/watch?v=YkkQzs77rUk",
+    "videoLabel": "Watch the showcase & quickstart",
+    "mediaNote": "Actual Unreal Engine screenshots from the published v2 product gallery.",
+    "musicCredit": false
   }
 ]

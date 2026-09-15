@@ -5,6 +5,7 @@ import "@fontsource/ibm-plex-mono/latin-500.css";
 import Templates from "./Templates";
 import "./studio.css";
 import "./templates.css";
+import "./cinematic.css";
 
 const slug = window.location.pathname.split("/").filter(Boolean)[1] || "";
 const root = document.getElementById("template-root")!;
