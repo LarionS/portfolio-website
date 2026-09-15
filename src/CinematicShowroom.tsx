@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
-import { ArrowUpRight, Play, Pause, ArrowRight } from '@phosphor-icons/react';
+import { ArrowUpRight, Play, ArrowRight } from '@phosphor-icons/react';
 import templates from './templates.json';
 
 type Vehicle = (typeof templates)[number];
@@ -42,7 +42,6 @@ export default function CinematicShowroom({ home = false, selected, onSelect }: 
 }
 
 export function GameplayShowcase({ active, setActive }: { active:number;setActive:(value:number)=>void }) {
-  const [paused,setPaused] = useState(true);
   const video = useRef<HTMLVideoElement>(null);
   const item=templates[active];
   useEffect(()=>{
@@ -56,9 +55,9 @@ export function GameplayShowcase({ active, setActive }: { active:number;setActiv
   },[active]);
   return <section className="cinema-gameplay section-pad" id="gameplay" aria-labelledby="gameplay-title"><div className="cinema-editorial-heading"><h2 id="gameplay-title">Your hands.<br />The controls.</h2><div><p>Reach for the wheel. Take the collective.<br />Feel how each vehicle responds, then make it part of your own world.</p><span>Actual Unreal Engine capture</span></div></div>
     <div className="cinema-film" id="gameplay-panel" role="tabpanel" aria-labelledby={`gameplay-${active}`}>
-      {item.video ? <><video key={item.slug} ref={video} controls playsInline preload="none" poster={asset(item.gallery[0].image)} onPlay={()=>setPaused(false)} onPause={()=>setPaused(true)} aria-label={`${item.name} gameplay`}><source src={item.video} type="video/webm" /></video><button className="cinema-film-toggle" type="button" aria-label={paused?'Play gameplay':'Pause gameplay'} onClick={()=>{const node=video.current;if(node){if(node.paused)void node.play().catch(()=>setPaused(true));else node.pause();}}}>{paused?<Play weight="fill"/>:<Pause weight="fill"/>}<span>{paused?'Play film':'Pause film'}</span></button></> : <a href={item.videoLink} target="_blank" rel="noreferrer"><img src={asset(item.gallery[0].image)} alt={item.gallery[0].alt} width="1280" height="720" loading="lazy"/><span className="cinema-film-toggle"><Play weight="fill"/>Watch on {item.shortName==='Motorcycle'?'YouTube':'Fab'}<ArrowUpRight/></span></a>}
+      {item.video ? <video key={item.slug} ref={video} controls playsInline preload="none" poster={asset(item.gallery[0].image)} aria-label={`${item.name} gameplay`}><source src={item.video} type="video/webm" /></video> : <a href={item.videoLink} target="_blank" rel="noreferrer"><img src={asset(item.gallery[0].image)} alt={item.gallery[0].alt} width="1280" height="720" loading="lazy"/><span className="cinema-film-toggle"><Play weight="fill"/>Watch on {item.shortName==='Motorcycle'?'YouTube':'Fab'}<ArrowUpRight/></span></a>}
     </div><div className="cinema-film-foot"><p>{item.mediaNote}</p><a href={path(item)}>Explore {item.shortName.toLowerCase()} <ArrowUpRight aria-hidden="true"/></a></div>
-    <div className="cinema-text-tabs" role="tablist" aria-label="Choose gameplay">{templates.map((vehicle,index)=><button id={`gameplay-${index}`} type="button" role="tab" aria-selected={active===index} aria-controls="gameplay-panel" key={vehicle.slug} tabIndex={active===index?0:-1} onKeyDown={event=>{if(['ArrowRight','ArrowLeft','Home','End'].includes(event.key)){event.preventDefault();const next=event.key==='Home'?0:event.key==='End'?4:(index+(event.key==='ArrowRight'?1:4))%5;video.current?.pause();setPaused(true);setActive(next);document.getElementById(`gameplay-${next}`)?.focus();}}} onClick={()=>{video.current?.pause();setPaused(true);setActive(index);}}><small>0{index+1}</small>{vehicle.shortName}</button>)}</div>
+    <div className="cinema-text-tabs" role="tablist" aria-label="Choose gameplay">{templates.map((vehicle,index)=><button id={`gameplay-${index}`} type="button" role="tab" aria-selected={active===index} aria-controls="gameplay-panel" key={vehicle.slug} tabIndex={active===index?0:-1} onKeyDown={event=>{if(['ArrowRight','ArrowLeft','Home','End'].includes(event.key)){event.preventDefault();const next=event.key==='Home'?0:event.key==='End'?4:(index+(event.key==='ArrowRight'?1:4))%5;video.current?.pause();setActive(next);document.getElementById(`gameplay-${next}`)?.focus();}}} onClick={()=>{video.current?.pause();setActive(index);}}><small>0{index+1}</small>{vehicle.shortName}</button>)}</div>
     {item.musicCredit && <p className="cinema-credit">Music: <a href="https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1300046">Dream Culture — Kevin MacLeod</a>, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Edited with fades and level changes.</p>}
   </section>;
 }

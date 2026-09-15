@@ -174,3 +174,33 @@
 .guide-teaser p:not(.eyebrow) {font-size:17px;line-height:1.6;color:var(--muted);}
 .guide-teaser .text-link {flex-shrink:0;}
 @media(max-width:760px){.guide-heading{padding-block:50px 35px}.guide-heading>p:not(.cinema-eyebrow){font-size:17px}.guide-body{display:block;padding-block:40px 55px}.guide-body aside{position:static;margin-bottom:40px;gap:13px}.guide-body article{font-size:16px}.guide-lead{font-size:20px}.guide-body h2{font-size:29px}.guide-table th,.guide-table td{padding:12px 8px;font-size:13px}.guide-teaser{display:block;padding-block:45px}.guide-teaser .text-link{margin-top:20px}}
+
+/* Keep the collection composed on ultrawide displays instead of stretching its artwork. */
+body:has(> #template-root) { background:var(--ink); }
+#template-root { position:relative; max-width:2080px; margin-inline:auto; background:var(--paper); }
+.cinema-film { max-width:1440px; margin-inline:auto; }
+.cinema-film video,.cinema-film > a > img { display:block; aspect-ratio:16/9; max-height:none; }
+.cinema-gameplay .cinema-film-foot,.cinema-gameplay .cinema-text-tabs,.cinema-gameplay .cinema-credit { max-width:1440px; margin-inline:auto; }
+@media(min-width:1700px) {
+ .cinema-hero:not(.cinema-home) { min-height:900px; height:min(1000px,100svh); }
+ .cinema-copy { padding-top:155px; }
+ .cinema-description { font-size:20px; max-width:760px; }
+ .cinema-eyebrow { font-size:13px; }
+ .cinema-tabs { max-width:none; gap:22px; }
+ .cinema-tabs img { height:110px; }
+ .cinema-tabs span { font-size:15px; }
+ .cinema-art-note,.cinema-baseline { font-size:12px; }
+ .template-header nav { font-size:16px; }
+ .cinema-play { font-size:15px; }
+ .cinema-bottom { background:linear-gradient(transparent,#070913d9); }
+}
+@media(min-width:2200px) {
+ #template-root { box-shadow:0 0 100px #0006; }
+ .cinema-background .campaign-image { object-position:center; }
+}
+
+.template-header.cinema-header { background:linear-gradient(#07091370,transparent); }
+@media(min-width:2200px) {
+ body:has(> #template-root) .analytics-choices { left:calc((100vw - 2080px)/2 + 20px); }
+ body:has(> #template-root) .analytics-manage { left:calc((100vw - 2080px)/2 + 12px); }
+}
