@@ -130,7 +130,7 @@
 .template-media-note { font-size: 12px; color: var(--muted); line-height: 1.7; margin-top: 24px; max-width: 930px; }
 .template-film { padding-block: 60px; }
 .template-film video { width: 100%; max-height: 760px; background: #0b101c; aspect-ratio: 16/9; }
-.template-film-caption { display: flex; justify-content: space-between; gap: 20px; color: var(--muted); font-size: 12px; padding-top: 15px; }
+.template-film-caption { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 20px; color: var(--muted); font-size: 12px; padding-top: 15px; }
 .template-film-caption a { display: inline-flex; align-items: center; gap: 8px; }
 .template-downloads { padding-block: 70px; display: grid; grid-template-columns: 1fr 1fr; gap: 75px; background: #0b101c; color: var(--paper); }
 .template-downloads .eyebrow { color: #aab8d1; }

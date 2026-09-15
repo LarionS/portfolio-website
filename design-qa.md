@@ -31,3 +31,10 @@ Production build and all eight tests pass. Tests cover crawlable pages, metadata
 No outstanding P0/P1/P2 findings. P3: additional art-directed portrait assets could further improve mobile vehicle framing; current crop is usable and intentional.
 
 final result: passed
+# Tutorial addendum — 15 September 2026
+
+Reviewed the steering tutorial at desktop and 390px mobile width. Corrected the image's intrinsic-height gap with `height:auto`. Headings, body copy, image, navigation and source links remain readable. Production build passed; live page returned the complete crawlable article after GitHub Pages deployment 34950461911. Search Console processed the eight-page sitemap successfully.
+
+## YouTube and analytics launch
+- Verified the three Shorts and four full trailers as public in YouTube Studio. Spaceship is unlisted while Fab approval is pending.
+- Added verified YouTube links, the optimized Jet ski trailer, a privacy notice and opt-in Analytics. Desktop consent panel reviewed; decline and reopen controls work. Production build and all 11 tests pass.

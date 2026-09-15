@@ -68,7 +68,7 @@
       }
     ],
     "video": "/assets/templates/car-trailer.webm",
-    "videoLink": "https://www.fab.com/listings/bd39c4cf-beda-4c08-8f62-87baec9216b7",
+    "videoLink": "https://www.youtube.com/watch?v=JnTo5XPL8ko",
     "videoLabel": "Watch the car in action",
     "mediaNote": "Actual Unreal Engine capture from the published product. Hands are controller-driven animations, not optical hand tracking.",
     "musicCredit": false
@@ -152,7 +152,7 @@
       }
     ],
     "video": "/assets/templates/helicopter-trailer.webm",
-    "videoLink": "",
+    "videoLink": "https://www.youtube.com/watch?v=5PqqxCEhoAw",
     "videoLabel": "Explore the helicopter",
     "mediaNote": "Actual in-engine views of the included helicopter and airport. The gallery shows the product's demo environment.",
     "musicCredit": false
@@ -226,7 +226,7 @@
       }
     ],
     "video": "/assets/templates/boat-trailer.webm",
-    "videoLink": "",
+    "videoLink": "https://www.youtube.com/watch?v=KtkBk-s5Tfg",
     "videoLabel": "Watch the boat in action",
     "mediaNote": "Actual Unreal Engine capture of included content. Gameplay and hand motion use scripted inputs; the standalone dashboard demonstration uses example telemetry.",
     "musicCredit": true
@@ -304,9 +304,9 @@
         "url": "https://drive.google.com/file/d/1ORoez5mo4cRkJU43AxRqGcskYx5rtwFK/view"
       }
     ],
-    "video": "",
-    "videoLink": "https://www.fab.com/listings/ac64953c-add6-43ac-a6e1-1ce94f2bfb80",
-    "videoLabel": "Watch the trailer on Fab",
+    "video": "/assets/templates/jet-ski-trailer.webm",
+    "videoLink": "https://www.youtube.com/watch?v=p5Cd5F0QjrI",
+    "videoLabel": "Watch the trailer and quick start",
     "mediaNote": "Published product imagery and an actual first-person Unreal Engine screenshot.",
     "musicCredit": false
   },

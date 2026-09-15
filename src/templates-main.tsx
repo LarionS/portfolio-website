@@ -6,9 +6,12 @@ import Templates from "./Templates";
 import "./studio.css";
 import "./templates.css";
 import "./cinematic.css";
+import { mountAnalytics } from './analytics';
+import './analytics.css';
 
 const slug = window.location.pathname.split("/").filter(Boolean)[1] || "";
 const root = document.getElementById("template-root")!;
 const app = <StrictMode><Templates slug={slug}/></StrictMode>;
 if (root.hasChildNodes()) hydrateRoot(root, app);
 else createRoot(root).render(app);
+mountAnalytics();
