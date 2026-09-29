@@ -19,7 +19,7 @@ test('every vehicle has usable product media and public purchase/demo resources'
     }
     if(item.video) assert.ok(existsSync(resolve('public',item.video.slice(1))));
   }
-  assert.equal(templates.length,5);
+  assert.equal(templates.length,6);
 });
 
 test('production pages contain crawlable content, metadata and working local targets', {skip:!existsSync('dist/templates/index.html')}, () => {

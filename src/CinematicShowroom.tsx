@@ -16,7 +16,7 @@ function VehicleTabs({ active, setActive, prefix }: { active: number; setActive:
     const key = event.key;
     if (!['ArrowRight','ArrowLeft','Home','End'].includes(key)) return;
     event.preventDefault();
-    const next = key === 'Home' ? 0 : key === 'End' ? 4 : (index + (key === 'ArrowRight' ? 1 : 4)) % 5;
+    const next = key === 'Home' ? 0 : key === 'End' ? templates.length - 1 : (index + (key === 'ArrowRight' ? 1 : templates.length - 1)) % templates.length;
     setActive(next); document.getElementById(`${prefix}-${next}`)?.focus();
   };
   return <div className="cinema-tabs" role="tablist" aria-label="Choose your vehicle">{templates.map((item,index)=><button id={`${prefix}-${index}`} key={item.slug} type="button" role="tab" aria-selected={active===index} aria-controls={`${prefix}-panel`} tabIndex={active===index?0:-1} onClick={()=>setActive(index)} onKeyDown={e=>navigate(e,index)}><img src={asset(campaign(item)+'-small')} width="320" height="180" alt="" loading="lazy" /><span><small>0{index+1}</small>{item.shortName}</span></button>)}</div>;
@@ -33,8 +33,8 @@ export default function CinematicShowroom({ home = false, selected, onSelect }: 
     <div className="cinema-background" key={item.slug}><CampaignImage item={item} eager={!home} /></div>
     <div className="cinema-copy section-pad" id={`${prefix}-panel`} role="tabpanel" aria-labelledby={`${prefix}-${active}`}>
       <p className="cinema-eyebrow">Playframe Vault <span>/</span> VR vehicle collection</p>
-      <Heading id={`${prefix}-heading`}>Make worlds<br />worth driving.</Heading>
-      <p className="cinema-description">Five editable vehicle templates for Unreal Engine 5.8,<br className="desktop-break" /> with hands-on VR controls and demos to try.</p>
+      <Heading id={`${prefix}-heading`}>Make worlds<br />worth exploring.</Heading>
+      <p className="cinema-description">Six editable vehicle templates for Unreal Engine 5.8,<br className="desktop-break" /> with hands-on VR controls and demos to try.</p>
       <div className="cinema-actions"><a className="cinema-button" href={path(item)}>Explore {item.shortName.toLowerCase()} <ArrowUpRight aria-hidden="true" /></a><a className="cinema-play" href={home?`${path(item)}#film`:'#gameplay'}><Play weight="fill" aria-hidden="true" />Watch gameplay</a></div>
     </div>
     <div className="cinema-bottom section-pad"><p className="cinema-art-note">Promotional artwork · Actual gameplay below</p><VehicleTabs active={active} setActive={setActive} prefix={prefix} /><div className="cinema-baseline"><span>{item.name} / Unreal Engine 5.8</span><a href={home?'/templates/':'#choose'}>Explore the collection <ArrowRight aria-hidden="true" /></a></div></div>
@@ -53,11 +53,11 @@ export function GameplayShowcase({ active, setActive }: { active:number;setActiv
     document.addEventListener('visibilitychange',hide);
     return ()=>{observer.disconnect();document.removeEventListener('visibilitychange',hide);};
   },[active]);
-  return <section className="cinema-gameplay section-pad" id="gameplay" aria-labelledby="gameplay-title"><div className="cinema-editorial-heading"><h2 id="gameplay-title">Your hands.<br />The controls.</h2><div><p>Reach for the wheel. Take the collective.<br />Feel how each vehicle responds, then make it part of your own world.</p><span>Actual Unreal Engine capture</span></div></div>
+  return <section className="cinema-gameplay section-pad" id="gameplay" aria-labelledby="gameplay-title"><div className="cinema-editorial-heading"><h2 id="gameplay-title">Your hands.<br />The controls.</h2><div><p>Reach for the wheel. Take the collective. Grip the flight stick.<br />Feel how each vehicle responds, then make it part of your own world.</p><span>Actual Unreal Engine capture</span></div></div>
     <div className="cinema-film" id="gameplay-panel" role="tabpanel" aria-labelledby={`gameplay-${active}`}>
       {item.video ? <video key={item.slug} ref={video} controls playsInline preload="none" poster={asset(item.gallery[0].image)} aria-label={`${item.name} gameplay`}><source src={item.video} type="video/webm" /></video> : <a href={item.videoLink} target="_blank" rel="noreferrer"><img src={asset(item.gallery[0].image)} alt={item.gallery[0].alt} width="1280" height="720" loading="lazy"/><span className="cinema-film-toggle"><Play weight="fill"/>Watch on {item.shortName==='Motorcycle'?'YouTube':'Fab'}<ArrowUpRight/></span></a>}
     </div><div className="cinema-film-foot"><p>{item.mediaNote}</p><a href={path(item)}>Explore {item.shortName.toLowerCase()} <ArrowUpRight aria-hidden="true"/></a></div>
-    <div className="cinema-text-tabs" role="tablist" aria-label="Choose gameplay">{templates.map((vehicle,index)=><button id={`gameplay-${index}`} type="button" role="tab" aria-selected={active===index} aria-controls="gameplay-panel" key={vehicle.slug} tabIndex={active===index?0:-1} onKeyDown={event=>{if(['ArrowRight','ArrowLeft','Home','End'].includes(event.key)){event.preventDefault();const next=event.key==='Home'?0:event.key==='End'?4:(index+(event.key==='ArrowRight'?1:4))%5;video.current?.pause();setActive(next);document.getElementById(`gameplay-${next}`)?.focus();}}} onClick={()=>{video.current?.pause();setActive(index);}}><small>0{index+1}</small>{vehicle.shortName}</button>)}</div>
+    <div className="cinema-text-tabs" role="tablist" aria-label="Choose gameplay">{templates.map((vehicle,index)=><button id={`gameplay-${index}`} type="button" role="tab" aria-selected={active===index} aria-controls="gameplay-panel" key={vehicle.slug} tabIndex={active===index?0:-1} onKeyDown={event=>{if(['ArrowRight','ArrowLeft','Home','End'].includes(event.key)){event.preventDefault();const next=event.key==='Home'?0:event.key==='End'?templates.length-1:(index+(event.key==='ArrowRight'?1:templates.length-1))%templates.length;video.current?.pause();setActive(next);document.getElementById(`gameplay-${next}`)?.focus();}}} onClick={()=>{video.current?.pause();setActive(index);}}><small>0{index+1}</small>{vehicle.shortName}</button>)}</div>
     {item.musicCredit && <p className="cinema-credit">Music: <a href="https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1300046">Dream Culture — Kevin MacLeod</a>, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Edited with fades and level changes.</p>}
   </section>;
 }

@@ -378,5 +378,89 @@
     "videoLabel": "Watch the showcase & quickstart",
     "mediaNote": "Actual Unreal Engine screenshots from the published v2 product gallery.",
     "musicCredit": false
+  },
+  {
+    "slug": "vr-spaceship-template",
+    "name": "VR Spaceship Template",
+    "shortName": "Spaceship",
+    "category": "Beyond the clouds",
+    "tagline": "Your next world starts in the cockpit.",
+    "summary": "Pilot a VR spacecraft with grabbable flight controls, touchable cockpit systems, lasers and one-touch docking.",
+    "description": "Start a VR spaceflight experience with a ready-to-fly cockpit, a launch station and an asteroid field. The Unreal Engine 5.8 plugin includes physical controller-driven flight controls, cockpit interactions and a guided first-flight demo for PCVR and Quest 3.",
+    "image": "spaceship-hero",
+    "imageAlt": "First-person view from the spaceship cockpit flying through an asteroid field above the clouds",
+    "gallery": [
+      {
+        "image": "spaceship-cockpit",
+        "alt": "Controller-driven hand gripping the spaceship flight stick in the cockpit",
+        "caption": "Reach for the flight stick and fly with tracked VR controllers."
+      },
+      {
+        "image": "spaceship-docking",
+        "alt": "Spaceship cockpit during the one-touch docking autopilot sequence",
+        "caption": "Return to the launch station with the docking autopilot."
+      }
+    ],
+    "highlights": [
+      "Grabbable flight controls",
+      "Interactive cockpit",
+      "Docking autopilot"
+    ],
+    "features": [
+      {
+        "title": "Fly with your hands.",
+        "body": "Grip the flight stick to steer and slide the throttle to leave the station. Controller-driven hands interact with the cockpit in VR."
+      },
+      {
+        "title": "Touch the cockpit.",
+        "body": "Use cockpit switches and screens to launch, arm the lasers and move between precision and cruise flight modes."
+      },
+      {
+        "title": "Make the flight yours.",
+        "body": "Explore an above-the-clouds flight area, fire at destructible asteroids and use the docking autopilot to return to the station."
+      },
+      {
+        "title": "Build from a working example.",
+        "body": "The plugin includes a launch-station demo, illustrated guide, offline documentation and a 14-lesson tutorial to help you adapt the systems."
+      }
+    ],
+    "requirements": [
+      "Unreal Engine 5.8. Windows x64 development; Win64 and Android arm64 targets. PCVR and native Quest 3 demos are available.",
+      "Uses controller-driven VR hands and cockpit interactions. See the Fab listing and guide for required plugins and setup.",
+      "The packaged demos run without the editor. The editable example project requires the purchased plugin. Test performance on your target headset."
+    ],
+    "fab": "https://www.fab.com/listings/1d89712c-7098-4186-a7fb-fb0233b11fd0",
+    "downloads": [
+      {
+        "label": "Windows demo",
+        "detail": "Desktop and PCVR demo ZIP",
+        "url": "https://drive.google.com/file/d/1LLd3sGo2nh29JXwXpXnIXABlFZ6PB9O9/view"
+      },
+      {
+        "label": "Quest 3 demo",
+        "detail": "Standalone headset demo",
+        "url": "https://drive.google.com/file/d/1Vxek_PTcKtb6N_ZhD2c8d5qqcR00Wq3g/view"
+      },
+      {
+        "label": "Illustrated guide",
+        "detail": "First flight and customization",
+        "url": "https://drive.google.com/file/d/1-w7WlQ0tXVUSH0UAHTj8JYkyPocHmVqn/view"
+      },
+      {
+        "label": "Offline documentation",
+        "detail": "Downloadable reference guide",
+        "url": "https://drive.google.com/file/d/1gMpe4N4KdHzAez6GaUck-i4jKSgavY2J/view"
+      },
+      {
+        "label": "Example project",
+        "detail": "Purchased plugin required separately",
+        "url": "https://drive.google.com/file/d/1U8dFlSzczUU5xF9dfTMIu6CN9AUehIFT/view"
+      }
+    ],
+    "video": "/assets/templates/spaceship-trailer.webm",
+    "videoLink": "https://www.youtube.com/watch?v=GTgfKLBMOW8",
+    "videoLabel": "Watch the spaceship trailer",
+    "mediaNote": "Actual PCVR capture from the published product trailer. Hands are controller-driven animations, not optical hand tracking.",
+    "musicCredit": false
   }
 ]

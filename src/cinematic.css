@@ -14,7 +14,7 @@
 .cinema-play svg { width:34px; height:34px; border:1px solid #d8e2f090; border-radius:50%; padding:8px; }
 .cinema-bottom { padding-bottom:27px; background:#07091366; }
 .cinema-art-note { font:10px/1.6 var(--mono); color:#c5cfde; padding-block:14px 20px; }
-.cinema-tabs { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:18px; max-width:1150px; }
+.cinema-tabs { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:18px; max-width:1380px; }
 .cinema-tabs button { padding:0 0 12px; color:#fff; border-bottom:3px solid #ffffff38; text-align:left; opacity:.74; transition:opacity .2s,border-color .2s; }
 .cinema-tabs button[aria-selected=true],.cinema-tabs button:hover { opacity:1; border-color:var(--blue); }
 .cinema-tabs img { width:100%; height:clamp(68px,6.5vw,98px); object-fit:cover; object-position:70% center; border:1px solid #ffffff40; }
@@ -41,7 +41,7 @@
 .cinema-film-foot { display:flex; justify-content:space-between; align-items:start; gap:25px; margin-top:16px; }
 .cinema-film-foot p { max-width:730px; font:11px/1.7 var(--mono); color:var(--muted); }
 .cinema-film-foot a { white-space:nowrap; display:flex; align-items:center; gap:16px; font-size:14px; min-height:30px; }
-.cinema-text-tabs { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:28px; margin-top:44px; }
+.cinema-text-tabs { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:28px; margin-top:44px; }
 .cinema-text-tabs button { display:flex; gap:20px; padding:16px 0; border-bottom:1px solid #c6cedc; font:12px var(--mono); text-align:left; }
 .cinema-text-tabs small { font-size:10px; color:#71809b; }
 .cinema-text-tabs [aria-selected=true] { color:#324bba; border-bottom:3px solid var(--blue); }
@@ -95,7 +95,11 @@
  .cinema-play svg {width:29px;height:29px;padding:7px;}
  .cinema-bottom {padding-bottom:18px;}
  .cinema-art-note {font-size:8px;padding-block:12px;}
- .cinema-tabs {gap:8px;}
+ .cinema-art-note::after {content:" · Swipe to see all six";}
+ .cinema-tabs {display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:3px;}
+ .cinema-tabs,.cinema-text-tabs {scrollbar-width:none;}
+ .cinema-tabs::-webkit-scrollbar,.cinema-text-tabs::-webkit-scrollbar {display:none;}
+ .cinema-tabs button {flex:0 0 90px;scroll-snap-align:start;}
  .cinema-tabs img {height:46px;}
  .cinema-tabs span {font:9px/1.5 var(--mono);padding-top:8px;}
  .cinema-tabs button {padding-bottom:10px;}
@@ -117,7 +121,8 @@
  .cinema-film-foot {display:block;}
  .cinema-film-foot p {font-size:9px;}
  .cinema-film-foot a {font-size:12px;margin-top:8px;}
- .cinema-text-tabs {gap:9px;margin-top:24px;}
+ .cinema-text-tabs {display:flex;gap:16px;margin-top:24px;overflow-x:auto;scroll-snap-type:x mandatory;}
+ .cinema-text-tabs button {flex:0 0 94px;scroll-snap-align:start;}
  .cinema-text-tabs button {font-size:9px;display:block;line-height:1.6;}
  .cinema-text-tabs small {display:block;margin-bottom:7px;}
  .collection-title {display:block;padding-block:45px 30px;}

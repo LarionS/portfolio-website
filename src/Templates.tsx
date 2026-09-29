@@ -35,7 +35,7 @@ function TemplateCard({ item }: { item: VehicleTemplate }) {
 function Catalogue() {
   const [active,setActive] = useState(0);
   return <><TemplateHeader cinematic /><main id="main" className="template-main"><CinematicShowroom selected={active} onSelect={setActive}/><GameplayShowcase active={active} setActive={setActive}/>
-    <div className="collection-title section-pad" id="choose"><h2>Choose your<br />starting point.</h2><p>05 VEHICLES / ROAD · AIR · WATER<br />Explore the systems. Try the demos.<br />Make something of your own.</p></div>
+    <div className="collection-title section-pad" id="choose"><h2>Choose your<br />starting point.</h2><p>06 VEHICLES / ROAD · AIR · WATER · SPACE<br />Explore the systems. Try the demos.<br />Make something of your own.</p></div>
     <section className="catalogue-grid" aria-label="VR vehicle templates">{templates.map(item => <TemplateCard key={item.slug} item={item} />)}</section>
     <section className="template-principles section-pad" aria-label="How to get started"><div><VirtualReality aria-hidden="true" /><h2>Try the experience.</h2><p>Find available Windows and Quest demos on each template page. Check the feel on your own hardware.</p></div><div><SlidersHorizontal aria-hidden="true" /><h2>Make it yours.</h2><p>Explore the illustrated guides, editor settings and Blueprint workflows before choosing your starting point.</p></div><div><Code aria-hidden="true" /><h2>Build from there.</h2><p>Get the plugin on Fab, follow its setup guide, and adapt the vehicle to your Unreal project.</p></div></section>
     <section className="guide-teaser section-pad"><div><p className="eyebrow">Playframe field notes</p><h2>Build a wheel you can reach for.</h2><p>A practical guide to the seat, steering frame and VR hand grips.</p></div><a className="text-link" href="/guides/vr-steering-wheel-unreal/">Read the steering guide <ArrowUpRight aria-hidden="true"/></a></section>
@@ -47,7 +47,7 @@ function ProductPage({ item }: { item: VehicleTemplate }) {
   const [enlarged, setEnlarged] = useState<{ image: string; alt: string } | null>(null);
   const dialog = useRef<HTMLDialogElement>(null);
   useEffect(() => { if (enlarged && !dialog.current?.open) dialog.current?.showModal(); }, [enlarged]);
-  const gallery = [{image:item.image,alt:item.imageAlt,caption:"The included vehicle in the product gallery."},...item.gallery];
+  const gallery = [{image:item.image,alt:item.imageAlt,caption:"A view from the included demo."},...item.gallery];
   return <><TemplateHeader cinematic /><main id="main" className="template-main"><ProductCampaign item={item}/>
     <section className="template-overview section-pad"><div><Eyebrow>Built for your next world</Eyebrow><h2>{item.tagline}</h2></div><div><p>{item.description}</p><div className="template-tags">{item.highlights.map(tag=><span key={tag}>{tag}</span>)}</div></div></section>
     <section className="template-feature-grid section-pad" aria-label="Included features">{item.features.map((feature,index)=><article key={feature.title}><span>0{index+1}</span><h3>{feature.title}</h3><p>{feature.body}</p></article>)}</section>

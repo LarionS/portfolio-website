@@ -63,12 +63,12 @@ function Header() {
     <header className={`site-header${scrolled ? " is-scrolled" : ""}`}>
       <a href="#top" aria-label="Playframe home"><Brand /></a>
       <span className="header-studio">Independent studio.<br />Unreal possibilities.</span>
-      <nav className="desktop-nav" aria-label="Main navigation"><a href="/templates/">VR templates <span>05</span></a><a href="#work">Selected work <span>01</span></a><a href="#expertise">Our expertise <span>02</span></a><a className="nav-contact" href="#contact">Let’s talk <ArrowUpRight aria-hidden="true" /></a></nav>
+      <nav className="desktop-nav" aria-label="Main navigation"><a href="/templates/">VR templates <span>06</span></a><a href="#work">Selected work <span>01</span></a><a href="#expertise">Our expertise <span>02</span></a><a className="nav-contact" href="#contact">Let’s talk <ArrowUpRight aria-hidden="true" /></a></nav>
       <button className="mobile-menu-button" type="button" aria-label="Open navigation" aria-expanded={menuOpen} aria-controls="mobile-menu" onClick={() => { menu.current?.showModal(); setMenuOpen(true); }}><List /></button>
     </header>
     <dialog id="mobile-menu" className="menu-dialog" ref={menu} onClose={() => setMenuOpen(false)}>
       <div className="menu-inner"><div className="menu-top"><Brand /><button className="icon-button" type="button" onClick={close} aria-label="Close navigation"><X /></button></div>
-        <nav aria-label="Mobile navigation"><a href="/templates/" onClick={close}><span>05</span>VR templates<ArrowUpRight /></a><a href="#work" onClick={close}><span>01</span>Selected work<ArrowUpRight /></a><a href="#expertise" onClick={close}><span>02</span>Our expertise<ArrowUpRight /></a><a href="#contact" onClick={close}><span>03</span>Let’s talk<ArrowUpRight /></a></nav>
+        <nav aria-label="Mobile navigation"><a href="/templates/" onClick={close}><span>06</span>VR templates<ArrowUpRight /></a><a href="#work" onClick={close}><span>01</span>Selected work<ArrowUpRight /></a><a href="#expertise" onClick={close}><span>02</span>Our expertise<ArrowUpRight /></a><a href="#contact" onClick={close}><span>03</span>Let’s talk<ArrowUpRight /></a></nav>
         <a className="menu-email" href={`mailto:${EMAIL}`}>{EMAIL}</a>
       </div>
     </dialog>

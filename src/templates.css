@@ -150,7 +150,7 @@
 .template-requirements h2 { font-size: clamp(30px,3.2vw,44px); letter-spacing: -.04em; font-weight: 480; }
 .template-requirements p { margin-bottom: 19px; font-size: 15px; line-height: 1.75; color: var(--muted); }
 .template-related { padding-block: 50px 75px; border-top: 1px solid var(--line); }
-.template-related > div:last-child { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 24px; }
+.template-related > div:last-child { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 24px; }
 .template-related img { width: 100%; aspect-ratio: 16/9; height: auto; object-fit: cover; }
 .template-related a > span { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; font-size: 18px; }
 .template-lightbox { padding: 0; border: 0; max-width: min(95vw,1600px); max-height: 94svh; background: #0b101c; color: #fff; overflow: auto; }
