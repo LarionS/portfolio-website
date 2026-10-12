@@ -34,7 +34,7 @@ export default function CinematicShowroom({ home = false, selected, onSelect }: 
     <div className="cinema-copy section-pad" id={`${prefix}-panel`} role="tabpanel" aria-labelledby={`${prefix}-${active}`}>
       <p className="cinema-eyebrow">Playframe Vault <span>/</span> VR vehicle collection</p>
       <Heading id={`${prefix}-heading`}>Make worlds<br />worth exploring.</Heading>
-      <p className="cinema-description">Six editable vehicle templates for Unreal Engine 5.8,<br className="desktop-break" /> with hands-on VR controls and demos to try.</p>
+      <p className="cinema-description">Seven editable vehicle templates for Unreal Engine 5.8,<br className="desktop-break" /> with hands-on VR controls and demos to try.</p>
       <div className="cinema-actions"><a className="cinema-button" href={path(item)}>Explore {item.shortName.toLowerCase()} <ArrowUpRight aria-hidden="true" /></a><a className="cinema-play" href={home?`${path(item)}#film`:'#gameplay'}><Play weight="fill" aria-hidden="true" />Watch gameplay</a></div>
     </div>
     <div className="cinema-bottom section-pad"><p className="cinema-art-note">Promotional artwork · Actual gameplay below</p><VehicleTabs active={active} setActive={setActive} prefix={prefix} /><div className="cinema-baseline"><span>{item.name} / Unreal Engine 5.8</span><a href={home?'/templates/':'#choose'}>Explore the collection <ArrowRight aria-hidden="true" /></a></div></div>

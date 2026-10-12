@@ -462,5 +462,75 @@
     "videoLabel": "Watch the spaceship trailer",
     "mediaNote": "Actual PCVR capture from the published product trailer. Hands are controller-driven animations, not optical hand tracking.",
     "musicCredit": false
+  },
+  {
+    "slug": "vr-forklift-template",
+    "name": "VR Forklift Template",
+    "shortName": "Forklift",
+    "category": "In the warehouse",
+    "tagline": "Take the operator seat.",
+    "summary": "Grabbable steering and hydraulic controls, animated controller-driven hands, and a warehouse pallet pickup and delivery exercise.",
+    "description": "Build a seated forklift experience in Unreal Engine 5.8. Operate the included counterbalance forklift, move shipments to marked bays, and customize handling, controls and presentation through Blueprints and Data Assets.",
+    "image": "forklift-hero",
+    "imageAlt": "The included counterbalance forklift in the warehouse demo",
+    "gallery": [
+      {
+        "image": "forklift-cockpit",
+        "alt": "Forklift cab with steering wheel, hydraulic levers and instruments",
+        "caption": "Reach for the steering wheel and hydraulic controls."
+      }
+    ],
+    "highlights": [
+      "Grabbable wheel & levers",
+      "Pallet delivery workflow",
+      "Blueprint customization"
+    ],
+    "features": [
+      {
+        "title": "Reach for the controls.",
+        "body": "Grab the steering wheel with either or both hands. Three hydraulic levers control lift, mast tilt and side shift."
+      },
+      {
+        "title": "Complete the warehouse shift.",
+        "body": "Align the forks, engage an included pallet, carry the shipment to a marked bay, then lower and release it."
+      },
+      {
+        "title": "Make it yours.",
+        "body": "Adjust handling, brakes, load limits, lift travel, seat height and grip offsets. Replace moving meshes, materials and audio using Blueprints and Data Assets."
+      }
+    ],
+    "requirements": [
+      "Unreal Engine 5.8; Windows development host; Win64 and Android arm64 runtime targets.",
+      "Seated OpenXR interaction uses tracked controllers. Built-in dependencies and setup are documented in the guide.",
+      "Single-player flat-warehouse template with swept kinematic movement and assisted pallet attachment. No certified operator-training claim."
+    ],
+    "fab": "https://www.fab.com/listings/cb18f8bd-0cc3-4d31-917c-cbb753f519c4",
+    "downloads": [
+      {
+        "label": "Windows demo",
+        "detail": "Desktop / PC VR demo",
+        "url": "https://drive.google.com/file/d/1ClJogrSzQS5cjKxc2HleMjfRljQNROHr/view"
+      },
+      {
+        "label": "Quest demo",
+        "detail": "Native standalone demo",
+        "url": "https://drive.google.com/file/d/1rgY1fMUezsvBDkPj-MWH5Tg4Mp7zqkPR/view"
+      },
+      {
+        "label": "Illustrated guide",
+        "detail": "Setup and customization",
+        "url": "https://drive.google.com/file/d/1vNDF0xfGK04ie3sJ6kAtXiEbVlmlKtvb/view"
+      },
+      {
+        "label": "Example project",
+        "detail": "Purchased plugin required separately",
+        "url": "https://drive.google.com/file/d/1L6Dw6REyiPCmJGtHujloneucNEWCsWdu/view"
+      }
+    ],
+    "video": "/assets/templates/forklift-trailer.webm",
+    "videoLink": "",
+    "videoLabel": "Watch the forklift in action",
+    "mediaNote": "Actual Unreal Engine footage. Hands use controller-driven animations, not optical hand tracking.",
+    "musicCredit": false
   }
 ]
