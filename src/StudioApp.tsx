@@ -140,12 +140,15 @@ function SystemSection() {
   </section>;
 }
 
-type Film = { name: string; body: string; src: string; poster: string; category: string; link?: string };
-const films: Film[] = [
+type FilmDetails = { name: string; body: string; poster: string; category: string; link?: string };
+type LocalFilm = FilmDetails & { src: string; youtubeId?: never };
+type YouTubeFilm = FilmDetails & { youtubeId: string; src?: never };
+type Film = LocalFilm | YouTubeFilm;
+const films: LocalFilm[] = [
   { name: "Hover the Edge", body: "A body-steered VR hoverboard game. Race a collapsing island, recover the artifact, and find your way out.", src: hoverVideo, poster: hoverPoster, category: "Unreal Engine / VR game", link: "https://www.youtube.com/watch?v=yD0MdJfYck0" },
   { name: "FlyboxVR", body: "A real wind tunnel. A virtual world. Your posture and balance become the controls of an entirely different kind of flight.", src: flyboxVideo, poster: flyboxPoster, category: "Location-based VR / Physical integration" },
 ];
-function AutoVideo({ film, onExpand, suspended }: { film: Film; onExpand: () => void; suspended: boolean }) {
+function AutoVideo({ film, onExpand, suspended }: { film: LocalFilm; onExpand: () => void; suspended: boolean }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const visible = useRef(false);
   const manuallyPaused = useRef(false);
@@ -169,6 +172,24 @@ function Experiences({ onFilm, filmOpen }: { onFilm: (film: Film) => void; filmO
   return <section className="experiences-section section-pad" aria-labelledby="experiences-title"><div className="section-intro"><Reveal><Label>More than a screen</Label><h2 id="experiences-title">Some things have<br />to be <em>felt.</em></h2></Reveal><Reveal className="intro-note"><p>From the edge of an island<br />to the middle of a wind tunnel.<br />Play, with the whole body.</p></Reveal></div><div className="film-grid">{films.map((film, index) => <Reveal className={`film-project film-project-${index}`} key={film.name} delay={index * 0.08}><AutoVideo film={film} suspended={filmOpen} onExpand={() => onFilm(film)} /><div className="film-project-meta"><span>{film.category}</span><span>0{index + 4}</span></div><div className="film-title-row"><h3>{film.name}</h3><button className="project-arrow" type="button" onClick={() => onFilm(film)} aria-label={`Watch ${film.name}`}><ArrowUpRight /></button></div><p>{film.body}</p></Reveal>)}</div></section>;
 }
 
+const catFilm: YouTubeFilm = {
+  name: "A Cat Among Thieves",
+  category: "Game / Stealth & exploration",
+  body: "A feline adventure through a guarded museum. Explore a world of exhibits, security beams and close encounters, all from a cat’s point of view.",
+  poster: "/assets/projects/a-cat-among-thieves.webp",
+  youtubeId: "NN9-i7ai9xY",
+  link: "https://www.youtube.com/watch?v=NN9-i7ai9xY",
+};
+function GameProject({ onFilm }: { onFilm: (film: Film) => void }) {
+  useEffect(() => {
+    if (window.location.hash === "#a-cat-among-thieves") document.getElementById("a-cat-among-thieves")?.scrollIntoView({ behavior: "instant" });
+  }, []);
+  return <section className="game-section section-pad" id="a-cat-among-thieves" aria-labelledby="cat-game-title">
+    <Reveal className="game-copy"><Label>06 — Games & interactive worlds</Label><h2 id="cat-game-title">A Cat Among Thieves</h2><p>{catFilm.body}</p><a className="text-link" href={catFilm.link} target="_blank" rel="noreferrer">Watch on YouTube <ArrowUpRight aria-hidden="true" /></a></Reveal>
+    <Reveal className="game-visual"><button className="game-media" type="button" onClick={() => onFilm(catFilm)} aria-label="Watch A Cat Among Thieves trailer"><Picture src={catFilm.poster} alt="A cat leaping beside a stone display plinth in the A Cat Among Thieves trailer" /><span className="project-image-note">Actual project footage</span><span className="game-play"><span className="game-play-icon"><Play weight="fill" aria-hidden="true" /></span><span>Watch trailer<span className="game-duration">1 min 24 sec</span></span><ArrowUpRight aria-hidden="true" /></span></button><div className="film-project-meta"><span>{catFilm.category}</span><span>Project trailer</span></div></Reveal>
+  </section>;
+}
+
 const products = [
   { name: "Lighthouse", category: "Home & community", line: "A shared home. A little more harmony.", body: "The conversations, people and everyday moments that make a place feel like home.", image: lighthouse },
   { name: "MoneyNest", category: "Personal finance", line: "A clearer picture of your money.", body: "A considered space for everyday finances, with useful insights close at hand.", image: moneyNest },
@@ -177,7 +198,7 @@ const products = [
 function Products() {
   const compact = useCompactLayout();
   const [active, setActive] = useState(0); const product = products[active]; const reduced = useReducedMotion();
-  return <section className="products-section section-pad" id="mobile-products" aria-labelledby="products-title"><div className="products-copy"><Label>06 — Digital products</Label><h2 id="products-title">Beyond the<br />headset.</h2><p>The same care for interaction.<br />A different kind of world.</p><div className="product-tabs" role="tablist" aria-label="Explore mobile products" aria-orientation={compact ? "horizontal" : "vertical"}>{products.map((item, index) => <button key={item.name} type="button" role="tab" id={`product-tab-${index}`} aria-selected={active === index} aria-controls="product-panel" tabIndex={active === index ? 0 : -1} onClick={() => setActive(index)} onKeyDown={(event) => { let next = index; if (event.key === "ArrowDown" || event.key === "ArrowRight") next = (index + 1) % products.length; else if (event.key === "ArrowUp" || event.key === "ArrowLeft") next = (index + products.length - 1) % products.length; else if (event.key === "Home") next = 0; else if (event.key === "End") next = products.length - 1; else return; event.preventDefault(); setActive(next); document.getElementById(`product-tab-${next}`)?.focus(); }}><span><strong>{item.name}</strong><span>{item.category}</span></span><ArrowUpRight aria-hidden="true" /></button>)}</div></div>
+  return <section className="products-section section-pad" id="mobile-products" aria-labelledby="products-title"><div className="products-copy"><Label>07 — Digital products</Label><h2 id="products-title">Beyond the<br />headset.</h2><p>The same care for interaction.<br />A different kind of world.</p><div className="product-tabs" role="tablist" aria-label="Explore mobile products" aria-orientation={compact ? "horizontal" : "vertical"}>{products.map((item, index) => <button key={item.name} type="button" role="tab" id={`product-tab-${index}`} aria-selected={active === index} aria-controls="product-panel" tabIndex={active === index ? 0 : -1} onClick={() => setActive(index)} onKeyDown={(event) => { let next = index; if (event.key === "ArrowDown" || event.key === "ArrowRight") next = (index + 1) % products.length; else if (event.key === "ArrowUp" || event.key === "ArrowLeft") next = (index + products.length - 1) % products.length; else if (event.key === "Home") next = 0; else if (event.key === "End") next = products.length - 1; else return; event.preventDefault(); setActive(next); document.getElementById(`product-tab-${next}`)?.focus(); }}><span><strong>{item.name}</strong><span>{item.category}</span></span><ArrowUpRight aria-hidden="true" /></button>)}</div></div>
     <div className="product-stage" id="product-panel" role="tabpanel" aria-labelledby={`product-tab-${active}`}><div className="product-stage-top"><span>Made for the everyday.</span><span>0{active + 1} / 03</span></div><div className="product-scene"><span className="product-watermark" aria-hidden="true">{product.name}</span><motion.div className="phone-shell" key={product.name} initial={reduced ? false : { opacity: 0, x: 20, rotate: 2 }} animate={{ opacity: 1, x: 0, rotate: -3 }} transition={{ duration: 0.45, ease }}><img src={product.image} alt={`${product.name} app — ${product.category.toLowerCase()} interface`} loading="lazy" decoding="async" /></motion.div></div><div className="product-stage-bottom"><div><h3>{product.line}</h3><p>{product.body}</p></div><div className="product-cycle"><button type="button" aria-label="Previous mobile product" onClick={() => setActive((active + products.length - 1) % products.length)}><ArrowLeft /></button><button type="button" aria-label="Next mobile product" onClick={() => setActive((active + 1) % products.length)}><ArrowRight /></button></div></div></div>
   </section>;
 }
@@ -204,9 +225,9 @@ function ProjectDialog({ project, onClose }: { project: Project | null; onClose:
 }
 function FilmDialog({ film, onClose }: { film: Film | null; onClose: () => void }) {
   const ref = useRef<HTMLDialogElement>(null); useEffect(() => { if (film && !ref.current?.open) ref.current?.showModal(); }, [film]);
-  return <dialog ref={ref} className="film-dialog" onClose={onClose} onClick={(event) => { if (event.target === event.currentTarget) ref.current?.close(); }} aria-labelledby="film-dialog-title">{film && <div className="film-dialog-content"><div className="film-dialog-header"><h2 id="film-dialog-title">{film.name}</h2><button className="icon-button" type="button" onClick={() => ref.current?.close()} aria-label="Close film" autoFocus><X /></button></div><video key={film.src} src={film.src} controls autoPlay playsInline poster={film.poster} aria-label={`${film.name} film`} /><div className="film-dialog-caption"><span>Actual project footage</span>{film.link && <a href={film.link} target="_blank" rel="noreferrer">Watch on YouTube <ArrowUpRight /></a>}</div></div>}</dialog>;
+  return <dialog ref={ref} className="film-dialog" onClose={onClose} onClick={(event) => { if (event.target === event.currentTarget) ref.current?.close(); }} aria-labelledby="film-dialog-title">{film && <div className="film-dialog-content"><div className="film-dialog-header"><h2 id="film-dialog-title">{film.name}</h2><button className="icon-button" type="button" onClick={() => ref.current?.close()} aria-label="Close film" autoFocus><X /></button></div><div className={film.youtubeId ? "film-embed" : undefined}>{film.youtubeId ? <iframe key={film.youtubeId} src={`https://www.youtube-nocookie.com/embed/${film.youtubeId}?autoplay=1&rel=0`} title={`${film.name} trailer`} allow="autoplay; encrypted-media; picture-in-picture; fullscreen" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen /> : <video key={film.src} src={film.src} controls autoPlay playsInline poster={film.poster} aria-label={`${film.name} film`} />}</div><div className="film-dialog-caption"><span>{film.youtubeId ? "Project trailer" : "Actual project footage"}</span>{film.link && <a href={film.link} target="_blank" rel="noreferrer">Watch on YouTube <ArrowUpRight /></a>}</div></div>}</dialog>;
 }
 export default function StudioApp() {
   const [project, setProject] = useState<Project | null>(null); const [film, setFilm] = useState<Film | null>(null);
-  return <><Header /><main id="main"><Hero /><TemplateShowcase /><Work onSelect={setProject} /><SystemSection /><Experiences onFilm={setFilm} filmOpen={Boolean(film)} /><Products /><Studio /></main><Contact /><ProjectDialog project={project} onClose={() => setProject(null)} /><FilmDialog film={film} onClose={() => setFilm(null)} /></>;
+  return <><Header /><main id="main"><Hero /><TemplateShowcase /><Work onSelect={setProject} /><SystemSection /><Experiences onFilm={setFilm} filmOpen={Boolean(film)} /><GameProject onFilm={setFilm} /><Products /><Studio /></main><Contact /><ProjectDialog project={project} onClose={() => setProject(null)} /><FilmDialog film={film} onClose={() => setFilm(null)} /></>;
 }

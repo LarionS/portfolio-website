@@ -202,6 +202,24 @@ svg { flex-shrink: 0; }
 .video-error { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; background: #070913dd; color: white; font-size: 14px; }
 .video-error button { display: flex; gap: 16px; align-items: center; border-bottom: 1px solid; padding: 8px; }
 
+/* A real game moment, with its trailer loaded only on request. */
+.game-section { display: grid; grid-template-columns: 1.25fr .85fr; gap: clamp(35px, 6vw, 100px); align-items: center; padding-block: 85px 95px; border-top: 1px solid var(--line); }
+.game-copy { grid-column: 2; grid-row: 1; }
+.game-copy h2 { font-size: clamp(40px, 4.7vw, 74px); line-height: 1.02; letter-spacing: -.05em; font-weight: 450; margin-top: 25px; max-width: 450px; }
+.game-copy > p:not(.eyebrow) { max-width: 390px; margin-top: 24px; font-size: 15px; line-height: 1.7; color: var(--muted); }
+.game-copy .text-link { margin-top: 24px; }
+.game-visual { grid-column: 1; grid-row: 1; min-width: 0; }
+.game-media { display: block; position: relative; width: 100%; aspect-ratio: 16 / 9; padding: 0; overflow: hidden; background: #231c15; text-align: left; color: white; }
+.game-media picture, .game-media img { width: 100%; height: 100%; }
+.game-media img { object-fit: cover; transition: transform .8s var(--ease); }
+.game-media:hover img { transform: scale(1.035); }
+.game-play { position: absolute; inset: auto 0 0; display: flex; align-items: center; gap: 15px; padding: 40px 22px 20px; background: linear-gradient(0deg, #070913d9, transparent); font-size: 15px; }
+.game-play-icon { display: grid; place-items: center; width: 46px; height: 46px; flex-shrink: 0; border: 1px solid #ffffffa6; border-radius: 50%; background: #07091350; transition: background .25s, border-color .25s; }
+.game-play-icon svg { width: 16px; height: 16px; margin-left: 2px; }
+.game-media:hover .game-play-icon { background: var(--blue); border-color: var(--blue); }
+.game-duration { display: block; margin-top: 5px; font: 8px/1.5 var(--mono); text-transform: uppercase; color: #d5dbea; }
+.game-play > svg { width: 23px; height: 23px; margin-left: auto; }
+
 /* Crisp product screens, one focal point. */
 .products-section { padding-block: 90px; border-top: 1px solid var(--line); display: grid; grid-template-columns: .72fr 1fr; gap: clamp(45px, 9vw, 150px); align-items: center; }
 .products-copy h2 { font-size: clamp(52px, 6vw, 96px); font-weight: 450; letter-spacing: -.055em; line-height: .99; margin-top: 24px; }
@@ -302,6 +320,8 @@ dialog::backdrop { background: #050712d9; backdrop-filter: blur(5px); }
 .film-dialog-header, .film-dialog-caption { display: flex; justify-content: space-between; gap: 20px; align-items: center; padding: 15px 25px; }
 .film-dialog-header h2 { font-size: 24px; font-weight: 450; letter-spacing: -.03em; }
 .film-dialog video { width: 100%; max-height: calc(100dvh - 200px); background: black; }
+.film-embed { aspect-ratio: 16 / 9; max-height: calc(100dvh - 200px); margin-inline: auto; }
+.film-embed iframe { display: block; width: 100%; height: 100%; border: 0; background: black; }
 .film-dialog-caption { font: 9px/1.5 var(--mono); color: #bdc6df; }
 .film-dialog-caption a { display: flex; align-items: center; gap: 15px; }
 .film-dialog-caption svg { width: 16px; height: 16px; }
@@ -445,6 +465,14 @@ dialog::backdrop { background: #050712d9; backdrop-filter: blur(5px); }
   .film-control { width: 44px; height: 44px; }
   .film-title-row h3 { font-size: 37px; }
   .film-project > p { margin-top: 12px; font-size: 14px; max-width: 350px; }
+  .game-section { grid-template-columns: 1fr; gap: 30px; padding-block: 60px 65px; }
+  .game-copy, .game-visual { grid-column: auto; grid-row: auto; }
+  .game-copy h2 { font-size: clamp(40px, 10vw, 60px); margin-top: 22px; max-width: 390px; }
+  .game-copy > p:not(.eyebrow) { font-size: 14px; margin-top: 20px; }
+  .game-copy .text-link { margin-top: 20px; }
+  .game-play { gap: 12px; padding: 35px 14px 14px; font-size: 13px; }
+  .game-play-icon { width: 44px; height: 44px; }
+  .game-visual .film-project-meta { font-size: 7px; margin-top: 15px; }
   .products-section { padding-block: 63px; grid-template-columns: 1fr; gap: 30px; }
   .products-copy h2 { font-size: 60px; margin-top: 20px; }
   .products-copy > p:not(.eyebrow) { font-size: 14px; margin-top: 20px; }
