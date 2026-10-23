@@ -26,7 +26,7 @@ test("all in-page navigation and legacy landing pages have real targets", () => 
 });
 
 test("contact information matches the owner's confirmed details", () => {
-  assert.match(app, /const EMAIL = "Larion1@gmail\.com"/);
+  assert.match(app, /const EMAIL = "hello@playframe\.qd\.je"/);
   assert.match(app, /const WHATSAPP = "https:\/\/wa\.me\/972504931021"/);
   assert.doesNotMatch(app, /wa\.me\/66|922470654|Larion Siments|\bprototype\b/i);
 });

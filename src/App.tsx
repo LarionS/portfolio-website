@@ -30,7 +30,7 @@ import moneyNest from "../assets/journey/apps/moneynest-home.webp";
 import biteSync from "../assets/journey/apps/bitesync-health-chat.webp";
 
 const contact = {
-  email: "mailto:Larion1@gmail.com?subject=New%20Playframe%20project",
+  email: "mailto:hello@playframe.qd.je?subject=New%20Playframe%20project",
   whatsapp: "https://wa.me/972504931021",
 };
 
