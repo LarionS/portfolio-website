@@ -284,7 +284,7 @@ svg { flex-shrink: 0; }
 .contact-primary > span { width: 45px; height: 45px; display: grid; place-items: center; border-radius: 50%; background: var(--blue); color: var(--ink); transition: transform .35s var(--ease), background .25s; }
 .contact-primary svg { width: 23px; height: 23px; }
 .contact-primary:hover > span { transform: rotate(45deg); background: #9cadff; }
-.contact-secondary { display: flex; gap: 28px; margin-top: 24px; }
+.contact-secondary { display: flex; flex-wrap: wrap; gap: 28px; margin-top: 24px; }
 .contact-secondary a { display: flex; min-height: 44px; gap: 9px; align-items: center; color: #c3cbe0; font-size: 13px; }
 .contact-secondary svg { width: 16px; height: 16px; }
 .contact-secondary a:hover { color: white; }

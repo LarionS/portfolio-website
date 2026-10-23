@@ -240,6 +240,6 @@ export const mobileProducts = [
 export const contact = {
   email: "Project enquiries",
   emailHref:
-    "mailto:Larion1@gmail.com?subject=New%20Unreal%20%2F%20VR%20project",
+    "mailto:hello@playframe.qd.je?subject=New%20Unreal%20%2F%20VR%20project",
   whatsapp: "https://wa.me/972504931021",
 };
