@@ -25,5 +25,24 @@ CNAME cannot be placed there alongside those records. Do not replace the mail
 or nameserver records to force an apex CNAME.
 
 A `www.playframe.qd.je` CNAME is possible with external DNS; alternatively a
-separately registered domain can be onboarded to Cloudflare. The public address
-and cutover must be decided before changing live DNS or canonical URLs.
+separately registered domain can be onboarded to Cloudflare. The owner chose to
+retain the current address and GitHub Pages routing until buying a domain.
+Do not change live DNS or canonical URLs as part of the staging deployment.
+
+## Active Cloudflare copy
+
+- Project: `playframe-studio`, in the `larion1@gmail.com` Cloudflare account.
+- URL: https://playframe-studio.pages.dev/
+- Git source: `LarionS/portfolio-website`, production branch `main`.
+- Build command: `npm run build:cloudflare && npm test`.
+- Output: `dist-cloudflare`; build environment: `NODE_VERSION=22`.
+- The GitHub integration is scoped to this repository only.
+
+The initial migration-branch deployment passed all build checks. HTTPS checks
+returned 200 for the home, templates, forklift, guide, privacy, and WebM URLs;
+the original MP4 URL redirected to the unchanged 35,947,900-byte download.
+Both studio MP4 previews loaded and played in Chrome without media errors.
+
+The current domain remains canonical to avoid presenting the Cloudflare copy
+as a replacement public identity before the owner selects a new domain. Its
+DNSSEC support request and ImprovMX mail routing are independent of hosting.
